@@ -13,7 +13,7 @@
 
 include_once('install_r.php');
 
-Route::get('testing', 'TestingController@mailTest');
+// Route::get('testing', 'TestingController@mailTest');
 
 Route::match(['get', 'post'], 'confirmation', function () {
     \Log::info('Mpesa confirmation responses');
