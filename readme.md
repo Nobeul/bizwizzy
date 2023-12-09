@@ -1,3 +1,1 @@
 Bizwizzy
-
-Branch protection added
