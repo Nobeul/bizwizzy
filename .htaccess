@@ -1,0 +1,62 @@
+
+RewriteEngine On
+RewriteCond %{HTTPS} !on
+RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+RewriteCond %{HTTP_REFERER} !^http://bizelevate.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://bizelevate.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://bizelevate.com.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://bizelevate.com.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://pos.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://pos.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://test.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://test.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://ulti1.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://ulti1.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.bizelevate.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.bizelevate.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.bizelevate.com.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.bizelevate.com.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.pos.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.pos.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.test.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.test.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.ulti1.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.ulti1.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://bizelevate.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://bizelevate.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://bizelevate.com.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://bizelevate.com.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://pos.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://pos.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://test.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://test.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://ulti1.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://ulti1.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.bizelevate.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.bizelevate.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.bizelevate.com.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.bizelevate.com.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.pos.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.pos.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.test.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.test.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.ulti1.bizwizzy.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.ulti1.bizwizzy.com$      [NC]
+RewriteRule .*\.(jpg|jpeg|gif|png|bmp)$ - [F,NC]
+
