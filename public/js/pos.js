@@ -748,6 +748,24 @@ $(document).ready(function() {
             },
         });
     });
+    
+    $(document).on('change', '.vehicle_id', function () {
+        if ($(this).find(':selected').val() != 0) {
+            var error_msg_td = $(this).closest('tr').find('.vehicle_id').closest('td');
+            error_msg_td.find('label.error').remove();
+            
+            let unselectedVehicleCount = 0;
+            $('.vehicle_id').each(function () {
+                if ($(this).find(':selected').val() == 0) {
+                    unselectedVehicleCount++;
+                }
+            });
+            
+            if (unselectedVehicleCount == 0) {
+                enable_pos_form_actions();
+            }
+        }
+    });
 
     $(document).on('click', '.remove_payment_row', function() {
         swal({
@@ -822,6 +840,15 @@ $(document).ready(function() {
                     disable_pos_form_actions();
                 } else {
                     enable_pos_form_actions();
+                }
+            });
+            
+            $('.vehicle_id').each(function () {
+                if ($(this).find(":selected").val() == 0) {
+                    var error_msg_td = $(this).closest('tr').find('.vehicle_id').closest('td');
+                    error_msg_td.append('<label class="error">Please select vehicle registration no</label>');
+                    disable_pos_form_actions();
+                    is_msp_valid = false;
                 }
             });
 
