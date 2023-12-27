@@ -8,7 +8,7 @@
             <th><input type="checkbox" id="select-all-row" data-table-id="product_table"></th>
             <th>&nbsp;</th>
             <th>@lang('messages.action')</th>
-            <th>@lang('sale.product')</th>
+            <th>{{ __('Service') }}</th>
             <th>@lang('purchase.business_location') @show_tooltip(__('lang_v1.product_business_location_tooltip'))</th>
             @can('view_purchase_price')
                 @php 
@@ -23,9 +23,9 @@
                 <th>@lang('lang_v1.selling_price')</th>
             @endcan
             <th>@lang('report.current_stock')</th>
-            <th>@lang('product.product_type')</th>
+            <th>{{ __('Service Type') }}</th>
             <th>@lang('product.category')</th>
-            <th>@lang('product.brand')</th>
+            <th>{{ __('Region') }}</th>
             <th>@lang('product.tax')</th>
             <th>@lang('product.sku')</th>
             <th>{{ $custom_labels['product']['custom_field_1'] ?? __('lang_v1.product_custom_field1') }}</th>

@@ -107,4 +107,9 @@ class TransactionSellLine extends Model
     {
         return $this->belongsTo(\App\TransactionSellLine::class, 'so_line_id');
     }
+    
+    public function vehicle()
+    {
+        return $this->belongsTo(\App\Vehicle::class, 'vehicle_id');
+    }
 }

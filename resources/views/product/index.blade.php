@@ -5,8 +5,8 @@
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
-    <h1>@lang('sale.products')
-        <small>@lang('lang_v1.manage_products')</small>
+    <h1>{{ __('Services') }}
+        <small>{{ __('Manage your services') }}</small>
     </h1>
     <!-- <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
@@ -46,7 +46,7 @@
         </div>
         <div class="col-md-3">
             <div class="form-group">
-                {!! Form::label('brand_id', __('product.brand') . ':') !!}
+                {!! Form::label('brand_id', __('Region') . ':') !!}
                 {!! Form::select('brand_id', $brands, null, ['class' => 'form-control select2', 'style' => 'width:100%', 'id' => 'product_list_filter_brand_id', 'placeholder' => __('lang_v1.all')]); !!}
             </div>
         </div>
@@ -101,7 +101,7 @@
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                     <li class="active">
-                        <a href="#product_list_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-cubes" aria-hidden="true"></i> @lang('lang_v1.all_products')</a>
+                        <a href="#product_list_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-cubes" aria-hidden="true"></i> @lang('All Services')</a>
                     </li>
                     @can('stock_report.view')
                     <li>

@@ -757,6 +757,7 @@ class SellPosController extends Controller
             $layout = !empty($receipt_details->design) ? 'sale_pos.receipts.' . $receipt_details->design : 'sale_pos.receipts.classic';
             $business = Business::findOrFail($business_id);
             $pos_settings = !empty($business->pos_settings) ? json_decode($business->pos_settings, true) : [];
+            $pos_settings['is_credit_sale'] = isset(request()->is_credit_sale) && request()->is_credit_sale == 1 ? true : false;
 
             $output['html_content'] = view($layout, compact('receipt_details', 'pos_settings'))->render();
         }

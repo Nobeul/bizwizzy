@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('title', __('product.add_new_product'))
+@section('title', __('Add new service'))
 
 @section('content')
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
-    <h1>@lang('product.add_new_product')</h1>
+    <h1>{{ __('Add new service') }}</h1>
     <!-- <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
         <li class="active">Here</li>
@@ -23,7 +23,7 @@
         <div class="row">
         <div class="col-sm-4">
           <div class="form-group">
-            {!! Form::label('name', __('product.product_name') . ':*') !!}
+            {!! Form::label('name', __('Service Name') . ':*') !!}
               {!! Form::text('name', !empty($duplicate_product->name) ? $duplicate_product->name : null, ['class' => 'form-control', 'required',
               'placeholder' => __('product.product_name')]); !!}
           </div>
@@ -74,7 +74,7 @@
 
         <div class="col-sm-4 @if(!session('business.enable_brand')) hide @endif">
           <div class="form-group">
-            {!! Form::label('brand_id', __('product.brand') . ':') !!}
+            {!! Form::label('brand_id', __('Region') . ':') !!}
             <div class="input-group">
               {!! Form::select('brand_id', $brands, !empty($duplicate_product->brand_id) ? $duplicate_product->brand_id : null, ['placeholder' => __('messages.please_select'), 'class' => 'form-control select2']); !!}
             <span class="input-group-btn">
@@ -153,7 +153,7 @@
         </div>
         <div class="col-sm-4">
           <div class="form-group">
-            {!! Form::label('image', __('lang_v1.product_image') . ':') !!}
+            {!! Form::label('image', __('Service Image') . ':') !!}
             {!! Form::file('image', ['id' => 'upload_image', 'accept' => 'image/*']); !!}
             <small><p class="help-block">@lang('purchase.max_file_size', ['size' => (config('constants.document_size_limit') / 1000000)]) <br> @lang('lang_v1.aspect_ratio_should_be_1_1')</p></small>
           </div>
@@ -326,7 +326,7 @@
 
         <div class="col-sm-4">
           <div class="form-group">
-            {!! Form::label('type', __('product.product_type') . ':*') !!} @show_tooltip(__('tooltip.product_type'))
+            {!! Form::label('type', __('Service Type') . ':*') !!} @show_tooltip(__('tooltip.product_type'))
             {!! Form::select('type', $product_types, !empty($duplicate_product->type) ? $duplicate_product->type : null, ['class' => 'form-control select2',
             'required', 'data-action' => !empty($duplicate_product) ? 'duplicate' : 'add', 'data-product_id' => !empty($duplicate_product) ? $duplicate_product->id : '0']); !!}
           </div>

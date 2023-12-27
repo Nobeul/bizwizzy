@@ -42,17 +42,20 @@
           </div>
         </div>
         @if (! empty($vehicles) && isset($pos_settings['vehicle_on_pos_line']) && $pos_settings['vehicle_on_pos_line'])
-			<div class="col-md-4">
-				<div class="form-group">
-					{!! Form::label('vehicle', __('Vehicle') . ':') !!}
-					<select name="vehicle_id" class="form-control select2" placeholder="{{ __('messages.please_select') }}">
-						@foreach ($vehicles as $vehicle)
-							<option value="{{$vehicle->id}}" {{ optional($expense)->vehicle_id == $vehicle->id ? 'selected' : '' }}>{{ $vehicle->license_plate }}</option>
-						@endforeach
-					</select>
-				</div>
-			</div>
-		@endif
+          <div class="col-md-4">
+            <div class="form-group">
+              {!! Form::label('vehicle', __('Vehicle') . ':') !!}
+              <select name="vehicle_id" class="form-control select2" placeholder="{{ __('messages.please_select') }}">
+                @if (empty($expense->vehicle_id))
+                  <option value="0" selected>{{ __('Please Select') }}</option>
+                @endif
+                @foreach ($vehicles as $vehicle)
+                  <option value="{{$vehicle->id}}" {{ optional($expense)->vehicle_id == $vehicle->id ? 'selected' : '' }}>{{ $vehicle->license_plate }}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+        @endif
         <div class="clearfix"></div>
         <div class="col-sm-4">
           <div class="form-group">

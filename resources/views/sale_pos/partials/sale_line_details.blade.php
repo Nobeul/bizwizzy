@@ -5,6 +5,7 @@
         @if( session()->get('business.enable_lot_number') == 1 && empty($for_ledger))
             <th>{{ __('lang_v1.lot_n_expiry') }}</th>
         @endif
+        <th>{{ __('Vehicle Reg No') }}</th>
         @if($sell->type == 'sales_order')
             <th>@lang('lang_v1.quantity_remaining')</th>
         @endif
@@ -51,6 +52,7 @@
                     <br><span class="label @if($sell_line->res_line_order_status == 'cooked' ) bg-red @elseif($sell_line->res_line_order_status == 'served') bg-green @else bg-light-blue @endif">@lang('restaurant.order_statuses.' . $sell_line->res_line_order_status) </span>
                 @endif
             </td>
+            <td>{{ optional($sell_line->vehicle)->license_plate }}</td>
             @if( session()->get('business.enable_lot_number') == 1 && empty($for_ledger))
                 <td>{{ $sell_line->lot_details->lot_number ?? '--' }}
                     @if( session()->get('business.enable_product_expiry') == 1 && !empty($sell_line->lot_details->exp_date))

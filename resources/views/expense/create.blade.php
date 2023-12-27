@@ -55,6 +55,7 @@
 						<div class="form-group">
 							{!! Form::label('vehicle', __('Vehicle') . ':') !!}
 							<select name="vehicle_id" class="form-control select2" placeholder="{{ __('messages.please_select') }}">
+							    <option value="0">{{ __('Please Select') }}</option>
 								@foreach ($vehicles as $vehicle)
 									<option value="{{$vehicle->id}}">{{ $vehicle->license_plate }}</option>
 								@endforeach

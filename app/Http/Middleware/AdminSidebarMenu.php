@@ -53,7 +53,7 @@ class AdminSidebarMenu
                         if (auth()->user()->can('user.create')) {
                             $sub->url(
                                 action('SalesCommissionAgentController@index'),
-                                __('lang_v1.sales_commission_agents'),
+                                __('Drivers Commission'),
                                 ['icon' => 'fa fas fa-handshake', 'active' => request()->segment(1) == 'sales-commission-agents']
                             );
                         }
@@ -107,7 +107,7 @@ class AdminSidebarMenu
             }
             
             //Vehicles menu
-            if (auth()->user()->can('manage_vehicles')) {
+            if (auth()->user()->can('vehicles.view')) {
                 $menu->url(action('VehicleController@index'), __('Vehicles'), ['icon' => 'fa fas fa-truck', 'active' => request()->segment(1) == 'vehicles'])->order(16);
             }
 
@@ -117,19 +117,19 @@ class AdminSidebarMenu
                 auth()->user()->can('category.view') || auth()->user()->can('brand.create') ||
                 auth()->user()->can('unit.create') || auth()->user()->can('category.create')) {
                 $menu->dropdown(
-                    __('sale.products'),
+                    __('Services'),
                     function ($sub) {
                         if (auth()->user()->can('product.view')) {
                             $sub->url(
                                 action('ProductController@index'),
-                                __('lang_v1.list_products'),
+                                __('All Services'),
                                 ['icon' => 'fa fas fa-list', 'active' => request()->segment(1) == 'products' && request()->segment(2) == '']
                             );
                         }
                         if (auth()->user()->can('product.create')) {
                             $sub->url(
                                 action('ProductController@create'),
-                                __('product.add_product'),
+                                __('Add Service'),
                                 ['icon' => 'fa fas fa-plus-circle', 'active' => request()->segment(1) == 'products' && request()->segment(2) == 'create']
                             );
                         }
@@ -183,7 +183,7 @@ class AdminSidebarMenu
                         if (auth()->user()->can('brand.view') || auth()->user()->can('brand.create')) {
                             $sub->url(
                                 action('BrandController@index'),
-                                __('brand.brands'),
+                                __('Regions'),
                                 ['icon' => 'fa fas fa-gem', 'active' => request()->segment(1) == 'brands']
                             );
                         }

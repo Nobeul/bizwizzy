@@ -260,7 +260,8 @@
 
         @if(isset($pos_settings['vehicle_on_pos_line']) && $pos_settings['vehicle_on_pos_line'] == 1)
 			<br>
-			<select name="products[{{$row_count}}][vehicle_id]" id="" class="form-control input-sm">
+			<select name="products[{{$row_count}}][vehicle_id]" id="vehicle_id_{{$row_count}}" class="form-control input-sm vehicle_id">
+			    <option value="0">{{ __('Please Select') }}</option>
 				@foreach ($vehicles as $vehicle)
 					<option value="{{ $vehicle->id }}">{{ $vehicle->license_plate }}</option>
 				@endforeach

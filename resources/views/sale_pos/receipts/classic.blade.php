@@ -22,7 +22,10 @@
 				{{$receipt_details->display_name}}
 			@endif
 		</h2>
-		<p class="text-center">{{ __('CASH SALE') }}</p>
+		
+		@if (isset($pos_settings['is_credit_sale']) && $pos_settings['is_credit_sale'] == false)
+		    <p class="text-center">{{ __('CASH SALE') }}</p>
+		@endif
 
 		<!-- Address -->
 		<p>
@@ -72,7 +75,7 @@
 		</p>
 
 		<!-- Title of receipt -->
-		@if(!empty($receipt_details->invoice_heading))
+		@if(!empty($receipt_details->invoice_heading) && isset($pos_settings['is_credit_sale']) && $pos_settings['is_credit_sale'] == true)
 			<h3 class="text-center">
 				{!! $receipt_details->invoice_heading !!}
 			</h3>
@@ -88,9 +91,13 @@
 				<b>{{$receipt_details->date_label}}</b> {{$receipt_details->invoice_date}}
 				<br>
 				@if(!empty($receipt_details->invoice_no_prefix))
-					<b>{!! $receipt_details->invoice_no_prefix !!}</b>
+				    @if (isset($pos_settings['is_credit_sale']) && $pos_settings['is_credit_sale'] == true)
+					    <b>{!! $receipt_details->invoice_no_prefix !!}</b>
+					@else
+					    <b>{!! __('Cash sale no.') !!}</b>
+					@endif
+				    {{$receipt_details->invoice_no}}
 				@endif
-				{{$receipt_details->invoice_no}}
 
 				@if(!empty($receipt_details->types_of_service))
 					<br/>
@@ -390,9 +397,9 @@
 			@if(!empty($receipt_details->payments))
 				@foreach($receipt_details->payments as $payment)
 					<tr>
-						<td>{{$payment['method']}}</td>
-						<td class="text-right" >{{$payment['amount']}}</td>
-						<td class="text-right">{{$payment['date']}}</td>
+						<td>{{ isset($payment['method']) ? $payment['method'] : '' }}</td>
+						<td class="text-right" >{{ isset($payment['amount']) ? $payment['amount'] : ''}}</td>
+						<td class="text-right">{{ isset($payment['date']) ? $payment['date'] : '' }}</td>
 					</tr>
 				@endforeach
 			@endif
@@ -460,9 +467,11 @@
 						<th style="width:70%">
 							{!! $receipt_details->subtotal_label !!}
 						</th>
-						<td class="text-right">
-						    {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
-						</td>
+						@if (! empty($receipt_details->taxes))
+    						<td class="text-right">
+    						    {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
+    						</td>
+						@endif
 					</tr>
 					<tr>
 					    @foreach ($receipt_details->taxes as $key => $val)

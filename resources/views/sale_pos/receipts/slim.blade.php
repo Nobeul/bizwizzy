@@ -477,9 +477,11 @@
                     <p class="left text-right sub-headings">
                     	{!! $receipt_details->subtotal_label !!}
                     </p>
-                    <p class="width-50 text-right sub-headings">
-                    	KSh {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
-                    </p>
+                    @if (! empty($receipt_details->taxes))
+                        <p class="width-50 text-right sub-headings">
+                        	KSh {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
+                        </p>
+                    @endif
                 </div>
 
                 <!-- Shipping Charges -->

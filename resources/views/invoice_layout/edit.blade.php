@@ -96,6 +96,13 @@
               'placeholder' => __('invoice.header_text'), 'rows' => 3]); !!}
           </div>
         </div>
+        <div class="col-sm-12">
+          <div class="form-group">
+            {!! Form::label('header_text', __('invoice.header_text') . ':' ) !!}
+              {!! Form::textarea('header_text', $invoice_layout->header_text, ['class' => 'form-control',
+              'placeholder' => __('invoice.header_text'), 'rows' => 3]); !!}
+          </div>
+        </div>
         <div class="clearfix"></div>
         <div class="col-sm-3">
           <div class="form-group">
@@ -865,7 +872,7 @@
           <div class="form-group">
             {!! Form::label('footer_text', __('invoice.footer_text') . ':' ) !!}
               {!! Form::textarea('footer_text', $invoice_layout->footer_text, ['class' => 'form-control',
-              'placeholder' => __('invoice.footer_text'), 'rows' => 3]); !!}
+              'placeholder' => __('invoice.footer_text'), 'rows' => 3, 'style' => 'visibility:visible! important']); !!}
           </div>
         </div>
         @if(empty($invoice_layout->is_default))
