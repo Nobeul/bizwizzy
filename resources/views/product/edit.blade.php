@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('title', __('product.edit_product'))
+@section('title', __('Edit Service'))
 
 @section('content')
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
-    <h1>@lang('product.edit_product')</h1>
+    <h1>@lang('Edit Service')</h1>
     <!-- <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
         <li class="active">Here</li>
@@ -22,9 +22,9 @@
         <div class="row">
             <div class="col-sm-4">
               <div class="form-group">
-                {!! Form::label('name', __('product.product_name') . ':*') !!}
+                {!! Form::label('name', __('Service Name') . ':*') !!}
                   {!! Form::text('name', $product->name, ['class' => 'form-control', 'required',
-                  'placeholder' => __('product.product_name')]); !!}
+                  'placeholder' => __('Service Name')]); !!}
               </div>
             </div>
 
@@ -119,7 +119,7 @@
               <br>
                 <label>
                   {!! Form::checkbox('enable_stock', 1, $product->enable_stock, ['class' => 'input-icheck', 'id' => 'enable_stock']); !!} <strong>@lang('product.manage_stock')</strong>
-                </label>@show_tooltip(__('tooltip.enable_stock')) <p class="help-block"><i>@lang('product.enable_stock_help')</i></p>
+                </label>@show_tooltip(__('tooltip.enable_stock')) <p class="help-block"><i>{{ __('Enable stock management at service level') }}</i></p>
               </div>
             </div>
             <div class="col-sm-4" id="alert_quantity_div" @if(!$product->enable_stock) style="display:none" @endif>
@@ -148,13 +148,13 @@
             <div class="clearfix"></div>
             <div class="col-sm-8">
               <div class="form-group">
-                {!! Form::label('product_description', __('lang_v1.product_description') . ':') !!}
+                {!! Form::label('product_description', __('Service Description') . ':') !!}
                   {!! Form::textarea('product_description', $product->product_description, ['class' => 'form-control']); !!}
               </div>
             </div>
             <div class="col-sm-4">
               <div class="form-group">
-                {!! Form::label('image', __('lang_v1.product_image') . ':') !!}
+                {!! Form::label('image', __('Service Image') . ':') !!}
                 {!! Form::file('image', ['id' => 'upload_image', 'accept' => 'image/*']); !!}
                 <small><p class="help-block">@lang('purchase.max_file_size', ['size' => (config('constants.document_size_limit') / 1000000)]). @lang('lang_v1.aspect_ratio_should_be_1_1') @if(!empty($product->image)) <br> @lang('lang_v1.previous_image_will_be_replaced') @endif</p></small>
               </div>
@@ -162,7 +162,7 @@
             </div>
             <div class="col-sm-4">
               <div class="form-group">
-                {!! Form::label('product_brochure', __('lang_v1.product_brochure') . ':') !!}
+                {!! Form::label('product_brochure', __('Service Brochure') . ':') !!}
                 {!! Form::file('product_brochure', ['id' => 'product_brochure', 'accept' => implode(',', array_keys(config('constants.document_upload_mimes_types')))]); !!}
                 <small>
                     <p class="help-block">
@@ -214,7 +214,7 @@
           <div class="col-sm-4">
             <div class="checkbox">
               <label>
-                {!! Form::checkbox('enable_sr_no', 1, $product->enable_sr_no, ['class' => 'input-icheck']); !!} <strong>@lang('lang_v1.enable_imei_or_sr_no')</strong>
+                {!! Form::checkbox('enable_sr_no', 1, $product->enable_sr_no, ['class' => 'input-icheck']); !!} <strong>{{ __('Enable Service description, IMEI or Serial Number') }}</strong>
               </label>
               @show_tooltip(__('lang_v1.tooltip_sr_no'))
             </div>
@@ -343,7 +343,7 @@
             <div class="clearfix"></div>
             <div class="col-sm-4">
               <div class="form-group">
-                {!! Form::label('type', __('product.product_type') . ':*') !!} @show_tooltip(__('tooltip.product_type'))
+                {!! Form::label('type', __('Service Type') . ':*') !!} @show_tooltip(__('tooltip.product_type'))
                 {!! Form::select('type', $product_types, $product->type, ['class' => 'form-control select2',
                   'required','disabled', 'data-action' => 'edit', 'data-product_id' => $product->id ]); !!}
               </div>

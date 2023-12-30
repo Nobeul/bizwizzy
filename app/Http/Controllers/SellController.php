@@ -25,6 +25,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Product;
 use App\Media;
+use App\Vehicle;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Support\Facades\Artisan;
 
@@ -94,6 +95,10 @@ class SellController extends Controller
             $sale_type = !empty(request()->input('sale_type')) ? request()->input('sale_type') : 'sell';
 
             $sells = $this->transactionUtil->getListSells($business_id, $sale_type);
+
+            if (request()->has('vehicle_id') && request()->vehicle_id != 0) {
+                $sells->where('tsl.vehicle_id', request()->vehicle_id);
+            }
 
             $permitted_locations = auth()->user()->permitted_locations();
             if ($permitted_locations != 'all') {
@@ -523,6 +528,12 @@ class SellController extends Controller
 
                     return $invoice_no;
                 })
+                ->editColumn('vehicle_reg_no', function ($row) {
+                    return $row->license_plate;
+                })
+                ->editColumn('trip', function ($row) {
+                    return $row->product_name;
+                })
                 ->editColumn('shipping_status', function ($row) use ($shipping_statuses) {
                     $status_color = !empty($this->shipping_status_colors[$row->shipping_status]) ? $this->shipping_status_colors[$row->shipping_status] : 'bg-gray';
                     $status = !empty($row->shipping_status) ? '<a href="#" class="btn-modal" data-href="' . action('SellController@editShipping', [$row->id]) . '" data-container=".view_modal"><span class="label ' . $status_color .'">' . $shipping_statuses[$row->shipping_status] . '</span></a>' : '';
@@ -574,7 +585,7 @@ class SellController extends Controller
                         }
                     }]);
 
-            $rawColumns = ['final_total', 'action', 'total_paid', 'total_remaining', 'payment_status', 'invoice_no', 'discount_amount', 'tax_amount', 'total_before_tax', 'shipping_status', 'types_of_service_name', 'payment_methods', 'return_due', 'conatct_name', 'status'];
+            $rawColumns = ['final_total', 'action', 'total_paid', 'total_remaining', 'payment_status', 'invoice_no', 'vehicle_reg_no', 'trip', 'discount_amount', 'tax_amount', 'total_before_tax', 'shipping_status', 'types_of_service_name', 'payment_methods', 'return_due', 'conatct_name', 'status'];
                 
             return $datatable->rawColumns($rawColumns)
                       ->make(true);
@@ -603,6 +614,8 @@ class SellController extends Controller
         if ($is_woocommerce) {
             $sources['woocommerce'] = 'Woocommerce';
         }
+
+        $vehicles = Vehicle::where('status', 'active')->orderBy('id', 'desc')->get();
 
         return view('sell.index')
         ->with(compact('business_locations', 'customers', 'is_woocommerce', 'sales_representative', 'is_cmsn_agent_enabled', 'commission_agents', 'service_staffs', 'is_tables_enabled', 'is_service_staff_enabled', 'is_types_service_enabled', 'shipping_statuses', 'sources'));

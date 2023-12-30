@@ -67,6 +67,19 @@
         </div>
     </div>
 @endif
+@if(!empty($vehicles))
+    <div class="col-md-3">
+        <div class="form-group">
+            {!! Form::label('vehicle_id', __('Drivers') . ':') !!}
+            <select name="vehicle_id" placeholder="{{ __('lang_v1.all') }}" class="form-control select2" id="vehicle_id">
+                <option value="0">{{ __('lang_v1.all') }}</option>
+                @foreach ($vehicles as $vehicle)
+                    <option value="{{ $vehicle->id }}">{{ $vehicle->name }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+@endif
 @if(empty($only) || in_array('only_subscriptions', $only))
 <div class="col-md-3">
     <div class="form-group">

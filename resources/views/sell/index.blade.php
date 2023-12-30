@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('title', __( 'lang_v1.all_sales'))
+@section('title', __( 'Trips'))
 
 @section('content')
 
 <!-- Content Header (Page header) -->
 <section class="content-header no-print">
-    <h1>@lang( 'sale.sells')
+    <h1>{{ __( 'Trips') }}
     </h1>
 </section>
 
@@ -23,7 +23,7 @@
             </div>
         @endif
     @endcomponent
-    @component('components.widget', ['class' => 'box-primary', 'title' => __( 'lang_v1.all_sales')])
+    @component('components.widget', ['class' => 'box-primary', 'title' => __( 'All trips')])
         @can('direct_sell.access')
             @slot('tool')
                 <div class="box-tools">
@@ -42,6 +42,8 @@
                         <th>@lang('messages.action')</th>
                         <th>@lang('messages.date')</th>
                         <th>@lang('sale.invoice_no')</th>
+                        <th> {{ __('Vehicle Reg No') }} </th>
+                        <th> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ __('Trip') }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </th>
                         <th>@lang('sale.customer_name')</th>
                         <th>@lang('lang_v1.contact_no')</th>
                         <th>@lang('sale.location')</th>
@@ -138,6 +140,7 @@ $(document).ready( function(){
                 d.created_by = $('#created_by').val();
                 d.sales_cmsn_agnt = $('#sales_cmsn_agnt').val();
                 d.service_staffs = $('#service_staffs').val();
+                d.vehicle_id = $('#vehicle_id').val();
 
                 if($('#shipping_status').length) {
                     d.shipping_status = $('#shipping_status').val();
@@ -161,6 +164,8 @@ $(document).ready( function(){
             { data: 'action', name: 'action', orderable: false, "searchable": false},
             { data: 'transaction_date', name: 'transaction_date'  },
             { data: 'invoice_no', name: 'invoice_no'},
+            { data: 'vehicle_reg_no', name: 'vehicle_reg_no'},
+            { data: 'trip', name: 'trip'},
             { data: 'conatct_name', name: 'conatct_name'},
             { data: 'mobile', name: 'contacts.mobile'},
             { data: 'business_location', name: 'bl.name'},
@@ -214,7 +219,7 @@ $(document).ready( function(){
         }
     });
 
-    $(document).on('change', '#sell_list_filter_location_id, #sell_list_filter_customer_id, #sell_list_filter_payment_status, #created_by, #sales_cmsn_agnt, #service_staffs, #shipping_status, #sell_list_filter_source',  function() {
+    $(document).on('change', '#sell_list_filter_location_id, #sell_list_filter_customer_id, #sell_list_filter_payment_status, #created_by, #sales_cmsn_agnt, #service_staffs, #shipping_status, #sell_list_filter_source, #vehicle_id',  function() {
         sell_table.ajax.reload();
     });
 

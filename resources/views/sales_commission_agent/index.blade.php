@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('title', __('lang_v1.sales_commission_agents'))
+@section('title', __('Drivers Commission'))
 
 @section('content')
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
-    <h1>@lang( 'lang_v1.sales_commission_agents' )
+    <h1>{{ __( 'Drivers Commission' ) }}
     </h1>
 </section>
 
@@ -29,7 +29,7 @@
                             <th>@lang( 'business.email' )</th>
                             <th>@lang( 'lang_v1.contact_no' )</th>
                             <th>@lang( 'business.address' )</th>
-                            <th>@lang( 'lang_v1.cmmsn_percent' )</th>
+                            <th>{{ __('Commission Percentage(%)') }}</th>
                             <th>@lang( 'messages.action' )</th>
                         </tr>
                     </thead>

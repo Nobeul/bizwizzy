@@ -5000,6 +5000,8 @@ class TransactionUtil extends Util
                     $join->on('transactions.id', '=', 'tsl.transaction_id')
                         ->whereNull('tsl.parent_sell_line_id');
                 })
+                ->leftJoin('vehicles', 'tsl.vehicle_id', '=', 'vehicles.id')
+                ->leftJoin('products', 'tsl.product_id', '=', 'products.id')
                 ->leftJoin('users as u', 'transactions.created_by', '=', 'u.id')
                 ->leftJoin('users as ss', 'transactions.res_waiter_id', '=', 'ss.id')
                 ->leftJoin('res_tables as tables', 'transactions.res_table_id', '=', 'tables.id')
@@ -5025,6 +5027,9 @@ class TransactionUtil extends Util
                 ->where('transactions.type', $sale_type)
                 ->select(
                     'transactions.id',
+                    'tsl.vehicle_id',
+                    'vehicles.license_plate',
+                    'products.name as product_name',
                     'transactions.transaction_date',
                     'transactions.type',
                     'transactions.is_direct_sale',
@@ -5179,7 +5184,7 @@ class TransactionUtil extends Util
             $temp_array = [
                 'date' => $transaction->transaction_date,
                 'ref_no' => in_array($transaction->type, ['sell', 'sell_return']) ? $transaction->invoice_no : $transaction->ref_no,
-                'type' => $transaction_types[$transaction->type],
+                'type' => $transaction_types[$transaction->type] == 'Sell' ? 'Trip' : $transaction_types[$transaction->type],
                 'location' => $transaction->location->name ?? '',
                 'payment_status' => !in_array($transaction->type, ['ledger_discount']) ?  __('lang_v1.' . $transaction->payment_status) : '',
                 'total' => '',

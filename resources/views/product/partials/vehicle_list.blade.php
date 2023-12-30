@@ -3,7 +3,7 @@
     <thead>
         <tr>
             <th>@lang('messages.action')</th>
-            <th>{{ __('Vehicle Name') }}</th> 
+            <th>{{ __('Driver Name') }}</th> 
             <th>{{ __('Acquisition Date') }}</th> 
             <th>{{ __('VIN/SN') }}</th> 
             <th>{{ __('License Plate') }}</th> 

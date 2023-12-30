@@ -213,7 +213,7 @@ class SellPosController extends Controller
         //If brands, category are enabled then send else false.
         $categories = (request()->session()->get('business.enable_category') == 1) ? Category::catAndSubCategories($business_id) : false;
         $brands = (request()->session()->get('business.enable_brand') == 1) ? Brands::forDropdown($business_id)
-                    ->prepend(__('lang_v1.all_brands'), 'all') : false;
+                    ->prepend(__('All Regions'), 'all') : false;
 
         $change_return = $this->dummyPaymentLine;
 

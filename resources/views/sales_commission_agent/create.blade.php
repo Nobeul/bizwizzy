@@ -5,7 +5,7 @@
 
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      <h4 class="modal-title">@lang( 'lang_v1.add_sales_commission_agent' )</h4>
+      <h4 class="modal-title">{{ __('Add driver commission') }}</h4>
     </div>
 
     <div class="modal-body">
@@ -50,8 +50,8 @@
 
       <div class="col-md-6">
         <div class="form-group">
-          {!! Form::label('cmmsn_percent', __( 'lang_v1.cmmsn_percent' ) . ':') !!}
-            {!! Form::text('cmmsn_percent', null, ['class' => 'form-control input_number', 'placeholder' => __( 'lang_v1.cmmsn_percent' ), 'required' ]); !!}
+          {!! Form::label('cmmsn_percent', __('Commission Percentage(%)') . ':') !!}
+            {!! Form::text('cmmsn_percent', null, ['class' => 'form-control input_number', 'placeholder' => __('Commission Percentage(%)'), 'required' ]); !!}
         </div>
       </div>
 

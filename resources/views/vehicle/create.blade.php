@@ -18,8 +18,8 @@
         <div class="row">
           <div class="col-sm-4">
             <div class="form-group">
-              {!! Form::label('name', __('Vehicle Name') . ':*') !!}
-              {!! Form::text('name', null, ['class' => 'form-control', 'required', 'placeholder' => __('Vehicle Name')]); !!}
+              {!! Form::label('name', __('Driver Name') . ':*') !!}
+              {!! Form::text('name', null, ['class' => 'form-control', 'required', 'placeholder' => __('Driver Name')]); !!}
             </div>
           </div>
 

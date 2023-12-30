@@ -5,13 +5,13 @@
 
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      <h4 class="modal-title">@lang( 'brand.add_brand' )</h4>
+      <h4 class="modal-title">{{ __('Add region') }}</h4>
     </div>
 
     <div class="modal-body">
       <div class="form-group">
-        {!! Form::label('name', __( 'brand.brand_name' ) . ':*') !!}
-          {!! Form::text('name', null, ['class' => 'form-control', 'required', 'placeholder' => __( 'brand.brand_name' ) ]); !!}
+        {!! Form::label('name', __( 'Region name' ) . ':*') !!}
+          {!! Form::text('name', null, ['class' => 'form-control', 'required', 'placeholder' => __( 'Region name' ) ]); !!}
       </div>
 
       <div class="form-group">

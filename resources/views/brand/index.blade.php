@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', 'Brands')
+@section('title', 'Regions')
 
 @section('content')
 
 <!-- Content Header (Page header) -->
 <section class="content-header">
-    <h1>@lang( 'brand.brands' )
-        <small>@lang( 'brand.manage_your_brands' )</small>
+    <h1>@lang( 'Regions' )
+        <small>{{ __('Manage your regions') }}</small>
     </h1>
     <!-- <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
@@ -16,7 +16,7 @@
 
 <!-- Main content -->
 <section class="content">
-    @component('components.widget', ['class' => 'box-primary', 'title' => __( 'brand.all_your_brands' )])
+    @component('components.widget', ['class' => 'box-primary', 'title' => __( 'All your regions' )])
         @can('brand.create')
             @slot('tool')
                 <div class="box-tools">
@@ -32,7 +32,7 @@
                 <table class="table table-bordered table-striped" id="brands_table">
                     <thead>
                         <tr>
-                            <th>@lang( 'brand.brands' )</th>
+                            <th>@lang( 'Regions' )</th>
                             <th>@lang( 'brand.note' )</th>
                             <th>@lang( 'messages.action' )</th>
                         </tr>

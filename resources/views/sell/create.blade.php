@@ -6,7 +6,7 @@
 	} else if (!empty($status) && $status == 'draft') {
 		$title = __('lang_v1.add_draft');
 	} else {
-		$title = __('sale.add_sale');
+		$title = __('Add Trip');
 	}
 
 	if($sale_type == 'sales_order') {
