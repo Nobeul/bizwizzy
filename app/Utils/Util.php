@@ -5,6 +5,7 @@ namespace App\Utils;
 use App\Business;
 use App\BusinessLocation;
 use App\Contact;
+use App\GatewaySetting;
 use App\Product;
 use App\ReferenceCount;
 use App\Transaction;
@@ -187,6 +188,13 @@ class Util
 
         if ($show_advance) {
             $payment_types = ['advance' => __('lang_v1.advance')] + $payment_types;
+        }
+
+        if (! empty($business_id)) {
+            $mpesaSettings = GatewaySetting::where(['business_id' => $business_id])->first();
+            if (! empty($mpesaSettings)) {
+                $payment_types['mpesa'] =  'Mpesa';
+            }
         }
 
         return $payment_types;
@@ -1236,7 +1244,7 @@ class Util
     {
         $start = $start ?? "2023-01-01";
         // show_payments: false
-        $end = $end ?? "2023-12-31";
+        $end = $end ?? \Carbon::now()->format('Y-m-d');
         $business_id = request()->session()->get('user.business_id');
         //Get sum of totals before start date
         $previous_transaction_sums = $this->__transactionQuery($contact_id, $start, null, $location_id)

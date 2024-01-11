@@ -895,6 +895,12 @@ $(document).ready(function() {
 
     $(document).on('change', '.payment-amount', function() {
         calculate_balance_due();
+        var amount = parseFloat($(this).val());
+        var payment_amount_id = $(this).attr('id');
+        payment_amount_row_id = payment_amount_id.replace('amount_', '');
+        if (payment_amount_row_id == 0) {
+            $('.mpesa-button-amount').text(amount.toFixed(2));
+        }
     });
 
     //Update discount
@@ -2516,7 +2522,52 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
             account_dropdown.val(default_account);
             account_dropdown.change();
         }
+
+        if (payment_type && payment_type == 'mpesa') {
+            var business_id = $('#pos-business-id').val();
+            var payment_amount = payment_row.find('.payment-amount').val();
+            console.log(payment_amount);
+            var mpesaButton = `<div class="col-md-4" style="margin-top: 25px;">
+                                    <a class="btn btn-warning" id="get-mpesa-payment" data-amount="${payment_amount}" data-businessId="${business_id}">Get <span class="mpesa-button-amount">${payment_amount}</span> using mpesa</a>
+                                </div>`;
+            $("#payment-type-row").after(mpesaButton);                  
+        }
     }
+
+    function generateMpesaRequest(business_id, amount)
+    {
+        $.ajax({
+            method: 'GET',
+            url: base_path + '/mpesa-check-payments' + '?business_id=' + business_id + '&amount=' + amount,
+            dataType: 'json',
+            success: function(data) {
+                console.log(data);
+                if (data.ResponseCode == "0" && data.ResponseDescription == "Success") {
+                    console.log('found');
+                } else {
+                    alert('Something went wrong! Mpesa did not grab the payment.');
+                }
+                
+            },
+        });
+    }
+    
+    $("#get-mpesa-payment").on('click', function () {
+        let business_id = $('#pos-business-id').val();
+        let payment_amount = $(this).data('amount');
+
+        swal({
+            title: 'Waiting',
+            icon: 'warning',
+            buttons: true,
+            dangerMode: true,
+        }).then(confirm => {
+            if (confirm) {
+                generateMpesaRequest(business_id, payment_amount);
+            }
+        });
+
+    });
 
     //Validate max amount and disable account if advance 
     amount_element = payment_row.find('.payment-amount');
@@ -2530,6 +2581,11 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
                 'max-value': msg,
             },
         });
+        if (account_dropdown) {
+            account_dropdown.prop('disabled', true);
+            account_dropdown.closest('.form-group').addClass('hide');
+        }
+    } else if (payment_type == 'mpesa') {
         if (account_dropdown) {
             account_dropdown.prop('disabled', true);
             account_dropdown.closest('.form-group').addClass('hide');

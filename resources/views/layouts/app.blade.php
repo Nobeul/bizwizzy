@@ -53,6 +53,13 @@
 
             <!-- Content Wrapper. Contains page content -->
             <div class="@if(!$pos_layout) content-wrapper @endif">
+                @if(Session::has('message'))
+                    <a href="#" class="list-group-item list-group-item-action list-group-item-{{ Session::get('alert-class') }}" id="session-flash-div">{{ Session::get('message') }}
+                        <span>
+                            <button style="float:right; margin-top: -3px" id="approve-message-id">X</button>
+                        </span>
+                    </a>
+                @endif
                 <!-- empty div for vuejs -->
                 <div id="app">
                     @yield('vue')

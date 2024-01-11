@@ -11,14 +11,13 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
+
 include_once('install_r.php');
 
 // Route::get('testing', 'TestingController@mailTest');
 
-Route::match(['get', 'post'], 'confirmation', function () {
-    \Log::info('Mpesa confirmation responses');
-    \Log::info(request()->all());
-});
+Route::match(['get', 'post'], 'confirmation', 'MpesaController@confirmation');
 
 Route::match(['get', 'post'], 'validation', function () {
     \Log::info('Mpesa validation responses');
@@ -33,7 +32,9 @@ Route::get('/clear-cache', function() {
  
 });
 
-Route::get('mpesa-pay', 'TestingController@index');
+Route::get('mpesa-pay-testing', 'TestingController@index');
+
+Route::get('mpesa-check-payments', 'MpesaController@checkPayments');
 
 Route::middleware(['setData'])->group(function () {
     Route::get('/', function () {
@@ -403,6 +404,16 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::resource('bookings', 'Restaurant\BookingController');
     
     Route::resource('types-of-service', 'TypesOfServiceController');
+
+    Route::get('mpesa-settings', 'MpesaController@mpesaSettings');
+    Route::match(['get', 'post'], 'mpesa-settings/create', 'MpesaController@create');
+    Route::post('mpesa-settings/{id}', 'MpesaController@edit');
+    Route::delete('mpesa-delete/{id}', 'MpesaController@delete');
+
+    Route::match(['get', 'post'],'mpesa-request-enable', 'MpesaController@enableRequest');
+    Route::middleware('superadmin')->get('mpesa-request-list', 'MpesaController@requestList');
+    Route::middleware('superadmin')->match(['get', 'post'], 'mpesa-request/{id}', 'MpesaController@requestDetails');
+
     Route::get('sells/edit-shipping/{id}', 'SellController@editShipping');
     Route::put('sells/update-shipping/{id}', 'SellController@updateShipping');
     Route::get('shipments', 'SellController@shipments');

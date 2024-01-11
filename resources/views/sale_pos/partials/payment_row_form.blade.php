@@ -31,7 +31,7 @@
 		</div>
 	</div>
 	@endif
-	<div class="{{$col_class}}">
+	<div class="{{$col_class}}" id="payment-type-row">
 		<div class="form-group">
 			{!! Form::label("method_$row_index" , __('lang_v1.payment_method') . ':*') !!}
 			<div class="input-group">
@@ -132,6 +132,7 @@
 			</div>
 		</div>
 	@endif
+	{!! Form::hidden("business_id", $business_id ?? null, ['id' => "pos-business-id"]); !!}
 	<div class="clearfix"></div>
 		@include('sale_pos.partials.payment_type_details')
 	<div class="col-md-12">

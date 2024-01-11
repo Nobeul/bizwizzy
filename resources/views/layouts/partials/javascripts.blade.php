@@ -132,4 +132,8 @@
             isRTL: isRTL
         });
     });
+
+    $('#approve-message-id').on('click', function () {
+        $("#session-flash-div").hide();
+    });
 </script>

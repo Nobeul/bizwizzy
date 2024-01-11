@@ -288,7 +288,8 @@ class SellPosController extends Controller
                 'invoice_schemes',
                 'default_invoice_schemes',
                 'invoice_layouts',
-                'users'
+                'users',
+                'business_id'
             ));
     }
 

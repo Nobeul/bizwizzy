@@ -766,6 +766,22 @@ class AdminSidebarMenu
                                 ['icon' => 'fa fas fa-user-circle', 'active' => request()->segment(1) == 'types-of-service']
                             );
                         }
+
+                        // if (in_array('types_of_service', $enabled_modules) && auth()->user()->can('access_mpesa_settings')) {
+                            $sub->url(
+                                action('MpesaController@mpesaSettings'),
+                                __('Mpesa Settings'),
+                                ['icon' => 'fa fas fa-user-circle', 'active' => request()->segment(1) == 'mpesa-settings']
+                            );
+                        // }
+                        
+                        if (!empty(auth()->user()) && in_array(strtolower(auth()->user()->username), explode(',', strtolower(config('constants.administrator_usernames'))))) {
+                            $sub->url(
+                                action('MpesaController@requestList'),
+                                __('Mpesa Requests'),
+                                ['icon' => 'fa fas fa-user-circle', 'active' => request()->segment(1) == 'mpesa-request-list']
+                            );
+                        }
                     },
                     ['icon' => 'fa fas fa-cog', 'id' => 'tour_step3']
                 )->order(85);
