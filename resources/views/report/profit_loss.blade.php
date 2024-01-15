@@ -178,6 +178,37 @@
                 }
             });
 
+            expense_by_products_table = $('#expense_by_products_table').DataTable({
+                processing: true,
+                serverSide: true,
+                "ajax": {
+                    "url": "/reports/get-profit-loss/expense",
+                    "data": function ( d ) {
+                        d.start_date = $('#profit_loss_date_filter')
+                            .data('daterangepicker')
+                            .startDate.format('YYYY-MM-DD');
+                        d.end_date = $('#profit_loss_date_filter')
+                            .data('daterangepicker')
+                            .endDate.format('YYYY-MM-DD');
+                        d.location_id = $('#profit_loss_location_filter').val();
+                        d.vehicle_id = $('#pnl_vehicle_no').val();
+                    }
+                },
+                columns: [
+                    { data: 'category', name: 'category'  },
+                    { data: 'total_expense', "searchable": false},
+                ],
+                footerCallback: function ( row, data, start, end, display ) {
+                    var total_profit = 0;
+                    for (var r in data){
+                        total_profit += $(data[r].total_expense).data('orig-value') ? 
+                        parseFloat($(data[r].total_expense).data('orig-value')) : 0;
+                    }
+
+                    $('#expense_by_products_table .footer_total').html(__currency_trans_from_en(total_profit));
+                }
+            });
+
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             var target = $(e.target).attr('href');
             if ( target == '#profit_by_categories') {
@@ -412,6 +443,7 @@
                     });
             } else if (target == '#profit_by_products') {
                 profit_by_products_table.ajax.reload();
+                expense_by_products_table.ajax.reload();
             }
         });
     });

@@ -248,6 +248,7 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::get('/reports/product-stock-details', 'ReportController@productStockDetails');
     Route::get('/reports/adjust-product-stock', 'ReportController@adjustProductStock');
     Route::get('/reports/get-profit/{by?}', 'ReportController@getProfit');
+    Route::get('/reports/get-profit-loss/expense', 'ReportController@getProfitReportExpense');
     Route::get('/reports/items-report', 'ReportController@itemsReport');
     Route::get('/reports/get-stock-value', 'ReportController@getStockValue');
     

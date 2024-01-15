@@ -5623,6 +5623,15 @@ class TransactionUtil extends Util
 
         $data['gross_profit'] = $gross_profit;
 
+        $get_expense_report_data = $this->getExpenseReport($business_id, [
+            'location_id' => $location_id, 
+            'vehicle_id' => $vehicle_id, 
+            'start_date' => $start_date, 
+            'end_date' => $end_date
+        ]);
+        $total_expense = $get_expense_report_data->sum('total_expense');
+        $data['threshold'] = ($total_expense/$gross_profit)*100;
+
         //get sub type for total sales
         $sales_by_subtype = Transaction::where('business_id', $business_id)
             ->where('type', 'sell')

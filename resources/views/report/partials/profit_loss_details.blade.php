@@ -1,4 +1,4 @@
-<div class="col-xs-6">
+{{-- <div class="col-xs-6">
     @component('components.widget')
         <table class="table table-striped">
             <tr>
@@ -77,9 +77,9 @@
             @endforeach
         </table>
     @endcomponent
-</div>
+</div> --}}
 
-<div class="col-xs-6">
+{{-- <div class="col-xs-6">
     @component('components.widget')
         <table class="table table-striped">
             <tr>
@@ -170,7 +170,7 @@
             @endforeach
         </table>
     @endcomponent
-</div>
+</div> --}}
 <br>
 <div class="col-xs-12">
     @component('components.widget')
@@ -201,5 +201,11 @@
                 + {{$module_data['label']}}
             @endif 
         @endforeach )</small>
+
+        <h3 class="text-muted mb-0">
+            {{ __('Threshold') }}: 
+            <span class="display_currency" data-currency_symbol="true" id="threshold-pnl-report">{{$data['threshold']}}</span>
+        </h3>
+        <small class="help-block">{{ __('(Expense / Gross Profit) * 100') }}</small>
     @endcomponent
 </div>

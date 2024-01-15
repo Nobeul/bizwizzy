@@ -2898,6 +2898,71 @@ class ReportController extends Controller
         return $datatable;
     }
 
+    public function getProfitReportExpense()
+    {
+        $business_id = request()->session()->get('user.business_id');
+        $filters = request()->only(['location_id', 'vehicle_id', 'start_date', 'end_date']);
+        
+        if (empty($filters['start_date']) || empty($filters['end_date'])) {
+            $filters['start_date'] = \Carbon::now()->startOfMonth()->format('Y-m-d');
+            $filters['end_date'] = \Carbon::now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $query = Transaction::leftjoin('expense_categories AS ec', 'transactions.expense_category_id', '=', 'ec.id')
+                ->where('transactions.business_id', $business_id)
+                ->whereIn('type', ['expense', 'expense_refund']);
+
+        $permitted_locations = auth()->user()->permitted_locations();
+
+        if ($permitted_locations != 'all') {
+            $query->whereIn('transactions.location_id', $permitted_locations);
+        }
+
+        if (!empty($filters['location_id'])) {
+            $query->where('transactions.location_id', $filters['location_id']);
+        }
+
+        if (!empty($filters['vehicle_id'])) {
+            $query->where('transactions.vehicle_id', $filters['vehicle_id']);
+        }
+
+        if (!empty($filters['category'])) {
+            $query->where('ec.id', $filters['category']);
+        }
+
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            $query->whereBetween(DB::raw('date(transaction_date)'), [$filters['start_date'],
+                $filters['end_date']]);
+        }
+
+        //Check tht type of report and return data accordingly
+        $query = $query->select(
+                    DB::raw("SUM( IF(transactions.type='expense_refund', -1 * final_total, final_total) ) as total_expense"),
+                    'ec.name as category'
+                )->groupBy('expense_category_id');
+
+        $datatable = Datatables::of($query);
+
+        $datatable->editColumn(
+            'total_expense',
+            function($row) {
+                return '<span class="gross-profit" data-orig-value="' . $row->total_expense . '">' .  $row->total_expense . '</span>';
+            })
+            ->editColumn(
+                'category',
+                function($row) {
+                    $category = !empty($row->category) ? $row->category : __('report.others');
+                    return '<span class="gross-profit" data-orig-value="' . $category . '">' . $category . '</span>';
+                })
+            ->filterColumn('category', function ($query, $keyword) {
+                $query->where('ec.name', 'like', ["%{$keyword}%"]);
+            });
+
+        $raw_columns = ['total_expense', 'category'];
+
+        return $datatable->rawColumns($raw_columns)->make(true);
+    }
+
     /**
      * Lists profit by product, category, brand, location, invoice and date
      *
