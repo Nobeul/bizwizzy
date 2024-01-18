@@ -18,6 +18,8 @@ use DB;
 use Illuminate\Http\Request;
 use App\Exceptions\AdvanceBalanceNotAvailable;
 use App\CashDenomination;
+use App\CashRegister;
+use App\CashRegisterTransaction;
 
 class TransactionPaymentController extends Controller
 {
@@ -64,6 +66,14 @@ class TransactionPaymentController extends Controller
      */
     public function store(Request $request)
     {
+        $cashRegister = CashRegister::where('user_id', auth()->user()->id)->where('status', 'open')->first();
+        if (empty($cashRegister)) {
+            $output = ['success' => false,
+                          'msg' => 'No cash register found open'
+                      ];
+            return redirect()->back()->with(['status' => $output]);
+        }
+        
         try {
             $business_id = $request->session()->get('user.business_id');
             $transaction_id = $request->input('transaction_id');
@@ -122,6 +132,16 @@ class TransactionPaymentController extends Controller
                 
                 if (!empty($inputs['amount'])) {
                     $tp = TransactionPayment::create($inputs);
+
+                    // create cash register transaction to get register data with due payment
+                    CashRegisterTransaction::create([
+                        'cash_register_id' => $cashRegister->id,
+                        'amount' => $inputs['amount'],
+                        'pay_method' => $request->method,
+                        'type' => 'credit',
+                        'transaction_id' => $transaction->id,
+                        'transaction_type' => 'sell'
+                    ]);
 
                     if (!empty($request->input('denominations'))) {
                         $this->transactionUtil->addCashDenominations($tp, $request->input('denominations'));

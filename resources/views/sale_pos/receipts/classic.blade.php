@@ -461,7 +461,9 @@
 							{!! $receipt_details->subtotal_label !!}
 						</th>
 						<td class="text-right">
-						    {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
+							@if (!empty($receipt_details->taxes))
+						    	{{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
+							@endif
 						</td>
 					</tr>
 					<tr>

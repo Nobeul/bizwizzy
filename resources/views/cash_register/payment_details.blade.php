@@ -173,6 +173,37 @@
         </td>
       </tr>
     </table>
+    @php
+      $total_amount = $register_details->cash_in_hand + $register_details->total_cash + $register_details->total_cheque + $register_details->total_card + $register_details->total_bank_transfer + $register_details->total_advance + $register_details->total_other_expense;
+
+      if (array_key_exists('custom_pay_1', $payment_types)) {
+        $total_amount += $register_details->total_custom_pay_1;
+      }
+
+      if (array_key_exists('custom_pay_2', $payment_types)) {
+        $total_amount += $register_details->total_custom_pay_2;
+      }
+
+      if (array_key_exists('custom_pay_3', $payment_types)) {
+        $total_amount += $register_details->total_custom_pay_3;
+      }
+
+      if (array_key_exists('custom_pay_4', $payment_types)) {
+        $total_amount += $register_details->total_custom_pay_4;
+      }
+
+      if (array_key_exists('custom_pay_5', $payment_types)) {
+        $total_amount += $register_details->total_custom_pay_5;
+      }
+
+      if (array_key_exists('custom_pay_6', $payment_types)) {
+        $total_amount += $register_details->total_custom_pay_6;
+      }
+
+      if (array_key_exists('custom_pay_7', $payment_types)) {
+        $total_amount += $register_details->total_custom_pay_7;
+      }
+    @endphp
     <hr>
     <table class="table table-condensed">
       <tr>
@@ -219,10 +250,34 @@
       </tr>
       <tr class="success">
         <th>
-          @lang('lang_v1.total_payment')
+          @lang('lang_v1.total_payment'):
         </th>
         <td>
-          <b><span class="display_currency" data-currency_symbol="true">{{ $register_details->cash_in_hand + $register_details->total_cash - $register_details->total_cash_refund }}</span></b>
+          <b><span class="display_currency" data-currency_symbol="true">{{ $total_amount }}</span></b>
+        </td>
+      </tr>
+      <tr class="success">
+        <th>
+          {{ __('Total Sell Return') }}:
+        </th>
+        <td>
+          <b><span class="display_currency" data-currency_symbol="true">{{ $sell_return }}</span></b>
+        </td>
+      </tr>
+      <tr class="danger">
+        <th>
+          @lang('report.total_expense'):
+        </th>
+        <td>
+          <b><span class="display_currency" data-currency_symbol="true">{{ $register_details->total_expense }}</span></b>
+        </td>
+      </tr>
+      <tr class="success">
+        <th>
+          {{ __('Net Sell') }}:
+        </th>
+        <td>
+          <b><span class="display_currency" data-currency_symbol="true">{{ $total_amount - $sell_return - $register_details->total_expense }}</span></b>
         </td>
       </tr>
       <tr class="success">
@@ -239,14 +294,6 @@
         </th>
         <td>
           <b><span class="display_currency" data-currency_symbol="true">{{ $details['transaction_details']->total_sales }}</span></b>
-        </td>
-      </tr>
-      <tr class="danger">
-        <th>
-          @lang('report.total_expense'):
-        </th>
-        <td>
-          <b><span class="display_currency" data-currency_symbol="true">{{ $register_details->total_expense }}</span></b>
         </td>
       </tr>
     </table>

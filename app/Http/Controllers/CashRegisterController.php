@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BusinessLocation;
 use App\CashRegister;
+use App\Transaction;
 use App\Utils\CashRegisterUtil;
 use App\Utils\ModuleUtil;
 use Illuminate\Http\Request;
@@ -147,6 +148,12 @@ class CashRegisterController extends Controller
         $open_time = $register_details['open_time'];
         $close_time = \Carbon::now()->toDateTimeString();
 
+        $sell_return = Transaction::where('created_by', $user_id)
+                    ->whereBetween('created_at', [$open_time, $close_time])
+                    ->where('type', 'sell_return')
+                    ->where('status', 'final')
+                    ->sum('final_total');
+
         $is_types_of_service_enabled = $this->moduleUtil->isModuleEnabled('types_of_service');
 
         $details = $this->cashRegisterUtil->getRegisterTransactionDetails($user_id, $open_time, $close_time, $is_types_of_service_enabled);
@@ -154,7 +161,7 @@ class CashRegisterController extends Controller
         $payment_types = $this->cashRegisterUtil->payment_types($register_details->location_id, true, $business_id);
         
         return view('cash_register.register_details')
-                ->with(compact('register_details', 'details', 'payment_types', 'close_time'));
+                ->with(compact('register_details', 'details', 'payment_types', 'close_time', 'sell_return'));
     }
 
     /**
