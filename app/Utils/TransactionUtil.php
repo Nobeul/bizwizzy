@@ -1402,7 +1402,8 @@ class TransactionUtil extends Util
 
         //Subtotal
         $output['subtotal_label'] = $il->sub_total_label . ':';
-        $output['subtotal'] = ($transaction->total_before_tax != 0) ? $this->num_f($transaction->total_before_tax, $show_currency, $business_details) : 0;
+        $total = $transaction->total_before_tax - ($transaction->total_before_tax / 1.16);
+        $output['subtotal'] = ($transaction->total_before_tax != 0) ? $this->num_f($total, $show_currency, $business_details) : 0;
         $output['subtotal_unformatted'] = ($transaction->total_before_tax != 0) ? $transaction->total_before_tax : 0;
 
         //round off

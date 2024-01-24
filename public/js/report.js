@@ -192,6 +192,14 @@ $(document).ready(function() {
             if ($('th.current_stock_mfg').length) {
                 $('.footer_total_mfg_stock').html(__currency_trans_from_en(footer_total_mfg_stock, false));
             }
+            $('#closing_stock_by_pp').html(__currency_trans_from_en(total_stock_price));
+            $('#closing_stock_by_sp').html(__currency_trans_from_en(footer_stock_value_by_sale_price));
+            $('#potential_profit').html(__currency_trans_from_en(total_potential_profit));
+            var pot_profit = parseFloat(total_potential_profit).toFixed(2);
+            var foot_stock_by_sale = parseFloat(footer_stock_value_by_sale_price).toFixed(2);
+            var profit_margin = (pot_profit / foot_stock_by_sale) * 100;
+            $('#profit_margin').html(__currency_trans_from_en(profit_margin));
+
         },
     });
 
