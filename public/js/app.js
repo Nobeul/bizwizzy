@@ -1457,7 +1457,7 @@ $(document).ready(function() {
             { data: 'action', name: 'action', orderable: false, searchable: false },
             { data: 'transaction_date', name: 'transaction_date' },
             { data: 'ref_no', name: 'ref_no' },
-            { data: 'license_plate', name: 'license_plate' },
+            { data: 'license_plate', name: 'license_plate', searchable: false },
             { data: 'recur_details', name: 'recur_details', orderable: false, searchable: false },
             { data: 'category', name: 'ec.name' },
             { data: 'sub_category', name: 'esc.name' },

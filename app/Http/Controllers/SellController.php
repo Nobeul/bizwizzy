@@ -548,6 +548,16 @@ class SellController extends Controller
                         ->orWhere('contacts.supplier_business_name', 'like', "%{$keyword}%");
                     });
                 })
+                ->filterColumn('vehicle_reg_no', function ($query, $keyword) {
+                    $query->where( function($q) use($keyword) {
+                        $q->where('vehicles.license_plate', 'like', "%{$keyword}%");
+                    });
+                })
+                ->filterColumn('trip', function ($query, $keyword) {
+                    $query->where( function($q) use($keyword) {
+                        $q->where('products.name', 'like', "%{$keyword}%");
+                    });
+                })
                 ->addColumn('payment_methods', function ($row) use ($payment_types) {
                     $methods = array_unique($row->payment_lines->pluck('method')->toArray());
                     $count = count($methods);
