@@ -72,8 +72,7 @@ class MpesaController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $response = curl_exec($ch);
         curl_close($ch);
-        // echo '<pre>';
-        // echo $response;
+        
         return json_decode($response);
     }
 
@@ -325,6 +324,8 @@ class MpesaController extends Controller
 
     public function checkPayments()
     {
+        $status = false;
+        $data = null;
         $mpesaSetting = GatewaySetting::with('mpesaRequest')
                         ->where([
                             'business_id' => auth()->user()->business_id,
@@ -332,12 +333,57 @@ class MpesaController extends Controller
                             'status' => 'active'
                         ])->first();
 
-        $pendingTransactions = MpesaTransaction::where([
-                'status' => 'pending',
-                'business_short_code' => $mpesaSetting->mpesa_shortcode,
-                'transaction_amount' => request()->amount,
-            ])->whereDate('created_at', Carbon::now())->get();
+        if (! empty ($mpesaSetting)) {
+            $pendingTransaction = MpesaTransaction::where([
+                    'status' => 'pending',
+                    'business_short_code' => $mpesaSetting->mpesa_shortcode,
+                    'transaction_amount' => request()->amount
+                ])->whereDate('created_at', '<', Carbon::now());
+    
+            if (! empty(request()->passed_by)) {
+                $pendingTransaction->where('id', '>', request()->passed_by);
+            }
+    
+            $pendingTransaction = $pendingTransaction->first();
+            
+            if (! empty ($pendingTransaction)) {
+                $status = true;
+                $data = $pendingTransaction;
+            }
+        }
+
+        return response()->json([
+            'status' => $status,
+            'data' => $data
+        ]);
+    }
+
+    public function capturePayments()
+    {
+        $status = false;
+        $mpesaSetting = GatewaySetting::with('mpesaRequest')
+                        ->where([
+                            'business_id' => auth()->user()->business_id,
+                            'provider' => 'mpesa',
+                            'status' => 'active'
+                        ])->first();
+
+        if (! empty($mpesaSetting)) {
+            $isUpdatedTransaction = MpesaTransaction::where([
+                    'status' => 'pending',
+                    'business_short_code' => $mpesaSetting->mpesa_shortcode,
+                    'transaction_amount' => request()->amount,
+                    'id' => request()->transaction_id
+                ])->update([
+                    'cashier_id' => auth()->user()->id,
+                    'status' => 'compeleted'
+                ]);
+            
+            if (! empty($isUpdatedTransaction)) {
+                $status = $isUpdatedTransaction;
+            }
+        }
         
-        return response()->json($pendingTransactions);
+        return response()->json(['status' => $status]);
     }
 }

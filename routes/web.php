@@ -34,8 +34,6 @@ Route::get('/clear-cache', function() {
 
 Route::get('mpesa-pay-testing', 'TestingController@index');
 
-Route::get('mpesa-check-payments', 'MpesaController@checkPayments');
-
 Route::middleware(['setData'])->group(function () {
     Route::get('/', function () {
         return view('welcome');
@@ -413,6 +411,9 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::match(['get', 'post'],'mpesa-request-enable', 'MpesaController@enableRequest');
     Route::middleware('superadmin')->get('mpesa-request-list', 'MpesaController@requestList');
     Route::middleware('superadmin')->match(['get', 'post'], 'mpesa-request/{id}', 'MpesaController@requestDetails');
+
+    Route::get('mpesa-check-payments', 'MpesaController@checkPayments');
+    Route::post('mpesa-capture', 'MpesaController@capturePayments');
 
     Route::get('sells/edit-shipping/{id}', 'SellController@editShipping');
     Route::put('sells/update-shipping/{id}', 'SellController@updateShipping');

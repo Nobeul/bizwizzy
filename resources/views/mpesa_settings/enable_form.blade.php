@@ -16,7 +16,7 @@
     @component('components.widget', ['class' => 'box-primary'])
         <h4>
             <i>
-                Thank you for your interest to enable Mpesa in your system. It is a premium service and to get it enabled you have to pay 1000 ksh to 222 111 555. After the payment is done please fill up the form. Generally it takes two to three days to get verify.
+                Thank you for your interest to enable Mpesa in your system. It is a premium service and to get it enabled you have to pay 20,000 KSh to +254 740 804489. After the payment is done please fill up the form. Generally it takes two to three days to get verified.
             </i>
         </h4>
         <br><br><br>
