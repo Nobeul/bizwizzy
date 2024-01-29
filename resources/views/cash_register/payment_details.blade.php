@@ -26,6 +26,20 @@
           <span class="display_currency" data-currency_symbol="true">{{ $register_details->total_cash_expense }}</span>
         </td>
       </tr>
+
+      @if ($is_mpesa_enabled)
+        <tr>
+          <td>
+            Mpesa Payment:
+          </th>
+          <td>
+            <span class="display_currency" data-currency_symbol="true">{{ $register_details->total_mpesa }}</span>
+          </td>
+          <td>
+            <span class="display_currency" data-currency_symbol="true">{{ $register_details->total_mpesa_expense }}</span>
+          </td>
+        </tr>
+      @endif
       <tr>
         <td>
           @lang('cash_register.checque_payment'):
@@ -203,6 +217,11 @@
       if (array_key_exists('custom_pay_7', $payment_types)) {
         $total_amount += $register_details->total_custom_pay_7;
       }
+
+      if ($is_mpesa_enabled) {
+        $total_amount += $register_details->total_mpesa;
+      }
+
     @endphp
     <hr>
     <table class="table table-condensed">

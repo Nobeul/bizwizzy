@@ -265,6 +265,8 @@ class CashRegisterUtil extends Util
             DB::raw("SUM(IF(transaction_type='expense', IF(transaction_type='refund', -1 * amount, amount), 0)) as total_expense"),
             DB::raw("SUM(IF(pay_method='cash', IF(transaction_type='sell', amount, 0), 0)) as total_cash"),
             DB::raw("SUM(IF(pay_method='cash', IF(transaction_type='expense', amount, 0), 0)) as total_cash_expense"),
+            DB::raw("SUM(IF(pay_method='mpesa', IF(transaction_type='sell', amount, 0), 0)) as total_mpesa"),
+            DB::raw("SUM(IF(pay_method='mpesa', IF(transaction_type='expense', amount, 0), 0)) as total_mpesa_expense"),
             DB::raw("SUM(IF(pay_method='cheque', IF(transaction_type='sell', amount, 0), 0)) as total_cheque"),
             DB::raw("SUM(IF(pay_method='cheque', IF(transaction_type='expense', amount, 0), 0)) as total_cheque_expense"),
             DB::raw("SUM(IF(pay_method='card', IF(transaction_type='sell', amount, 0), 0)) as total_card"),

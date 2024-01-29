@@ -334,10 +334,13 @@ class MpesaController extends Controller
                         ])->first();
 
         if (! empty ($mpesaSetting)) {
+
+            $amount = (float)str_replace(",", "", request()->amount);
+
             $pendingTransaction = MpesaTransaction::where([
                     'status' => 'pending',
                     'business_short_code' => $mpesaSetting->mpesa_shortcode,
-                    'transaction_amount' => request()->amount
+                    'transaction_amount' => $amount
                 ])->whereDate('created_at', '<', Carbon::now());
     
             if (! empty(request()->passed_by)) {
@@ -369,10 +372,12 @@ class MpesaController extends Controller
                         ])->first();
 
         if (! empty($mpesaSetting)) {
+            $amount = (float)str_replace(",", "", request()->amount);
+
             $isUpdatedTransaction = MpesaTransaction::where([
                     'status' => 'pending',
                     'business_short_code' => $mpesaSetting->mpesa_shortcode,
-                    'transaction_amount' => request()->amount,
+                    'transaction_amount' => $amount,
                     'id' => request()->transaction_id
                 ])->update([
                     'cashier_id' => auth()->user()->id,
