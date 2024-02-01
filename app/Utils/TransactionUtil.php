@@ -1328,6 +1328,7 @@ class TransactionUtil extends Util
             $total_line_taxes = 0;
             $subtotal_exc_tax = 0;
             $unique_items = [];
+            $output['subtotal'] = 0;
             foreach ($details['lines'] as $line) {
                 if (!empty($line['group_tax_details'])) {
                     foreach ($line['group_tax_details'] as $tax_group_detail) {
@@ -1353,6 +1354,12 @@ class TransactionUtil extends Util
                 $total_line_taxes += ($line['tax_unformatted'] * $line['quantity_uf']);
                 if (!empty($line['variation_id']) && !in_array($line['variation_id'], $unique_items) ) {
                     $unique_items[] = $line['variation_id'];
+                }
+                
+                if (! empty($line['tax_name'])) {
+                    $output['subtotal'] += $line['line_total_uf']/1.16;
+                } else {
+                    $output['subtotal'] += $line['line_total_uf'];
                 }
             }
 
@@ -1402,9 +1409,24 @@ class TransactionUtil extends Util
 
         //Subtotal
         $output['subtotal_label'] = $il->sub_total_label . ':';
-        $total = $transaction->total_before_tax - ($transaction->total_before_tax / 1.16);
-        $output['subtotal'] = ($transaction->total_before_tax != 0) ? $this->num_f($total, $show_currency, $business_details) : 0;
+        // $output['subtotal'] = ($transaction->total_before_tax != 0) ? $this->num_f($transaction->total_before_tax, $show_currency, $business_details) : 0;
         $output['subtotal_unformatted'] = ($transaction->total_before_tax != 0) ? $transaction->total_before_tax : 0;
+        
+        //Subtotal
+        $output['subtotal_label'] = $il->sub_total_label . ':';
+        // $output['subtotal'] = ($transaction->total_before_tax != 0) ? $this->num_f($transaction->total_before_tax, $show_currency, $business_details) : 0;
+        $output['subtotal_unformatted'] = ($transaction->total_before_tax != 0) ? $transaction->total_before_tax : 0;
+        
+        // if ($transaction->total_before_tax != 0) {
+        //     $sub_total = $transaction->final_total/1.16;
+        //     \Log::info('Final total = '.$transaction->final_total);
+        //     $output['subtotal'] = $this->num_f($sub_total, $show_currency, $business_details);
+        //     \Log::info('After Sub total = '.$output['subtotal']);
+        // } else {
+        //      $output['subtotal'] = 0;
+        // }
+        $output['subtotal'] = $this->num_f($output['subtotal'], $show_currency, $business_details);
+        
 
         //round off
         $output['round_off_label'] = !empty($il->round_off_label) ? $il->round_off_label . ':' : __('lang_v1.round_off') . ':';

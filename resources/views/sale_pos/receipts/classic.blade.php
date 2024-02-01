@@ -462,16 +462,17 @@
 						</th>
 
 						<td class="text-right">
-							@if (! empty($receipt_details->taxes))
+							{{-- @if (! empty($receipt_details->taxes))
 						    	{{(float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
 							@else
 							 	{{ (float)preg_replace('/[^0-9.]/', '', $receipt_details->total) }}
-							@endif
+							@endif --}}
+							{{ (float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) }}
 						</td>
 					</tr>
 					<tr>
 					    @if (count($receipt_details->taxes) > 0)
-    					    @foreach ($receipt_details->taxes as $key => $val)
+    					    {{-- @foreach ($receipt_details->taxes as $key => $val)
     					        @if ($key != 'Total Tax')
             					    <th style="width:70%">
             					        {{ $key }}:
@@ -480,7 +481,13 @@
             					        {{ (float)preg_replace('/[^0-9.]/', '', $val) }}
             					    </td>
         					    @endif
-    					    @endforeach
+    					    @endforeach --}}
+    					    <th style="width:70%">
+    					        {{ __('VAT') }}:
+    					    </th>
+    					    <td class="text-right">
+    					        {{ (float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) }}
+    					    </td>
 					    @else
 					        <th style="width:70%">
         					    {{ Tax }}:
