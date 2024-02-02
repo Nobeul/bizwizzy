@@ -5467,7 +5467,7 @@ class TransactionUtil extends Util
     
     public function getProfitLossDetails($business_id, $location_id, $start_date, $end_date, $user_id = null, $vehicle_id = null)
     {
-        //For Opening stock date should be 1 day before test
+        //For Opening stock date should be 1 day before
         $day_before_start_date = \Carbon::createFromFormat('Y-m-d', $start_date)->subDay()->format('Y-m-d');
 
         $filters = ['user_id' => $user_id];
