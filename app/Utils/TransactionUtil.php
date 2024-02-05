@@ -5102,12 +5102,12 @@ class TransactionUtil extends Util
         //Get sum of totals before start date
         $previous_transaction_sums = $this->__transactionQuery($contact_id, $start, null, $location_id)
                 ->select(
-                    DB::raw("SUM(IF(type = 'purchase', final_total, 0)) as total_purchase"),
-                    DB::raw("SUM(IF(type = 'sell' AND status = 'final', final_total, 0)) as total_invoice"),
-                    DB::raw("SUM(IF(type = 'sell_return', final_total, 0)) as total_sell_return"),
-                    DB::raw("SUM(IF(type = 'purchase_return', final_total, 0)) as total_purchase_return"),
-                    DB::raw("SUM(IF(type = 'opening_balance', final_total, 0)) as total_opening_balance"),
-                    DB::raw("SUM(IF(type = 'ledger_discount', final_total, 0)) as total_ledger_discount")
+                    DB::raw("SUM(IF(transactions.type = 'purchase', final_total, 0)) as total_purchase"),
+                    DB::raw("SUM(IF(transactions.type = 'sell' AND transactions.status = 'final', final_total, 0)) as total_invoice"),
+                    DB::raw("SUM(IF(transactions.type = 'sell_return', final_total, 0)) as total_sell_return"),
+                    DB::raw("SUM(IF(transactions.type = 'purchase_return', final_total, 0)) as total_purchase_return"),
+                    DB::raw("SUM(IF(transactions.type = 'opening_balance', final_total, 0)) as total_opening_balance"),
+                    DB::raw("SUM(IF(transactions.type = 'ledger_discount', final_total, 0)) as total_ledger_discount")
                 )->first();
 
         //Get payment totals before start date
@@ -5152,7 +5152,11 @@ class TransactionUtil extends Util
         //Get transaction totals between dates
         $transaction_query = $this->__transactionQuery($contact_id, $start, $end, $location_id)
                             ->with(['location'])
-                            ->select('transactions.*');
+                            ->select('transactions.*', 
+                                \DB::raw("IF (transactions.type = 'expense', vehicles.license_plate, '') as vehicle_reg_no"), 
+                                \DB::raw("IF (transactions.type = 'expense', expense_categories.name, '') AS expense_category_name"),
+                                \DB::raw("IF (transactions.type = 'expense', transactions.additional_notes, '') AS expense_note")
+                            );
 
         if ($format == 'format_2') {
             $transaction_query->leftjoin('transaction_payments as tp', 'tp.transaction_id', '=', 'transactions.id')
@@ -5190,10 +5194,13 @@ class TransactionUtil extends Util
                 'total' => '',
                 'payment_method' => '',
                 'debit' => in_array($transaction->type, ['sell', 'purchase_return']) || ($transaction->sub_type == 'purchase_discount') ? $transaction->final_total : '',
-                'credit' => in_array($transaction->type, ['purchase', 'sell_return']) || ($transaction->sub_type == 'sell_discount') ? $transaction->final_total : '',
+                'credit' => in_array($transaction->type, ['purchase', 'sell_return', 'expense']) || ($transaction->sub_type == 'sell_discount') ? $transaction->final_total : '',
                 'others' => $transaction->additional_notes,
                 'transaction_id' => $transaction->id,
-                'transaction_type' => $transaction->type
+                'transaction_type' => $transaction->type,
+                'extense_category_name' => $transaction->expense_category_name,
+                'expense_note' => $transaction->expense_note,
+                'vehicle_reg_no' => $transaction->vehicle_reg_no
             ];
 
             if ($format == 'format_2') {
@@ -5219,7 +5226,7 @@ class TransactionUtil extends Util
         //Get payment totals between dates
         if ($format == 'format_1' || $format == 'format_3') {
             $payments = $this->__paymentQuery($contact_id, $start, $end, $location_id)
-                            ->select('transaction_payments.*', 'bl.name as location_name', 't.type as transaction_type', 't.ref_no', 't.invoice_no')
+                            ->select('transaction_payments.*', 'bl.name as location_name', 't.type as transaction_type', 't.ref_no', 't.invoice_no', 't.additional_notes as expense_note', 'ec.name as extense_category_name', 'v.license_plate as vehicle_reg_no')
                             ->get();
         } else {
             $payments = [];
@@ -5269,9 +5276,12 @@ class TransactionUtil extends Util
                 'total' => '',
                 'payment_method' => !empty($paymentTypes[$payment->method]) ? $paymentTypes[$payment->method] : '',
                 'payment_method_key' => $payment->method,
-                'debit' => in_array($payment->transaction_type, ['purchase', 'sell_return']) || ($payment->is_advance == 1 && $contact->type == 'supplier') || (in_array($payment->transaction_type, ['sell', 'purchase_return', 'opening_balance']) &&  $payment->is_return == 1) || $payment->payment_type == 'debit' ? $payment->amount : '',
+                'debit' => in_array($payment->transaction_type, ['purchase', 'sell_return']) || ($payment->is_advance == 1 && $contact->type == 'supplier') || (in_array($payment->transaction_type, ['sell', 'purchase_return', 'opening_balance']) &&  $payment->is_return == 1) || $payment->payment_type == 'debit' || ($transaction_types['payment'] == 'Payment' && $contact->type == 'supplier') ? $payment->amount : '',
                 'credit' => (in_array($payment->transaction_type, ['sell', 'purchase_return', 'opening_balance']) || ($payment->is_advance == 1 && in_array($contact->type, ['customer', 'both']))) && $payment->is_return == 0 || $payment->payment_type == 'credit' ? $payment->amount : '',
-                'others' =>  $note 
+                'others' =>  $note,
+                'extense_category_name' => $payment->extense_category_name,
+                'expense_note' => $payment->expense_note,
+                'vehicle_reg_no' => $payment->vehicle_reg_no
             ];
         }
 
@@ -5290,6 +5300,8 @@ class TransactionUtil extends Util
         $total_purchase_paid = !empty($payments) ? $payments->where('transaction_type', 'purchase')->where('is_return', 0)->sum('amount') : 0;
         $total_sell_return_paid = !empty($payments) ? $payments->where('transaction_type', 'sell_return')->sum('amount') : 0;
         $total_purchase_return_paid = !empty($payments) ? $payments->where('transaction_type', 'purchase_return')->sum('amount') : 0;
+        $total_expense = ! empty($transactions) ? $transactions->where('type', 'expense')->sum('final_total') : 0;
+        $total_expense_paid = !empty($payments) ? $payments->sum('amount') : 0;
 
         $total_invoice_paid += $opening_balance_paid;
 
@@ -5301,9 +5313,9 @@ class TransactionUtil extends Util
 
         $opening_balance_due = $opening_balance;
 
-        $total_paid = $total_invoice_paid + $total_purchase_paid - $total_sell_return_paid - $total_purchase_return_paid + $total_excess_advance_payment;
+        $total_paid = $total_invoice_paid + $total_purchase_paid - $total_sell_return_paid - $total_purchase_return_paid + $total_excess_advance_payment + $total_expense_paid;
         
-        $curr_due = $total_invoice + $total_purchase - $total_paid + $beginning_balance + $opening_balance_due;
+        $curr_due = $total_invoice + $total_purchase - $total_paid + $beginning_balance + $opening_balance_due + $total_expense;
 
         //Sort by date
         if (!empty($ledger)) {
@@ -5330,7 +5342,10 @@ class TransactionUtil extends Util
                 'others' => '',
                 'final_total' => abs($total_opening_bal),
                 'total_due' => 0,
-                'due_date' => null
+                'due_date' => null,
+                'extense_category_name' => '',
+                'expense_note' => '',
+                'vehicle_reg_no' => ''
             ]], $ledger) ;
         }
         
@@ -5367,7 +5382,8 @@ class TransactionUtil extends Util
             'balance_due' => $curr_due,
             'total_paid' => $total_paid,
             'total_reverse_payment' => $total_reverse_payment,
-            'ledger_discount' => $ledger_discount
+            'ledger_discount' => $ledger_discount,
+            'total_expense' => $total_expense
         ];
 
         return $output;
@@ -5382,7 +5398,9 @@ class TransactionUtil extends Util
         $business_id = request()->session()->get('user.business_id');
         $transaction_type_keys = array_keys(Transaction::transactionTypes());
 
-        $query = Transaction::where('transactions.contact_id', $contact_id)
+        $query = Transaction::leftJoin('vehicles', 'transactions.vehicle_id', '=', 'vehicles.id')  
+                        ->leftJoin('expense_categories', 'transactions.expense_category_id', '=', 'expense_categories.id')  
+                        ->where('transactions.contact_id', $contact_id)
                         ->where('transactions.business_id', $business_id)
                         ->where('transactions.status', '!=', 'draft')
                         ->whereIn('transactions.type', $transaction_type_keys);
@@ -5422,9 +5440,11 @@ class TransactionUtil extends Util
             't.id'
         )
             ->leftJoin('business_locations as bl', 't.location_id', '=', 'bl.id')
-            ->where('transaction_payments.payment_for', $contact_id);
+            ->where('transaction_payments.payment_for', $contact_id)
             //->whereNotNull('transaction_payments.transaction_id');
             //->whereNull('transaction_payments.parent_id');
+            ->leftJoin('expense_categories as ec', 't.expense_category_id', '=', 'ec.id')
+            ->leftJoin('vehicles as v', 't.vehicle_id', '=', 'v.id');
 
         if (!empty($start)  && !empty($end)) {
             $query->whereDate('paid_on', '>=', $start)

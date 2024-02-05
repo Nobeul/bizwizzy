@@ -33,6 +33,10 @@
 			<td>@lang('report.total_purchase')</td>
 			<td class="align-right">@format_currency($ledger_details['total_purchase'])</td>
 		</tr>
+		<tr>
+			<td>@lang('Total Expense')</td>
+			<td class="align-right">@format_currency($ledger_details['total_expense'])</td>
+		</tr>
 	@endif
 	@if( $contact->type == 'customer' || $contact->type == 'both')
 		<tr>
@@ -70,6 +74,9 @@
 				<th width="9%" class="text-center">@lang('purchase.ref_no')</th>
 				<th width="8%" class="text-center">@lang('lang_v1.type')</th>
 				<th width="10%" class="text-center">@lang('sale.location')</th>
+				<th width="10%" class="text-center">{{ __('Expense Category') }}</th>
+				<th width="10%" class="text-center">{{ __('Expense Note') }}</th>
+				<th width="10%" class="text-center">{{ __('Vehicle Reg No') }}</th>
 				<th width="5%" class="text-center">@lang('sale.payment_status')</th>
 				{{--<th width="10%" class="text-center">@lang('sale.total')</th>--}}
 				<th width="10%" class="text-center">@lang('account.debit')</th>
@@ -86,6 +93,9 @@
 					<td>{{$data['ref_no']}}</td>
 					<td>{{$data['type']}}</td>
 					<td>{{$data['location']}}</td>
+					<td>{{ $data['extense_category_name'] ?? '' }}</td>
+					<td>{{ $data['expense_note'] ?? '' }}</td>
+					<td>{{ $data['vehicle_reg_no'] ?? '' }}</td>
 					<td>{{$data['payment_status']}}</td>
 					{{--<td class="ws-nowrap align-right">@if($data['total'] !== '') @format_currency($data['total']) @endif</td>--}}
 					<td class="ws-nowrap align-right">@if($data['debit'] != '') @format_currency($data['debit']) @endif</td>

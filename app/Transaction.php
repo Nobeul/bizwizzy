@@ -281,7 +281,8 @@ class Transaction extends Model
                 'purchase_return' =>  __('lang_v1.purchase_return'),
                 'opening_balance' => __('lang_v1.opening_balance'),
                 'payment' => __('lang_v1.payment'),
-                'ledger_discount' => __('lang_v1.ledger_discount')
+                'ledger_discount' => __('lang_v1.ledger_discount'),
+                'expense' => 'Expense'
             ];
     }
 
