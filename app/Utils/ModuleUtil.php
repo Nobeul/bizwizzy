@@ -146,7 +146,7 @@ class ModuleUtil extends Util
             $package = \Modules\Superadmin\Entities\Subscription::active_subscription($business_id);
            
             if (empty($package)) {
-                return false;
+                return true;
             } elseif (isset($package['package_details'][$permission])) {
                 if (!is_null($callback_function)) {
                     $obj = new ModuleUtil();
@@ -162,13 +162,13 @@ class ModuleUtil extends Util
                     if (isset($permission_formatted[$permission])) {
                         return $package['package_details'][$permission];
                     } else {
-                        return false;
+                        return true;
                     }
                 } else {
                     return $package['package_details'][$permission];
                 }
             } else {
-                return false;
+                return true;
             }
         }
       
