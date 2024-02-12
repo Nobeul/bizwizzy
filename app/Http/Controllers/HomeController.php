@@ -20,6 +20,7 @@ use App\Utils\RestaurantUtil;
 use App\User;
 use Illuminate\Notifications\DatabaseNotification;
 use App\Media;
+use App\Vehicle;
 
 class HomeController extends Controller
 {
@@ -198,8 +199,10 @@ class HomeController extends Controller
         }
 
         $common_settings = !empty(session('business.common_settings')) ? session('business.common_settings') : [];
+        
+        $vehicles = Vehicle::where('status', 'active')->pluck('license_plate', 'id')->toArray();
 
-        return view('home.index', compact('sells_chart_1', 'sells_chart_2', 'widgets', 'all_locations', 'common_settings', 'is_admin'));
+        return view('home.index', compact('sells_chart_1', 'sells_chart_2', 'widgets', 'all_locations', 'common_settings', 'is_admin', 'vehicles'));
     }
 
     /**
@@ -213,13 +216,14 @@ class HomeController extends Controller
             $start = request()->start;
             $end = request()->end;
             $location_id = request()->location_id;
+            $vehicle_id = request()->vehicle_id;
             $business_id = request()->session()->get('user.business_id');
 
-            $purchase_details = $this->transactionUtil->getPurchaseTotals($business_id, $start, $end, $location_id);
+            $purchase_details = $this->transactionUtil->getPurchaseTotals($business_id, $start, $end, $location_id, null, $vehicle_id);
 
-            $sell_details = $this->transactionUtil->getSellTotals($business_id, $start, $end, $location_id);
+            $sell_details = $this->transactionUtil->getSellTotals($business_id, $start, $end, $location_id, null, $vehicle_id);
 
-            $total_ledger_discount = $this->transactionUtil->getTotalLedgerDiscount($business_id, $start, $end);
+            $total_ledger_discount = $this->transactionUtil->getTotalLedgerDiscount($business_id, $start, $end, $vehicle_id);
 
             $purchase_details['purchase_due'] = $purchase_details['purchase_due'] - $total_ledger_discount['total_purchase_discount'];
 
@@ -232,7 +236,10 @@ class HomeController extends Controller
                 $transaction_types,
                 $start,
                 $end,
-                $location_id
+                $location_id,
+                null,
+                $vehicle_id,
+                true
             );
 
             $total_purchase_inc_tax = !empty($purchase_details['total_purchase_inc_tax']) ? $purchase_details['total_purchase_inc_tax'] : 0;
@@ -241,11 +248,11 @@ class HomeController extends Controller
             $output = $purchase_details;
             $output['total_purchase'] = $total_purchase_inc_tax;
             $output['total_purchase_return'] = $total_purchase_return_inc_tax;
-            $output['total_purchase_return_paid'] = $this->transactionUtil->getTotalPurchaseReturnPaid($business_id, $start, $end, $location_id);
+            $output['total_purchase_return_paid'] = $this->transactionUtil->getTotalPurchaseReturnPaid($business_id, $start, $end, $location_id, null, $vehicle_id);
 
             $total_sell_inc_tax = !empty($sell_details['total_sell_inc_tax']) ? $sell_details['total_sell_inc_tax'] : 0;
             $total_sell_return_inc_tax = !empty($transaction_totals['total_sell_return_inc_tax']) ? $transaction_totals['total_sell_return_inc_tax'] : 0;
-            $output['total_sell_return_paid'] = $this->transactionUtil->getTotalSellReturnPaid($business_id, $start, $end, $location_id);
+            $output['total_sell_return_paid'] = $this->transactionUtil->getTotalSellReturnPaid($business_id, $start, $end, $location_id, null, $vehicle_id);
 
             $output['total_sell'] = $total_sell_inc_tax;
             $output['total_sell_return'] = $total_sell_return_inc_tax;
@@ -256,6 +263,8 @@ class HomeController extends Controller
             //NET = TOTAL SALES - INVOICE DUE - EXPENSE
             // $output['net'] = $output['total_sell'] - $output['invoice_due'] - $output['total_expense'];
             $output['net'] = $output['total_sell'] - $output['invoice_due'] - $output['total_sell_return'] - $output['total_purchase'] - $output['total_purchase_return'] - $output['total_expense'];
+            
+            $output['total_trips'] = $sell_details['total_trips'];
             
             return $output;
         }

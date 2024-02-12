@@ -15,7 +15,7 @@ $(document).ready(function() {
         update_statistics(moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'));
     }
 
-    $('#dashboard_location').change( function(e) {
+    $('#dashboard_location, #dashboard_vehicle').change( function(e) {
         var start = $('#dashboard_date_filter')
                     .data('daterangepicker')
                     .startDate.format('YYYY-MM-DD');
@@ -170,10 +170,12 @@ $(document).ready(function() {
 
 function update_statistics(start, end) {
     var location_id = '';
-    if ($('#dashboard_location').length > 0) {
+    var vehicle_id = '';
+    if ($('#dashboard_location').length > 0 || $('#dashboard_vehicle').length > 0) {
         location_id = $('#dashboard_location').val();
+        vehicle_id = $('#dashboard_vehicle').val();
     }
-    var data = { start: start, end: end, location_id: location_id };
+    var data = { start: start, end: end, location_id: location_id, vehicle_id: vehicle_id };
     //get purchase details
     var loader = '<i class="fas fa-sync fa-spin fa-fw margin-bottom"></i>';
     $('.total_purchase').html(loader);
@@ -181,6 +183,7 @@ function update_statistics(start, end) {
     $('.total_sell').html(loader);
     $('.invoice_due').html(loader);
     $('.total_expense').html(loader);
+    $('.total_trips').html(loader);
     $('.total_purchase_return').html(loader);
     $('.total_sell_return').html(loader);
     $('.net').html(loader);
@@ -199,6 +202,7 @@ function update_statistics(start, end) {
             $('.invoice_due').html(__currency_trans_from_en(data.invoice_due, true));
             //expense details
             $('.total_expense').html(__currency_trans_from_en(data.total_expense, true));
+            $('.total_trips').html(data.total_trips);
             var total_purchase_return = data.total_purchase_return - data.total_purchase_return_paid;
             $('.total_purchase_return').html(__currency_trans_from_en(total_purchase_return, true));
             var total_sell_return_due = data.total_sell_return - data.total_sell_return_paid;

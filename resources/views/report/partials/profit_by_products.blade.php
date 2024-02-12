@@ -14,9 +14,9 @@
         </tfoot>
     </table>
 
-    <p class="text-muted">
+    {{-- <p class="text-muted">
         @lang('lang_v1.profit_note')
-    </p>
+    </p> --}}
 </div>
 
 <br><br>

@@ -2449,7 +2449,7 @@ class TransactionUtil extends Util
         return $output;
     }
 
-    public function getTotalPurchaseReturnPaid($business_id, $start_date = null, $end_date = null, $location_id = null, $created_by = null)
+    public function getTotalPurchaseReturnPaid($business_id, $start_date = null, $end_date = null, $location_id = null, $created_by = null, $vehicle_id = null)
     {
         $query = TransactionPayment::join('transactions as t', 't.id', 'transaction_payments.transaction_id')
                                 ->where('t.type', 'purchase_return')
@@ -2480,11 +2480,16 @@ class TransactionUtil extends Util
         if (!empty($created_by)) {
             $query->where('t.created_by', $created_by);
         }
+        
+        if (! empty($vehicle_id)) {
+            $query->where('t.vehicle_id', $vehicle_id);
+        }
+        
         $total_purchase_return_paid = $query->first()->total_paid ?? 0;
         return $total_purchase_return_paid;
     }
 
-    public function getTotalSellReturnPaid($business_id, $start_date = null, $end_date = null, $location_id = null, $created_by = null)
+    public function getTotalSellReturnPaid($business_id, $start_date = null, $end_date = null, $location_id = null, $created_by = null, $vehicle_id = null)
     {
         $query = TransactionPayment::join('transactions as t', 't.id', 'transaction_payments.transaction_id')
                                 ->where('t.type', 'sell_return')
@@ -2515,6 +2520,10 @@ class TransactionUtil extends Util
         if (!empty($created_by)) {
             $query->where('t.created_by', $created_by);
         }
+        
+        if (! empty($vehicle_id)) {
+            $query->where('t.vehicle_id', $vehicle_id);
+        }
 
         $total_sell_return_paid = $query->first()->total_paid ?? 0;
         return $total_sell_return_paid;
@@ -2539,8 +2548,10 @@ class TransactionUtil extends Util
                         DB::raw('SUM(final_total - (SELECT COALESCE(SUM(IF(tp.is_return = 1, -1*tp.amount, tp.amount)), 0) FROM transaction_payments as tp WHERE tp.transaction_id = transactions.id) )  as total_due'),
                         DB::raw('SUM(total_before_tax) as total_before_tax'),
                         DB::raw('SUM(shipping_charges) as total_shipping_charges'),
-                        DB::raw("SUM(additional_expense_value_1 + additional_expense_value_2 + additional_expense_value_3 + additional_expense_value_4) as total_expense")
-                    );
+                        DB::raw("SUM(additional_expense_value_1 + additional_expense_value_2 + additional_expense_value_3 + additional_expense_value_4) as total_expense"),
+                        DB::raw('COUNT(transaction_sell_lines.id) AS total_number_of_transactions')
+                    )
+                    ->leftJoin('transaction_sell_lines', 'transactions.id', '=', 'transaction_sell_lines.transaction_id');
 
         //Check for permitted locations of a user
         $permitted_locations = auth()->user()->permitted_locations();
@@ -2567,7 +2578,7 @@ class TransactionUtil extends Util
         }
         
         if (! empty($vehicle_id)) {
-            $query->where('transactions.vehicle_id', $vehicle_id);
+            $query->where('transaction_sell_lines.vehicle_id', $vehicle_id);
         }
 
         $sell_details = $query->first();
@@ -2578,11 +2589,13 @@ class TransactionUtil extends Util
         $output['invoice_due'] = $sell_details->total_due;
         $output['total_shipping_charges'] = $sell_details->total_shipping_charges;
         $output['total_additional_expense'] = $sell_details->total_expense;
+        $output['total_additional_expense'] = $sell_details->total_number_of_transactions ?? 0;
+        $output['total_trips'] = $sell_details->total_number_of_transactions ?? 0;
 
         return $output;
     }
 
-     public function getTotalLedgerDiscount($business_id, $start_date = null, $end_date = null)
+     public function getTotalLedgerDiscount($business_id, $start_date = null, $end_date = null, $vehicle_id = null)
     {
         $query = Transaction::where('transactions.business_id', $business_id)
                     ->where('transactions.type', 'ledger_discount')
@@ -2599,6 +2612,10 @@ class TransactionUtil extends Util
 
         if (empty($start_date) && !empty($end_date)) {
             $query->whereDate('transactions.transaction_date', '<=', $end_date);
+        }
+        
+        if (! empty($vehicle_id)) {
+            $query->where('transaction_sell_lines.vehicle_id', $vehicle_id);
         }
 
         $sell_details = $query->first();
@@ -4445,7 +4462,8 @@ class TransactionUtil extends Util
         $end_date = null,
         $location_id = null,
         $created_by = null,
-        $vehicle_id = null
+        $vehicle_id = null,
+        $dashboard_report = false
         ) {
         $query = Transaction::where('transactions.business_id', $business_id);
         
@@ -4461,8 +4479,15 @@ class TransactionUtil extends Util
             }
         }
         
-        if (! empty($vehicle_id)) {
-            $query->where('transactions.vehicle_id', $vehicle_id);
+        if (! $dashboard_report) {
+            if (! empty($vehicle_id)) {
+                $query->where('transactions.vehicle_id', $vehicle_id);
+            }
+        } else {
+            if (! empty($vehicle_id)) {
+                $query->leftJoin('transaction_sell_lines', 'transactions.id', '=', 'transaction_sell_lines.transaction_id')
+                    ->where('transaction_sell_lines.vehicle_id', $vehicle_id);
+            }
         }
 
         if (!empty($start_date) && !empty($end_date)) {
@@ -5371,6 +5396,12 @@ class TransactionUtil extends Util
 
             $ledger[$key]['balance'] = $balance;
         }
+        
+        $final_output = collect($ledger);
+        $total_credit = $final_output->sum('credit');
+        $total_debit = $final_output->sum('debit');
+        $total_paid = $total_credit;
+        $curr_due = $total_credit - $total_debit;
 
         $output = [
             'ledger' => $ledger,

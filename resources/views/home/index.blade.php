@@ -19,7 +19,12 @@
                         {!! Form::select('dashboard_location', $all_locations, null, ['class' => 'form-control select2', 'placeholder' => __('lang_v1.select_location'), 'id' => 'dashboard_location']); !!}
                     @endif
                 </div>
-        		<div class="col-md-8 col-xs-12">
+                <div class="col-md-4 col-xs-12">
+                    @if(count($vehicles) > 1)
+                        {!! Form::select('vehicle_id', $vehicles, null, ['class' => 'form-control select2', 'placeholder' => __('Select Vehicle'), 'id' => 'dashboard_vehicle']); !!}
+                    @endif
+                </div>
+        		<div class="col-md-4 col-xs-12">
                     <div class="form-group pull-right">
                           <div class="input-group">
                             <button type="button" class="btn btn-primary" id="dashboard_date_filter">
@@ -156,6 +161,26 @@
                             {{ __('lang_v1.expense') }}
                           </span>
                           <span class="info-box-number total_expense"><i class="fas fa-sync fa-spin fa-fw margin-bottom"></i></span>
+                        </div>
+                        <!-- /.info-box-content -->
+                    </div>
+                  <!-- /.info-box -->
+                </div>
+            </div>
+            
+            <div class="row">
+                <!-- trips -->
+                <div class="col-md-3 col-sm-6 col-xs-12 col-custom">
+                    <div class="info-box info-box-new-style">
+                        <span class="info-box-icon bg-red">
+                          <i class="fas fa-minus-circle"></i>
+                        </span>
+
+                        <div class="info-box-content">
+                          <span class="info-box-text">
+                            {{ __('Total Trips') }}
+                          </span>
+                          <span class="info-box-number total_trips"><i class="fas fa-sync fa-spin fa-fw margin-bottom"></i></span>
                         </div>
                         <!-- /.info-box-content -->
                     </div>
