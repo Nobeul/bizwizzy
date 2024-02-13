@@ -128,7 +128,7 @@ class StockAdjustmentController extends Controller
      */
     public function create()
     {
-        if (!auth()->user()->can('purchase.create')) {
+        if (!auth()->user()->can('stock-adjustment.create')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -153,7 +153,7 @@ class StockAdjustmentController extends Controller
      */
     public function store(Request $request)
     {
-        if (!auth()->user()->can('purchase.create')) {
+        if (!auth()->user()->can('stock-adjustment.create')) {
             abort(403, 'Unauthorized action.');
         }
 

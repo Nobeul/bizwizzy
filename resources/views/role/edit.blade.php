@@ -473,7 +473,16 @@
                                 <label>
                                     {!! Form::checkbox('permissions[]', 'purchase.create', in_array('purchase.create', $role_permissions), [
                                         'class' => 'input-icheck',
-                                    ]) !!} {{ __('role.purchase.create') }}
+                                    ]) !!} {{ __('Add Purchase') }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="checkbox">
+                                <label>
+                                    {!! Form::checkbox('permissions[]', 'stock-adjustment.create', in_array('stock-adjustment.create', $role_permissions), [
+                                        'class' => 'input-icheck',
+                                    ]) !!} {{ __('Add Stock Adjustment') }}
                                 </label>
                             </div>
                         </div>

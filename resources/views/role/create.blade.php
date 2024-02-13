@@ -388,7 +388,14 @@
                         <div class="col-md-12">
                             <div class="checkbox">
                                 <label>
-                                    {!! Form::checkbox('permissions[]', 'purchase.create', false, ['class' => 'input-icheck']) !!} {{ __('role.purchase.create') }}
+                                    {!! Form::checkbox('permissions[]', 'purchase.create', false, ['class' => 'input-icheck']) !!} {{ __('Add Purchase') }}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="checkbox">
+                                <label>
+                                    {!! Form::checkbox('permissions[]', 'stock-adjustment.create', false, ['class' => 'input-icheck']) !!} {{ __('Add Stock Adjustment') }}
                                 </label>
                             </div>
                         </div>
