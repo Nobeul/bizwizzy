@@ -385,7 +385,7 @@ class AdminSidebarMenu
             }
 
             //stock adjustment dropdown
-            if (in_array('stock_adjustment', $enabled_modules) && (auth()->user()->can('purchase.view') || auth()->user()->can('purchase.create'))) {
+            if (in_array('stock_adjustment', $enabled_modules) && (auth()->user()->can('purchase.view') || auth()->user()->can('stock-adjustment.create'))) {
                 $menu->dropdown(
                     __('stock_adjustment.stock_adjustment'),
                     function ($sub) {
@@ -396,7 +396,7 @@ class AdminSidebarMenu
                                 ['icon' => 'fa fas fa-list', 'active' => request()->segment(1) == 'stock-adjustments' && request()->segment(2) == null]
                             );
                         }
-                        if (auth()->user()->can('purchase.create')) {
+                        if (auth()->user()->can('stock-adjustment.create')) {
                             $sub->url(
                                 action('StockAdjustmentController@create'),
                                 __('stock_adjustment.add'),
