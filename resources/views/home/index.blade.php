@@ -60,7 +60,7 @@
                        </span>
 
                         <div class="info-box-content">
-                          <span class="info-box-text">{{ __('lang_v1.net') }} @show_tooltip(__('lang_v1.net_home_tooltip'))</span>
+                          <span class="info-box-text">{{ __('Net Profit') }} @show_tooltip(__('lang_v1.net_home_tooltip'))</span>
                           <span class="info-box-number net"><i class="fas fa-sync fa-spin fa-fw margin-bottom"></i></span>
                         </div>
                         <!-- /.info-box-content -->

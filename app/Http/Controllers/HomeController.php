@@ -238,8 +238,7 @@ class HomeController extends Controller
                 $end,
                 $location_id,
                 null,
-                $vehicle_id,
-                true
+                $vehicle_id
             );
 
             $total_purchase_inc_tax = !empty($purchase_details['total_purchase_inc_tax']) ? $purchase_details['total_purchase_inc_tax'] : 0;
@@ -260,9 +259,9 @@ class HomeController extends Controller
             $output['invoice_due'] = $sell_details['invoice_due'] - $total_ledger_discount['total_sell_discount'];
             $output['total_expense'] = $transaction_totals['total_expense'];
 
-            //NET = TOTAL SALES - INVOICE DUE - EXPENSE
-            // $output['net'] = $output['total_sell'] - $output['invoice_due'] - $output['total_expense'];
-            $output['net'] = $output['total_sell'] - $output['invoice_due'] - $output['total_sell_return'] - $output['total_purchase'] - $output['total_purchase_return'] - $output['total_expense'];
+            //NET = TOTAL SALES - EXPENSE
+            $output['net'] = $output['total_sell'] - $output['total_expense'];
+            // $output['net'] = $output['total_sell'] - $output['invoice_due'] - $output['total_sell_return'] - $output['total_purchase'] - $output['total_purchase_return'] - $output['total_expense'];
             
             $output['total_trips'] = $sell_details['total_trips'];
             

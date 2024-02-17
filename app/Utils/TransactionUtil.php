@@ -4462,8 +4462,7 @@ class TransactionUtil extends Util
         $end_date = null,
         $location_id = null,
         $created_by = null,
-        $vehicle_id = null,
-        $dashboard_report = false
+        $vehicle_id = null
         ) {
         $query = Transaction::where('transactions.business_id', $business_id);
         
@@ -4479,15 +4478,8 @@ class TransactionUtil extends Util
             }
         }
         
-        if (! $dashboard_report) {
-            if (! empty($vehicle_id)) {
-                $query->where('transactions.vehicle_id', $vehicle_id);
-            }
-        } else {
-            if (! empty($vehicle_id)) {
-                $query->leftJoin('transaction_sell_lines', 'transactions.id', '=', 'transaction_sell_lines.transaction_id')
-                    ->where('transaction_sell_lines.vehicle_id', $vehicle_id);
-            }
+        if (! empty($vehicle_id)) {
+            $query->where('transactions.vehicle_id', $vehicle_id);
         }
 
         if (!empty($start_date) && !empty($end_date)) {
