@@ -14,7 +14,7 @@
 				<span class="input-group-addon">
 					<i class="fas fa-money-bill-alt"></i>
 				</span>
-				{!! Form::text("payment[$row_index][amount]", @num_format($payment_line['amount']), ['class' => 'form-control payment-amount input_number', 'required', 'id' => "amount_$row_index", 'placeholder' => __('sale.amount'), 'readonly' => $readonly]); !!}
+				{!! Form::text("payment[$row_index][amount]", @num_format($payment_line['amount']) != 0 ? @num_format($payment_line['amount']) : '', ['class' => 'form-control payment-amount input_number', 'required', 'id' => "amount_$row_index", 'placeholder' => __('sale.amount'), 'readonly' => $readonly]); !!}
 			</div>
 		</div>
 	</div>

@@ -187,6 +187,12 @@ class CashRegisterController extends Controller
         $open_time = $register_details['open_time'];
         $close_time = \Carbon::now()->toDateTimeString();
 
+        $sell_return = Transaction::where('created_by', $user_id)
+                    ->whereBetween('created_at', [$open_time, $close_time])
+                    ->where('type', 'sell_return')
+                    ->where('status', 'final')
+                    ->sum('final_total');
+
         $is_types_of_service_enabled = $this->moduleUtil->isModuleEnabled('types_of_service');
 
         $details = $this->cashRegisterUtil->getRegisterTransactionDetails($user_id, $open_time, $close_time, $is_types_of_service_enabled);
@@ -195,8 +201,12 @@ class CashRegisterController extends Controller
 
         $pos_settings = !empty(request()->session()->get('business.pos_settings')) ? json_decode(request()->session()->get('business.pos_settings'), true) : [];
 
+        $business_location = BusinessLocation::where('business_id', $business_id)->first();
+        $business_location = json_decode($business_location->default_payment_accounts, true);
+        $is_mpesa_enabled = $business_location['mpesa']['is_enabled'];
+
         return view('cash_register.close_register_modal')
-                    ->with(compact('register_details', 'details', 'payment_types', 'pos_settings'));
+                    ->with(compact('register_details', 'details', 'payment_types', 'pos_settings', 'sell_return'));
     }
 
     /**
