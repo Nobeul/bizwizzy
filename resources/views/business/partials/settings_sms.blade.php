@@ -6,7 +6,7 @@
         <div class="col-xs-3">
             <div class="form-group">
                 {!! Form::label('sms_service', __('lang_v1.sms_service') . ':') !!}
-                {!! Form::select('sms_settings[sms_service]', ['nexmo' => 'Nexmo', 'twilio' => 'Twilio', 'other' => __('lang_v1.other')], $sms_service , ['class' => 'form-control', 'id' => 'sms_service']); !!}
+                {!! Form::select('sms_settings[sms_service]', ['nexmo' => 'Nexmo', 'twilio' => 'Twilio', 'pinnacle' => 'Pinnacle', 'other' => __('lang_v1.other')], $sms_service , ['class' => 'form-control', 'id' => 'sms_service']); !!}
             </div>
         </div>
     </div>
@@ -47,6 +47,26 @@
             <div class="form-group">
                 {!! Form::label('twilio_from', __('account.from') . ':') !!}
                 {!! Form::text('sms_settings[twilio_from]', !empty($sms_settings['twilio_from']) ? $sms_settings['twilio_from'] : null, ['class' => 'form-control','placeholder' => __('account.from'), 'id' => 'twilio_from']); !!}
+            </div>
+        </div>
+    </div>
+    <div class="row sms_service_settings @if($sms_service != 'pinnacle') hide @endif" data-service="pinnacle">
+        <div class="col-xs-3">
+            <div class="form-group">
+                {!! Form::label('pinnacle_username', __('Pinnacle Username') . ':') !!}
+                {!! Form::text('sms_settings[pinnacle_username]', !empty($sms_settings['pinnacle_username']) ? $sms_settings['pinnacle_username'] : null, ['class' => 'form-control','placeholder' => __('Pinnacle Username'), 'id' => 'pinnacle_username', 'required']); !!}
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="form-group">
+                {!! Form::label('pinnacle_password', __('Pinnacle Password') . ':') !!}
+                {!! Form::text('sms_settings[pinnacle_password]', !empty($sms_settings['pinnacle_password']) ? $sms_settings['pinnacle_password'] : null, ['class' => 'form-control','placeholder' => __('Pinnacle Password'), 'id' => 'pinnacle_password', 'required']); !!}
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="form-group">
+                {!! Form::label('api_key', __('API Key') . ':') !!}
+                {!! Form::text('', $business->pinnacle_api_key, ['class' => 'form-control','placeholder' => __('API Key'), 'id' => 'api_key', 'readonly']); !!}
             </div>
         </div>
     </div>

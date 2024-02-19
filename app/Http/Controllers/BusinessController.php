@@ -449,6 +449,14 @@ class BusinessController extends Controller
             //Enabled modules
             $enabled_modules = $request->input('enabled_modules');
             $business_details['enabled_modules'] = !empty($enabled_modules) ? $enabled_modules : null;
+            if (isset($business_details['sms_settings']['sms_service']) && $business_details['sms_settings']['sms_service'] == 'pinnacle') {
+                if ($business_details['sms_settings']['pinnacle_username'] && $business_details['sms_settings']['pinnacle_password']) {
+                    $pinnacle_api_key = $this->createPinnacleApiKey($business_details['sms_settings']['pinnacle_username'], $business_details['sms_settings']['pinnacle_password']);
+                    if (! empty($pinnacle_api_key)) {
+                        $business_details['pinnacle_api_key'] = $pinnacle_api_key;
+                    }
+                }
+            }
             $business->fill($business_details);
             $business->save();
 
@@ -480,6 +488,75 @@ class BusinessController extends Controller
                         ];
         }
         return redirect('business/settings')->with('status', $output);
+    }
+
+    private function createPinnacleApiKey($username, $password)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://smsportal.hostpinnacle.co.ke/SMSApi/apikey/create",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => "userid=$username&password=$password&output=json",
+        CURLOPT_HTTPHEADER => array(
+            "cache-control: no-cache",
+            "content-type: application/x-www-form-urlencoded"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        $response = json_decode($response, true);
+        $api_key = null;
+
+        if ($response['response']['code'] == 200) {
+            $api_key = $this->getPinnacleApiKey($username, $password);    
+        }
+
+        return $api_key;
+    }
+
+    private function getPinnacleApiKey($username, $password)
+    {
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://smsportal.hostpinnacle.co.ke/SMSApi/apikey/read",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_POSTFIELDS => "userid=$username&password=$password&output=json",
+        CURLOPT_HTTPHEADER => array(
+            "cache-control: no-cache",
+            "content-type: application/x-www-form-urlencoded"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        $response = json_decode($response, true);
+
+        $api_key = null;
+
+        if (isset($response['response']['code']) && $response['response']['code'] == 200) {
+            $api_key = $response['response']['apikeyList']['apikey'];
+        }
+
+        return $api_key;
     }
 
     /**
