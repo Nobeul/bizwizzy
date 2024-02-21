@@ -12,7 +12,7 @@
 <section class="content content-custom no-print">
     <br>
     @if(auth()->user()->can('dashboard.data'))
-        @if($is_admin)
+        @if($is_admin || auth()->user()->can('dashboard.data'))
         	<div class="row">
                 <div class="col-md-4 col-xs-12">
                     @if(count($all_locations) > 1)
@@ -169,7 +169,7 @@
             @endif
         @endif 
         <!-- end is_admin check -->
-         @if(auth()->user()->can('sell.view') || auth()->user()->can('direct_sell.view'))
+         @if(auth()->user()->can('sell.view') || auth()->user()->can('direct_sell.view') || auth()->user()->can('dashboard.data'))
             @if(!empty($all_locations))
               	<!-- sales chart start -->
               	<div class="row">
@@ -203,7 +203,7 @@
         @endif
       	<!-- products less than alert quntity -->
       	<div class="row">
-            @if(auth()->user()->can('sell.view') || auth()->user()->can('direct_sell.view'))
+            @if(auth()->user()->can('sell.view') || auth()->user()->can('direct_sell.view') || auth()->user()->can('dashboard.data'))
                 <div class="col-sm-6">
                     @component('components.widget', ['class' => 'box-warning'])
                       @slot('icon')
@@ -321,7 +321,7 @@
                 @endif
       	    </div>
         @endcan
-        @if(auth()->user()->can('so.view_all') || auth()->user()->can('so.view_own'))
+        @if(auth()->user()->can('so.view_all') || auth()->user()->can('so.view_own') || auth()->user()->can('dashboard.data'))
             <div class="row" @if(!auth()->user()->can('dashboard.data'))style="margin-top: 190px !important;"@endif>
                 <div class="col-sm-12">
                     @component('components.widget', ['class' => 'box-warning'])
@@ -363,7 +363,7 @@
             </div>
         @endif
 
-        @if(!empty($common_settings['enable_purchase_requisition']) && (auth()->user()->can('purchase_requisition.view_all') || auth()->user()->can('purchase_requisition.view_own')) )
+        @if(!empty($common_settings['enable_purchase_requisition']) && (auth()->user()->can('purchase_requisition.view_all') || auth()->user()->can('purchase_requisition.view_own') || auth()->user()->can('dashboard.data')) )
             <div class="row" @if(!auth()->user()->can('dashboard.data'))style="margin-top: 190px !important;"@endif>
                 <div class="col-sm-12">
                     @component('components.widget', ['class' => 'box-warning'])
@@ -402,7 +402,7 @@
             </div>
         @endif
 
-        @if(!empty($common_settings['enable_purchase_order']) && (auth()->user()->can('purchase_order.view_all') || auth()->user()->can('purchase_order.view_own')) )
+        @if(!empty($common_settings['enable_purchase_order']) && (auth()->user()->can('purchase_order.view_all') || auth()->user()->can('purchase_order.view_own') || auth()->user()->can('dashboard.data')) )
             <div class="row" @if(!auth()->user()->can('dashboard.data'))style="margin-top: 190px !important;"@endif>
                 <div class="col-sm-12">
                     @component('components.widget', ['class' => 'box-warning'])
@@ -442,7 +442,7 @@
             </div>
         @endif
 
-        @if(auth()->user()->can('access_pending_shipments_only') || auth()->user()->can('access_shipping') || auth()->user()->can('access_own_shipping') )
+        @if(auth()->user()->can('access_pending_shipments_only') || auth()->user()->can('access_shipping') || auth()->user()->can('access_own_shipping') || auth()->user()->can('dashboard.data'))
             @component('components.widget', ['class' => 'box-warning'])
               @slot('icon')
                   <i class="fas fa-list-alt text-yellow fa-lg" aria-hidden="true"></i>
@@ -504,7 +504,7 @@
             @endcomponent
         @endif
 
-        @if(auth()->user()->can('account.access') && config('constants.show_payments_recovered_today') == true)
+        @if((auth()->user()->can('account.access') || auth()->user()->can('dashboard.data')) && config('constants.show_payments_recovered_today') == true)
             @component('components.widget', ['class' => 'box-warning'])
               @slot('icon')
                   <i class="fas fa-money-bill-alt text-yellow fa-lg" aria-hidden="true"></i>
@@ -603,7 +603,7 @@
           ]
         });
 
-        @if(auth()->user()->can('account.access') && config('constants.show_payments_recovered_today') == true)
+        @if((auth()->user()->can('account.access') || auth()->user()->can('dashboard.data')) && config('constants.show_payments_recovered_today') == true)
 
             // Cash Flow Table
             cash_flow_table = $('#cash_flow_table').DataTable({
