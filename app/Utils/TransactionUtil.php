@@ -6022,7 +6022,7 @@ class TransactionUtil extends Util
             $sell_return_data['customer_group_id'] = $sell->customer_group_id;
             $sell_return_data['type'] = 'sell_return';
             $sell_return_data['status'] = 'final';
-            $sell_return_data['created_by'] = $user_id;
+            $sell_return_data['created_by'] = $sell->created_by;
             $sell_return_data['return_parent_id'] = $sell->id;
             $sell_return = Transaction::create($sell_return_data);
 

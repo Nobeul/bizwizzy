@@ -7,6 +7,7 @@ use App\Account;
 use App\AccountTransaction;
 use App\Business;
 use App\BusinessLocation;
+use App\CashRegister;
 use App\ExpenseCategory;
 use App\TaxRate;
 use App\Transaction;
@@ -371,10 +372,19 @@ class ExpenseController extends Controller
             
             $expense = $this->transactionUtil->createExpense($request, $business_id, $user_id);
 
-            if (request()->ajax()) {
+            // if (request()->ajax()) {
                 $payments = !empty($request->input('payment')) ? $request->input('payment') : [];
+                $openRegister = CashRegister::where('user_id', auth()->user()->id)
+                            ->where('status', 'open')
+                            ->first();
+                if (empty($openRegister)) {
+                    $output = ['success' => 0,
+                            'msg' => __('No open register found')
+                        ];
+                    return redirect('expenses')->with('status', $output);
+                }
                 $this->cashRegisterUtil->addSellPayments($expense, $payments);
-            }
+            // }
 
             $this->transactionUtil->activityLog($expense, 'added');
 
