@@ -124,8 +124,14 @@ class CashRegisterController extends Controller
 
         $payment_types = $this->cashRegisterUtil->payment_types(null, false, $business_id);
 
+        $sell_return = Transaction::where('created_by', $user_id)
+                    ->whereBetween('created_at', [$open_time, $close_time])
+                    ->where('type', 'sell_return')
+                    ->where('status', 'final')
+                    ->sum('final_total');
+
         return view('cash_register.register_details')
-                    ->with(compact('register_details', 'details', 'payment_types', 'close_time'));
+                    ->with(compact('register_details', 'details', 'payment_types', 'close_time', 'sell_return'));
     }
 
     /**
