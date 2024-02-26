@@ -230,7 +230,7 @@
           @lang('cash_register.total_sales'):
         </td>
         <td>
-          <span class="display_currency" data-currency_symbol="true">{{ $register_details->total_sale }}</span>
+          <span class="display_currency" data-currency_symbol="true">{{ $register_details->total_sale - $sell_return }}</span>
         </td>
       </tr>
       <tr class="danger">
@@ -312,7 +312,7 @@
           @lang('cash_register.total_sales'):
         </th>
         <td>
-          <b><span class="display_currency" data-currency_symbol="true">{{ $details['transaction_details']->total_sales }}</span></b>
+          <b><span class="display_currency" data-currency_symbol="true">{{ $details['transaction_details']->total_sales - $sell_return }}</span></b>
         </td>
       </tr>
     </table>
