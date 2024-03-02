@@ -144,6 +144,7 @@ class TransactionUtil extends Util
             'additional_expense_key_2' => !empty($input['additional_expense_key_2']) ? $input['additional_expense_key_2'] : null,
             'additional_expense_key_3' => !empty($input['additional_expense_key_3']) ? $input['additional_expense_key_3'] : null,
             'additional_expense_key_4' => !empty($input['additional_expense_key_4']) ? $input['additional_expense_key_4'] : null,
+            'customer_name' => ! empty($input['customer_name']) ? $input['customer_name'] : null,
 
         ]);
 
@@ -1110,6 +1111,7 @@ class TransactionUtil extends Util
             $output['customer_label'] = !empty($il->customer_label) ? $il->customer_label : '';
             $output['customer_name'] = !empty($customer->name) ? $customer->name: $customer->supplier_business_name;
             $output['customer_mobile'] = $customer->mobile;
+            $output['pos_customer_name'] = $transaction->customer_name;
             
             if ($receipt_printer_type != 'printer') {
                 $output['customer_info'] .= $customer->contact_address;
@@ -5056,6 +5058,7 @@ class TransactionUtil extends Util
                     'contacts.name',
                     'contacts.mobile',
                     'contacts.contact_id',
+                    'transactions.customer_name',
                     'contacts.supplier_business_name',
                     'transactions.status',
                     'transactions.payment_status',

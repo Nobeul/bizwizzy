@@ -85,6 +85,8 @@
 				<br>
 				<b>{{ __('Customer PIN') }}</b> {{ $receipt_details->customer_pin ?? ''}}
 				<br>
+				<b>{{ __('Customer Name') }}</b> {{ $receipt_details->pos_customer_name ?? ''}}
+				<br>
 				<b>{{$receipt_details->date_label}}</b> {{$receipt_details->invoice_date}}
 				<br>
 				@if(!empty($receipt_details->invoice_no_prefix))

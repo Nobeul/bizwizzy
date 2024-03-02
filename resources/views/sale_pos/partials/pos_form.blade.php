@@ -179,6 +179,16 @@
     		</div>
     	</div>
     </div>
+	<div class="col-sm-4">
+    	<div class="form-group">
+    		<div class="input-group">
+    			<span class="input-group-addon">
+    				<i class="fa fa-user"></i>
+    			</span>
+    			{!! Form::text('customer_name', null, ['class' => 'form-control', 'placeholder' => __('Customer Name')]); !!}
+    		</div>
+    	</div>
+    </div>
     
 </div>
 <!-- include module fields -->
