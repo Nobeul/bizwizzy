@@ -84,6 +84,21 @@
                         @endphp
                     @endforeach
                 </tbody>
+                <!-- This below duplication needed to be removed -->
+                <tbody>
+                    @php
+                        $total_expense = 0;
+                    @endphp
+                    @foreach($expenses as $expense)
+                        <tr>
+                            <td>{{$expense['category'] ?? __('report.others')}}</td>
+                            <td><span class="display_currency" data-currency_symbol="true">{{$expense['total_expense']}}</span></td>
+                        </tr>
+                        @php
+                            $total_expense += $expense['total_expense'];
+                        @endphp
+                    @endforeach
+                </tbody>
                 <tfoot>
                     <tr>
                         <td>@lang('sale.total')</td>

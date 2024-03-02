@@ -6,6 +6,7 @@ use App\BusinessLocation;
 
 use App\Charts\CommonChart;
 use App\Currency;
+use App\ExpenseCategory;
 use App\Transaction;
 use App\Utils\BusinessUtil;
 
@@ -58,7 +59,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $business_id = request()->session()->get('user.business_id');
 
@@ -202,7 +203,44 @@ class HomeController extends Controller
         
         $vehicles = Vehicle::where('status', 'active')->pluck('license_plate', 'id')->toArray();
 
-        return view('home.index', compact('sells_chart_1', 'sells_chart_2', 'widgets', 'all_locations', 'common_settings', 'is_admin', 'vehicles'));
+        // Expense report
+        $business_id = $request->session()->get('user.business_id');
+        $filters = $request->only(['category', 'location_id', 'vehicle_id']);
+
+        $date_range = $request->input('date_range');
+        
+        if (!empty($date_range)) {
+            $date_range_array = explode('~', $date_range);
+            $filters['start_date'] = $this->transactionUtil->uf_date(trim($date_range_array[0]));
+            $filters['end_date'] = $this->transactionUtil->uf_date(trim($date_range_array[1]));
+        } else {
+            $filters['start_date'] = \Carbon::now()->startOfMonth()->format('Y-m-d');
+            $filters['end_date'] = \Carbon::now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $expenses = $this->transactionUtil->getExpenseReport($business_id, $filters);
+
+        $values = [];
+        $labels = [];
+        foreach ($expenses as $expense) {
+            $values[] = (float) $expense->total_expense;
+            $labels[] = !empty($expense->category) ? $expense->category : __('report.others');
+        }
+
+        $chart = new CommonChart;
+        $chart->labels($labels)
+            ->title(__('report.expense_report'))
+            ->dataset(__('report.total_expense'), 'column', $values);
+
+        $categories = ExpenseCategory::where('business_id', $business_id)
+                            ->pluck('name', 'id');
+        
+        $business_locations = BusinessLocation::forDropdown($business_id, true);
+        
+        $business_details = $this->businessUtil->getDetails($business_id);
+        $pos_settings = empty($business_details->pos_settings) ? $this->businessUtil->defaultPosSettings() : json_decode($business_details->pos_settings, true);
+
+        return view('home.index', compact('sells_chart_1', 'sells_chart_2', 'widgets', 'all_locations', 'common_settings', 'is_admin', 'vehicles', 'chart', 'categories', 'business_locations', 'expenses', 'pos_settings'));
     }
 
     /**

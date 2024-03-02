@@ -229,7 +229,7 @@
       	<!-- products less than alert quntity -->
       	<div class="row">
             @if(auth()->user()->can('sell.view') || auth()->user()->can('direct_sell.view') || auth()->user()->can('dashboard.data'))
-                <div class="col-sm-6">
+                <div class="col-sm-12">
                     @component('components.widget', ['class' => 'box-warning'])
                       @slot('icon')
                         <i class="fa fa-exclamation-triangle text-yellow" aria-hidden="true"></i>
@@ -259,8 +259,110 @@
                     @endcomponent
                 </div>
             @endif
+            <section class="content">
+                <div class="row no-print">
+                    <div class="col-md-12">
+                        @component('components.filters', ['title' => __('report.filters')])
+                          {!! Form::open(['url' => action('HomeController@index'), 'method' => 'get' ]) !!}
+                            <div class="{{ isset($pos_settings['vehicle_on_pos_line']) && $pos_settings['vehicle_on_pos_line'] == 1 ? 'col-md-3' : 'col-md-4'}}">
+                                <div class="form-group">
+                                    {!! Form::label('location_id',  __('purchase.business_location') . ':') !!}
+                                    {!! Form::select('location_id', $business_locations, null, ['class' => 'form-control select2', 'style' => 'width:100%']); !!}
+                                </div>
+                            </div>
+                            <div class="{{ isset($pos_settings['vehicle_on_pos_line']) && $pos_settings['vehicle_on_pos_line'] == 1 ? 'col-md-3' : 'col-md-4'}}">
+                                <div class="form-group">
+                                    {!! Form::label('category_id', __('category.category').':') !!}
+                                    {!! Form::select('category', $categories, null, ['placeholder' =>
+                                    __('report.all'), 'class' => 'form-control select2', 'style' => 'width:100%', 'id' => 'category_id']); !!}
+                                </div>
+                            </div>
+                            @if (isset($pos_settings['vehicle_on_pos_line']) && $pos_settings['vehicle_on_pos_line'] == 1)
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('vehicle_id', __('Vehicle').':') !!}
+                                        <select name="vehicle_id" id="exp-rpt-vehicle-id" class="form-control select2">
+                                            <option value="">{{ __('All') }}</option>
+                                            @foreach ($vehicles as $key => $vehicle)
+                                                <option value="{{ $key }}" {{ ! empty(request()->vehicle_id) && request()->vehicle_id == $key ? 'selected' : '' }}>{{ $vehicle }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="{{ isset($pos_settings['vehicle_on_pos_line']) && $pos_settings['vehicle_on_pos_line'] == 1 ? 'col-md-3' : 'col-md-4'}}">
+                                <div class="form-group">
+                                    {!! Form::label('trending_product_date_range', __('report.date_range') . ':') !!}
+                                    {!! Form::text('date_range', null , ['placeholder' => __('lang_v1.select_a_date_range'), 'class' => 'form-control', 'id' => 'trending_product_date_range', 'readonly']); !!}
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                              <button type="submit" class="btn btn-primary pull-right">@lang('report.apply_filters')</button>
+                            </div> 
+                            {!! Form::close() !!}
+                        @endcomponent
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        @component('components.widget', ['class' => 'box-primary'])
+                            {!! $chart->container() !!}
+                        @endcomponent
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                    @component('components.widget', ['class' => 'box-primary'])
+                        <table class="table" id="expense_report_table">
+                            <thead>
+                                <tr>
+                                    <th>@lang( 'expense.expense_categories' )</th>
+                                    <th>@lang( 'report.total_expense' )</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $total_expense = 0;
+                                @endphp
+                                @foreach($expenses as $expense)
+                                    <tr>
+                                        <td>{{$expense['category'] ?? __('report.others')}}</td>
+                                        <td><span class="display_currency" data-currency_symbol="true">{{$expense['total_expense']}}</span></td>
+                                    </tr>
+                                    @php
+                                        $total_expense += $expense['total_expense'];
+                                    @endphp
+                                @endforeach
+                            </tbody>
+                            <!-- This below duplication needed to be removed -->
+                            <tbody>
+                                @php
+                                    $total_expense = 0;
+                                @endphp
+                                @foreach($expenses as $expense)
+                                    <tr>
+                                        <td>{{$expense['category'] ?? __('report.others')}}</td>
+                                        <td><span class="display_currency" data-currency_symbol="true">{{$expense['total_expense']}}</span></td>
+                                    </tr>
+                                    @php
+                                        $total_expense += $expense['total_expense'];
+                                    @endphp
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>@lang('sale.total')</td>
+                                    <td><span class="display_currency" data-currency_symbol="true">{{$total_expense}}</span></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    @endcomponent
+                    </div>
+                </div>
+            
+            </section>
             @can('purchase.view')
-                <div class="col-sm-6">
+                {{-- <div class="col-sm-6">
                     @component('components.widget', ['class' => 'box-warning'])
                     @slot('icon')
                     <i class="fa fa-exclamation-triangle text-yellow" aria-hidden="true"></i>
@@ -288,11 +390,11 @@
                         </div>
                     </div>
                     @endcomponent
-                </div>
+                </div> --}}
             @endcan
         </div>
         @can('stock_report.view')
-            <div class="row">
+            {{-- <div class="row">
                 <div class="@if((session('business.enable_product_expiry') != 1) && (auth()->user()->can('stock_report.view') || auth()->user()->can('dashboard.data'))) col-sm-12 @else col-sm-6 @endif">
                     @component('components.widget', ['class' => 'box-warning'])
                       @slot('icon')
@@ -344,9 +446,9 @@
                         @endcomponent
                     </div>
                 @endif
-      	    </div>
+      	    </div> --}}
         @endcan
-        @if(auth()->user()->can('so.view_all') || auth()->user()->can('so.view_own') || auth()->user()->can('dashboard.data'))
+        {{-- @if(auth()->user()->can('so.view_all') || auth()->user()->can('so.view_own') || auth()->user()->can('dashboard.data'))
             <div class="row" @if(!auth()->user()->can('dashboard.data'))style="margin-top: 190px !important;"@endif>
                 <div class="col-sm-12">
                     @component('components.widget', ['class' => 'box-warning'])
@@ -386,7 +488,7 @@
                     @endcomponent
                 </div>
             </div>
-        @endif
+        @endif --}}
 
         @if(!empty($common_settings['enable_purchase_requisition']) && (auth()->user()->can('purchase_requisition.view_all') || auth()->user()->can('purchase_requisition.view_own') || auth()->user()->can('dashboard.data')) )
             <div class="row" @if(!auth()->user()->can('dashboard.data'))style="margin-top: 190px !important;"@endif>
@@ -467,7 +569,7 @@
             </div>
         @endif
 
-        @if(auth()->user()->can('access_pending_shipments_only') || auth()->user()->can('access_shipping') || auth()->user()->can('access_own_shipping') || auth()->user()->can('dashboard.data'))
+        {{-- @if(auth()->user()->can('access_pending_shipments_only') || auth()->user()->can('access_shipping') || auth()->user()->can('access_own_shipping') || auth()->user()->can('dashboard.data'))
             @component('components.widget', ['class' => 'box-warning'])
               @slot('icon')
                   <i class="fas fa-list-alt text-yellow fa-lg" aria-hidden="true"></i>
@@ -527,7 +629,7 @@
                     </div> 
                 </div>
             @endcomponent
-        @endif
+        @endif --}}
 
         @if((auth()->user()->can('account.access') || auth()->user()->can('dashboard.data')) && config('constants.show_payments_recovered_today') == true)
             @component('components.widget', ['class' => 'box-warning'])
@@ -590,6 +692,8 @@
         {!! $sells_chart_1->script() !!}
         {!! $sells_chart_2->script() !!}
     @endif
+    <script src="{{ asset('js/report.js?v=' . $asset_v) }}"></script>
+    {!! $chart->script() !!}
     <script type="text/javascript">
         $(document).ready( function(){
         sales_order_table = $('#sales_order_table').DataTable({
