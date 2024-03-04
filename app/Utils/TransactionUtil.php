@@ -5378,6 +5378,12 @@ class TransactionUtil extends Util
             $ledger[$key]['balance'] = $balance;
         }
 
+        $final_output = collect($ledger);
+        $total_credit = $final_output->sum('credit');
+        $total_debit = $final_output->sum('debit');
+        $total_paid = $total_credit;
+        $curr_due = $beginning_balance + $total_debit - $total_credit;
+
         $output = [
             'ledger' => $ledger,
             'start_date' => $start_date,
