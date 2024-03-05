@@ -40,7 +40,7 @@
     	   <br>
     	   <div class="row">
                 <!-- /.col -->
-                <div class="col-md-3 col-sm-6 col-xs-12 col-custom">
+                <div class="col-md-4 col-sm-6 col-xs-12 col-custom">
                    <div class="info-box info-box-new-style">
                         <span class="info-box-icon bg-aqua"><i class="ion ion-ios-cart-outline"></i></span>
 
@@ -52,7 +52,7 @@
                    </div>
                   <!-- /.info-box -->
                 </div>
-                <div class="col-md-3 col-sm-6 col-xs-12 col-custom">
+                <div class="col-md-4 col-sm-6 col-xs-12 col-custom">
                     <div class="info-box info-box-new-style">
                        <span class="info-box-icon bg-green">
                             <i class="ion ion-ios-paper-outline"></i>
@@ -67,7 +67,7 @@
                     </div>
                   <!-- /.info-box -->
                 </div>
-                <div class="col-md-3 col-sm-6 col-xs-12 col-custom">
+                <div class="col-md-4 col-sm-6 col-xs-12 col-custom">
                     <div class="info-box info-box-new-style">
                        <span class="info-box-icon bg-yellow">
                             <i class="ion ion-ios-paper-outline"></i>
@@ -83,7 +83,7 @@
                   <!-- /.info-box -->
                 </div>
 
-                <div class="col-md-3 col-sm-6 col-xs-12 col-custom">
+                {{-- <div class="col-md-3 col-sm-6 col-xs-12 col-custom">
                     <div class="info-box info-box-new-style">
                        <span class="info-box-icon bg-red text-white">
                             <i class="fas fa-exchange-alt"></i>
@@ -98,11 +98,11 @@
                             {{ __('lang_v1.total_sell_return_paid')}}<span class="total_srp"></span></p>
                     </div>
                   <!-- /.info-box -->
-                </div>
+                </div> --}}
     	    <!-- /.col -->
             </div>
           	<div class="row">
-                <div class="col-md-3 col-sm-6 col-xs-12 col-custom">
+                {{-- <div class="col-md-3 col-sm-6 col-xs-12 col-custom">
                    <div class="info-box info-box-new-style">
                         <span class="info-box-icon bg-aqua"><i class="ion ion-cash"></i></span>
 
@@ -147,10 +147,10 @@
                             {{ __('lang_v1.total_purchase_return_paid')}}<span class="total_prp"></span></p>
                     </div>
                   <!-- /.info-box -->
-                </div>
+                </div> --}}
 
                 <!-- expense -->
-                <div class="col-md-3 col-sm-6 col-xs-12 col-custom">
+                <div class="col-md-4 col-sm-6 col-xs-12 col-custom">
                     <div class="info-box info-box-new-style">
                         <span class="info-box-icon bg-red">
                           <i class="fas fa-minus-circle"></i>
@@ -166,11 +166,11 @@
                     </div>
                   <!-- /.info-box -->
                 </div>
-            </div>
+            {{-- </div>
             
-            <div class="row">
+            <div class="row"> --}}
                 <!-- trips -->
-                <div class="col-md-3 col-sm-6 col-xs-12 col-custom">
+                <div class="col-md-4 col-sm-6 col-xs-12 col-custom">
                     <div class="info-box info-box-new-style">
                         <span class="info-box-icon bg-red">
                           <i class="fas fa-minus-circle"></i>
