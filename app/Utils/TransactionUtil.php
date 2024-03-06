@@ -5382,7 +5382,7 @@ class TransactionUtil extends Util
         $total_credit = $final_output->sum('credit');
         $total_debit = $final_output->sum('debit');
         $total_paid = $total_credit;
-        $curr_due = $beginning_balance + $total_debit - $total_credit;
+        $curr_due = $total_debit - $total_credit;
 
         $output = [
             'ledger' => $ledger,
