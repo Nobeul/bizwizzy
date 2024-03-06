@@ -1633,9 +1633,9 @@ class ContactController extends Controller
     {
         if (request()->ajax()) {
             $business_id = request()->session()->get('user.business_id');
-            $due = $this->transactionUtil->getContactDue($contact_id, $business_id);
+            $due = $this->transactionUtil->getLedgerDetails($contact_id, \Carbon::now()->startOfYear()->format('Y-m-d'), \Carbon::now()->format('Y-m-d'))['balance_due'];
 
-            $output = $due != 0 ? $this->transactionUtil->num_f($due, true) : '';
+            $output = $due != 0 ? $this->transactionUtil->num_f($due, true) : 0;
             return $output;
         }
     }
