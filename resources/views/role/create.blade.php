@@ -624,6 +624,14 @@
                             </label>
                         </div>
                     </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'deselect_product', false, ['class' => 'input-icheck']) !!}
+                                {{ __('Deselect product from pos list') }}
+                            </label>
+                        </div>
+                    </div>
 
                 </div>
             </div>

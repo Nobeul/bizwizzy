@@ -399,7 +399,9 @@
 		<input type="{{$subtotal_type}}" class="form-control pos_line_total @if(!empty($pos_settings['is_pos_subtotal_editable'])) input_number @endif" value="{{@num_format($product->quantity_ordered*$unit_price_inc_tax )}}">
 		<span class="display_currency pos_line_total_text @if(!empty($pos_settings['is_pos_subtotal_editable'])) hide @endif" data-currency_symbol="true">{{$product->quantity_ordered*$unit_price_inc_tax}}</span>
 	</td>
-	<td class="text-center v-center">
-		<i class="fa fa-times text-danger pos_remove_row cursor-pointer" aria-hidden="true"></i>
-	</td>
+	@if($showCrossButton)
+		<td class="text-center v-center">
+			<i class="fa fa-times text-danger pos_remove_row cursor-pointer" aria-hidden="true"></i>
+		</td>
+	@endcan
 </tr>

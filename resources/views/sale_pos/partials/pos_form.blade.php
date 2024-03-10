@@ -232,7 +232,9 @@
 					<th class="text-center col-md-2">
 						@lang('sale.subtotal')
 					</th>
-					<th class="text-center"><i class="fas fa-times" aria-hidden="true"></i></th>
+					@if ($showCrossButton)
+						<th class="text-center"><i class="fas fa-times" aria-hidden="true"></i></th>
+					@endif
 				</tr>
 			</thead>
 			<tbody></tbody>

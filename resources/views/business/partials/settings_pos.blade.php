@@ -339,6 +339,19 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-sm-4">
+            <div class="form-group">
+                <div class="checkbox">
+                <br>
+                  <label>
+                    {!! Form::checkbox('pos_settings[deselect_product]', 1,  
+                    empty($pos_settings['deselect_product']) ? 0 : 1 , 
+                    [ 'class' => 'input-icheck']); !!} {{ "Restrict deselecting product on pos" }}
+                  </label>
+                </div>
+            </div>
+        </div>
     </div>    
     <hr>
     @include('business.partials.settings_weighing_scale')

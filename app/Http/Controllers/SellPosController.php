@@ -256,6 +256,12 @@ class SellPosController extends Controller
         //Added check because $users is of no use if enable_contact_assign if false
         $users = config('constants.enable_contact_assign') ? User::forDropdown($business_id, false, false, false, true) : [];
 
+        if (! isset($pos_settings['deselect_product']) || $pos_settings['deselect_product'] == 0 || ($pos_settings['deselect_product'] == 1 && auth()->user()->can('deselect_product'))) {
+            $showCrossButton = true;
+        } else {
+            $showCrossButton = false;
+        }
+
         return view('sale_pos.create')
             ->with(compact(
                 'edit_discount',
@@ -289,7 +295,8 @@ class SellPosController extends Controller
                 'default_invoice_schemes',
                 'invoice_layouts',
                 'users',
-                'business_id'
+                'business_id',
+                'showCrossButton'
             ));
     }
 
@@ -1616,8 +1623,13 @@ class SellPosController extends Controller
 
             $vehicles = Vehicle::where('status', 'active')->get();
             
+            if (! isset($pos_settings['deselect_product']) || $pos_settings['deselect_product'] == 0 || ($pos_settings['deselect_product'] == 1 && auth()->user()->can('deselect_product'))) {
+                $showCrossButton = true;
+            } else {
+                $showCrossButton = false;
+            }
             $output['html_content'] =  view('sale_pos.product_row')
-                        ->with(compact('product', 'row_count', 'tax_dropdown', 'enabled_modules', 'pos_settings', 'sub_units', 'discount', 'waiters', 'edit_discount', 'edit_price', 'purchase_line_id', 'warranties', 'quantity', 'is_direct_sell', 'so_line', 'is_sales_order', 'last_sell_line', 'vehicles'))
+                        ->with(compact('product', 'row_count', 'tax_dropdown', 'enabled_modules', 'pos_settings', 'sub_units', 'discount', 'waiters', 'edit_discount', 'edit_price', 'purchase_line_id', 'warranties', 'quantity', 'is_direct_sell', 'so_line', 'is_sales_order', 'last_sell_line', 'vehicles', 'showCrossButton'))
                         ->render();
         }
 
