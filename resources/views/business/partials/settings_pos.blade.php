@@ -347,7 +347,7 @@
                   <label>
                     {!! Form::checkbox('pos_settings[deselect_product]', 1,  
                     empty($pos_settings['deselect_product']) ? 0 : 1 , 
-                    [ 'class' => 'input-icheck']); !!} {{ "Restrict deselecting product on pos" }}
+                    [ 'class' => 'input-icheck']); !!} {{ __("Restrict deselecting product on pos") }}
                   </label>
                 </div>
             </div>
