@@ -27,7 +27,7 @@
         </td>
       </tr>
 
-      @if (isset($is_mpesa_enabled) && $is_mpesa_enabled == true)
+      @if ($is_mpesa_enabled)
         <tr>
           <td>
             Mpesa Payment:
@@ -218,7 +218,7 @@
         $total_amount += $register_details->total_custom_pay_7;
       }
 
-      if (isset($is_mpesa_enabled) && $is_mpesa_enabled == true) {
+      if ($is_mpesa_enabled) {
         $total_amount += $register_details->total_mpesa;
       }
 

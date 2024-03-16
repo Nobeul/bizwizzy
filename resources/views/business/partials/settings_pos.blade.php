@@ -236,18 +236,6 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-4">
-            <div class="form-group">
-                <div class="checkbox">
-                <br>
-                  <label>
-                    {!! Form::checkbox('pos_settings[vehicle_on_pos_line]', 1,  
-                    empty($pos_settings['vehicle_on_pos_line']) ? 0 : 1 , 
-                    [ 'class' => 'input-icheck']); !!} {{ "Vehicle on pos line" }}
-                  </label>
-                </div>
-            </div>
-        </div>
         <div class="clearfix"></div>
         <div class="col-sm-4">
             <div class="form-group">
@@ -339,7 +327,7 @@
                 </div>
             </div>
         </div>
-
+        
         <div class="col-sm-4">
             <div class="form-group">
                 <div class="checkbox">
@@ -347,7 +335,20 @@
                   <label>
                     {!! Form::checkbox('pos_settings[deselect_product]', 1,  
                     empty($pos_settings['deselect_product']) ? 0 : 1 , 
-                    [ 'class' => 'input-icheck']); !!} {{ __("Restrict deselecting product on pos") }}
+                    [ 'class' => 'input-icheck']); !!} {{ "Restrict deselecting product on pos" }}
+                  </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-sm-4">
+            <div class="form-group">
+                <div class="checkbox">
+                <br>
+                  <label>
+                    {!! Form::checkbox('pos_settings[deselect_product]', 1,  
+                    empty($pos_settings['deselect_product']) ? 0 : 1 , 
+                    [ 'class' => 'input-icheck']); !!} {{ "Restrict deselecting product on pos" }}
                   </label>
                 </div>
             </div>

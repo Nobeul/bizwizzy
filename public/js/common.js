@@ -83,7 +83,7 @@ $(document).ready(function() {
                 error.insertAfter(element.parent());
             } else {
                 error.insertAfter(element);
-            } 
+            }
         },
 
         invalidHandler: function() {

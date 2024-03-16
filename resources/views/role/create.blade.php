@@ -624,6 +624,7 @@
                             </label>
                         </div>
                     </div>
+
                     <div class="col-md-12">
                         <div class="checkbox">
                             <label>
@@ -632,7 +633,6 @@
                             </label>
                         </div>
                     </div>
-
                 </div>
             </div>
             <hr>

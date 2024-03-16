@@ -1427,7 +1427,7 @@ class TransactionUtil extends Util
         // } else {
         //      $output['subtotal'] = 0;
         // }
-        $output['subtotal'] = isset($output['subtotal']) ? $this->num_f($output['subtotal'], $show_currency, $business_details) : 0;
+        $output['subtotal'] = $this->num_f($output['subtotal'], $show_currency, $business_details);
         
 
         //round off
