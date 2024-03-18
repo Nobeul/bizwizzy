@@ -86,9 +86,15 @@ $(document).ready(function() {
             }
         },
 
-        invalidHandler: function() {
-            toastr.error(LANG.some_error_in_input_field);
-        },
+        invalidHandler: function(event, validator) {
+            // Get array of invalid elements
+            var invalidFields = validator.invalidElements();
+    
+            // Loop through invalid fields
+            $.each(invalidFields, function(index, field) {
+                toastr.error(LANG.some_error_in_input_field + field.name + ' is not valid');
+            });
+        }
     });
 
     jQuery.validator.addMethod(
