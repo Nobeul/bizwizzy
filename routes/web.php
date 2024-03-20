@@ -374,6 +374,9 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     
     Route::resource('account-types', 'AccountTypeController');
 
+    Route::get('deselect-reports', 'DeselectController@getReportData');
+    Route::post('deselect-reports', 'DeselectController@storeOrUpdate');
+
     //Restaurant module
     Route::group(['prefix' => 'modules'], function () {
         Route::resource('tables', 'Restaurant\TableController');

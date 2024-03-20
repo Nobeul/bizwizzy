@@ -1286,6 +1286,14 @@
                         </div>
                     </div>
 
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'deselected_product_report', false, ['class' => 'input-icheck']) !!} {{ __('Voided Products Report') }}
+                            </label>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             <hr>

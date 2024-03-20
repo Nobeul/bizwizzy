@@ -619,6 +619,13 @@ class AdminSidebarMenu
                                 ['icon' => 'fa fas fa-user', 'active' => request()->segment(2) == 'sales-representative-report']
                             );
                         }
+                        if (auth()->user()->can('deselected_product_report')) {
+                            $sub->url(
+                                action('DeselectController@getReportData'),
+                                __('Voided Products Report'),
+                                ['icon' => 'fa fas fa-user', 'active' => request()->segment(1) == 'deselect-reports']
+                            );
+                        }
                         if (auth()->user()->can('purchase_n_sell_report.view') && in_array('tables', $enabled_modules)) {
                             $sub->url(
                                 action('ReportController@getTableReport'),

@@ -1431,6 +1431,23 @@ $(document).ready(function() {
         });
     }
 
+    if ($('#deselect_date_range').length == 1) {
+        $('#deselect_date_range').daterangepicker(
+            dateRangeSettings, 
+            function(start, end) {
+                $('#deselect_date_range').val(
+                    start.format(moment_date_format) + ' ~ ' + end.format(moment_date_format)
+                );
+                deselected_product_report_table.ajax.reload();
+            }
+        );
+
+        $('#deselect_date_range').on('cancel.daterangepicker', function(ev, picker) {
+            $('#product_sr_date_filter').val('');
+            deselected_product_report_table.ajax.reload();
+        });
+    }
+
     //Expense table
     expense_table = $('#expense_table').DataTable({
         processing: true,

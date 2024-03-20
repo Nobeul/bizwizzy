@@ -483,6 +483,11 @@ $(document).ready(function() {
 
     //Remove row on click on remove row
     $('table#pos_table tbody').on('click', 'i.pos_remove_row', function() {
+        let product_id = $(this).closest('tr').find('.product_id').val();
+        let quantity = parseFloat($(this).closest('tr').find('input.pos_quantity').val().replace(/,/g, ''));
+        let unit_price = parseFloat($(this).closest('tr').find('input.pos_unit_price_inc_tax').val().replace(/,/g, ''));
+        entryDeselectReport(product_id, quantity, unit_price);
+
         $(this)
             .parents('tr')
             .remove();
@@ -1571,6 +1576,25 @@ function get_recent_transactions(status, element_obj) {
     });
 }
 
+function reloadPageWithDelay() {
+    $(".product_row").each(function () {
+        let product_id = $(this).closest('tr').find('.product_id').val();
+        let quantity = parseFloat($(this).closest('tr').find('input.pos_quantity').val().replace(/,/g, ''));
+        let unit_price = parseFloat($(this).closest('tr').find('input.pos_unit_price_inc_tax').val().replace(/,/g, ''));
+        entryDeselectReport(product_id, quantity, unit_price);
+    });
+    setTimeout(function() {
+        window.location.reload(true); // Reload the page
+    }, 10000); // Delay in milliseconds (e.g., 2000 ms = 2 seconds)
+}
+
+$(window).on('beforeunload', function() {
+    reloadPageWithDelay();
+
+    // Return a message to prompt the user to confirm leaving the page
+    return 'Are you sure you want to leave this page?';
+});
+
 //variation_id is null when weighing_scale_barcode is used.
 function pos_product_row(variation_id = null, purchase_line_id = null, weighing_scale_barcode = null, quantity = 1) {
 
@@ -1617,6 +1641,9 @@ function pos_product_row(variation_id = null, purchase_line_id = null, weighing_
                     __write_number(qty_element, qty + 1);
                     qty_element.change();
 
+                    let updated_quantity = qty + 1;
+                    let unit_price = $(this).find('.pos_unit_price_inc_tax').val();
+                    entryDeselectReport(variation_id, updated_quantity, unit_price);
                     round_row_to_iraqi_dinnar($(this));
 
                     $('input#search_product')
@@ -1766,6 +1793,24 @@ function pos_each_row(row_obj) {
     //var unit_price_inc_tax = __read_number(row_obj.find('input.pos_unit_price_inc_tax'));
 
     __write_number(row_obj.find('input.item_tax'), unit_price_inc_tax - discounted_unit_price);
+}
+
+function entryDeselectReport(product_id, quantity, unit_price) {
+    var location_id = $("#select_location_id").val();
+    $.ajax({
+        method: 'POST',
+        url: '/deselect-reports',
+        data: { 
+            product_id: product_id,
+            quantity: quantity,
+            unit_price: unit_price,
+            business_location_id: location_id
+        },
+        dataType: 'json',
+        success: function(result) {
+            console.log(result);
+        },
+    });
 }
 
 function pos_total_row() {
