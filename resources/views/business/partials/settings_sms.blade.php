@@ -54,13 +54,13 @@
         <div class="col-xs-3">
             <div class="form-group">
                 {!! Form::label('pinnacle_username', __('Pinnacle Username') . ':') !!}
-                {!! Form::text('sms_settings[pinnacle_username]', !empty($sms_settings['pinnacle_username']) ? $sms_settings['pinnacle_username'] : null, ['class' => 'form-control','placeholder' => __('Pinnacle Username'), 'id' => 'pinnacle_username', 'required']); !!}
+                {!! Form::text('sms_settings[pinnacle_username]', !empty($sms_settings['pinnacle_username']) ? $sms_settings['pinnacle_username'] : null, ['class' => 'form-control','placeholder' => __('Pinnacle Username'), 'id' => 'pinnacle_username']); !!}
             </div>
         </div>
         <div class="col-xs-3">
             <div class="form-group">
                 {!! Form::label('pinnacle_password', __('Pinnacle Password') . ':') !!}
-                {!! Form::text('sms_settings[pinnacle_password]', !empty($sms_settings['pinnacle_password']) ? $sms_settings['pinnacle_password'] : null, ['class' => 'form-control','placeholder' => __('Pinnacle Password'), 'id' => 'pinnacle_password', 'required']); !!}
+                {!! Form::text('sms_settings[pinnacle_password]', !empty($sms_settings['pinnacle_password']) ? $sms_settings['pinnacle_password'] : null, ['class' => 'form-control','placeholder' => __('Pinnacle Password'), 'id' => 'pinnacle_password']); !!}
             </div>
         </div>
         <div class="col-xs-3">
