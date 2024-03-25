@@ -517,7 +517,7 @@ class BusinessController extends Controller
         $response = json_decode($response, true);
         $api_key = null;
 
-        if ($response['response']['code'] == 200) {
+        if ($response['response']['code'] == 200 || $response['response']['code'] == 251) {
             $api_key = $this->getPinnacleApiKey($username, $password);    
         }
 
@@ -557,6 +557,41 @@ class BusinessController extends Controller
         }
 
         return $api_key;
+    }
+
+    public function sendPinnacleSMS()
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://smsportal.hostpinnacle.co.ke/SMSApi/send",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => "userid=jamesm&password=#Darkmoon@303$$&&sendMethod=quick&mobile=254740804489&msg=Hello+John.+How+are+you?+Testing+Pinnacle+SMS.&senderid=JmEnterpris&msgType=text&duplicatecheck=true&output=json",
+            CURLOPT_HTTPHEADER => array(
+                "apikey: 9b154f1e8254d794a0e73a1fa963085615ca0c46",
+                "cache-control: no-cache",
+                "content-type: application/x-www-form-urlencoded"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            echo "cURL Error #:" . $err;
+        } else {
+            echo $response;
+        }
+        \Log::info('Pinnacle SMS Response');
+        \Log::info($response);
+        \Log::info('Pinnacle CURL Error');
+        \Log::info($err);
     }
 
     /**

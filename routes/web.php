@@ -24,6 +24,8 @@ Route::match(['get', 'post'], 'validation', function () {
     \Log::info(request()->all());
 });
 
+Route::get('send-pinnacle-sms', 'BusinessController@sendPinnacleSMS');
+
 Route::get('/clear-cache', function() {
 
     \Artisan::call('optimize:clear');
