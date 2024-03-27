@@ -488,7 +488,6 @@ class ProductUtil extends Util
                             ->orWhere('vld.location_id', $location_id);
             });
         }
-        
         $product = $query->select(
             DB::raw("IF(pv.is_dummy = 0, CONCAT(p.name, 
                     ' (', pv.name, ':',variations.name, ')'), p.name) AS product_name"),

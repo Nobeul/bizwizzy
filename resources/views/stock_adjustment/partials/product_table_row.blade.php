@@ -66,7 +66,7 @@
 
         <input type="text" class="form-control product_quantity input_number input_quantity" value="{{@format_quantity($product->quantity_ordered)}}" name="products[{{$row_index}}][quantity]" 
         @if($product->unit_allow_decimal == 1) data-decimal=1 @else data-rule-abs_digit="true" data-msg-abs_digit="@lang('lang_v1.decimal_value_not_allowed')" data-decimal=0 @endif
-        data-rule-required="true" data-msg-required="@lang('validation.custom-messages.this_field_is_required')">
+        data-rule-required="true" data-msg-required="@lang('validation.custom-messages.this_field_is_required')" data-current-stock="{{ $stock_details['current_stock'] ?? 0 }}">
         {{$product->unit}}
     </td>
     <td>

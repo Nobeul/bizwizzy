@@ -74,9 +74,35 @@ $(document).ready(function() {
         update_table_total();
     });
 
+    function disable_stock_adjustment_form_actions(){
+        if (!window.navigator.onLine) {
+            return false;
+        }
+        $('#stock-adjustment-submit').attr('disabled', 'true');
+    }
+    
+    function enable_stock_adjustment_form_actions(){
+        $('#stock-adjustment-submit').removeAttr('disabled');
+    }
+
     $(document).on('change', 'input.product_quantity', function() {
+        var inputed_quantity = parseFloat($(this).val());
+        var current_stock = parseFloat($(this).attr('data-current-stock'));
+        var error_msg_td = $(this).closest('tr').find('.product_quantity').closest('td');
+
+        if (inputed_quantity < 0) {
+            if (Math.abs(inputed_quantity) > current_stock) {
+                error_msg_td.find('label.error').remove();
+                error_msg_td.append( '<label class="error "> Quantity in hand is'  + current_stock + '</label>');
+                disable_stock_adjustment_form_actions();
+            }
+        } else {
+            error_msg_td.find('label.error').remove();
+            enable_stock_adjustment_form_actions();
+        }
         update_table_row($(this).closest('tr'));
     });
+    
     $(document).on('change', 'input.product_unit_price', function() {
         update_table_row($(this).closest('tr'));
     });

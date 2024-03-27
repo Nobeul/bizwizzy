@@ -188,6 +188,23 @@ class StockAdjustmentController extends Controller
             if (!empty($products)) {
                 $product_data = [];
 
+                $go_ahead = true;
+                foreach ($products as $product) {
+                    $stock_details = $this->productUtil->getVariationStockDetails($business_id, $product['variation_id'], $input_data['location_id']);
+                    if ($product['quantity'] < 0 && (abs($product['quantity']) > $stock_details['current_stock'])) {
+                        $go_ahead = false;
+                        break;
+                    }
+                }
+                if (! $go_ahead) {
+                    $output = [
+                        'success' => 0,
+                        'msg' => 'Found mismatch in current stock on hand'
+                    ];
+
+                    return redirect('stock-adjustments')->with('status', $output);
+                }
+
                 foreach ($products as $product) {
                     $adjustment_line = [
                         'product_id' => $product['product_id'],
@@ -393,8 +410,9 @@ class StockAdjustmentController extends Controller
                 return view('stock_transfer.partials.product_table_row')
                     ->with(compact('product', 'row_index', 'sub_units'));
             } else {
+                $stock_details = $this->productUtil->getVariationStockDetails($business_id, $variation_id, $location_id);
                 return view('stock_adjustment.partials.product_table_row')
-                        ->with(compact('product', 'row_index', 'sub_units'));
+                        ->with(compact('product', 'row_index', 'sub_units', 'stock_details'));
             }
         }
     }
