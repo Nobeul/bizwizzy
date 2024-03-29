@@ -892,29 +892,43 @@ class StockTransferController extends Controller
             $status = $request->input('status');
 
             DB::beginTransaction();
+            $process_transaction = true;
             if ($status == 'completed' && $sell_transfer->status != 'completed' ) {
 
                 foreach ($sell_transfer->sell_lines as $sell_line) {
                     if ($sell_line->product->enable_stock) {
-                        $this->productUtil->decreaseProductQuantity(
-                            $sell_line->product_id,
-                            $sell_line->variation_id,
-                            $sell_transfer->location_id,
-                            $sell_line->quantity
-                        );
+                        $stock_details = $this->productUtil->getVariationStockDetails($business_id, $sell_line->variation_id, $sell_transfer->location_id)['current_stock'];
 
-                        $this->productUtil->updateProductQuantity(
-                            $purchase_transfer->location_id,
-                            $sell_line->product_id,
-                            $sell_line->variation_id,
-                            $sell_line->quantity,
-                            0,
-                            null,
-                            false
-                        );
+                        if ($sell_line->quantity <= $stock_details) {
+                            $this->productUtil->decreaseProductQuantity(
+                                $sell_line->product_id,
+                                $sell_line->variation_id,
+                                $sell_transfer->location_id,
+                                $sell_line->quantity
+                            );
+    
+                            $this->productUtil->updateProductQuantity(
+                                $purchase_transfer->location_id,
+                                $sell_line->product_id,
+                                $sell_line->variation_id,
+                                $sell_line->quantity,
+                                0,
+                                null,
+                                false
+                            );
+                        } else {
+                            $process_transaction = false;
+                        }
                     }
                 }
 
+                if (! $process_transaction) {
+                    $output = [
+                        'success' => 0,
+                        'msg' => "Exceeds quantity in stock"
+                    ];
+                    return $output;
+                }
                 //Adjust stock over selling if found
                 $this->productUtil->adjustStockOverSelling($purchase_transfer);
 
