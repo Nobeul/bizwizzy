@@ -225,6 +225,14 @@ class StockTransferController extends Controller
 
             if (!empty($products)) {
                 foreach ($products as $product) {
+                    if ($product['quantity'] <= 0) {
+                        $output = [
+                            'success' => 0,
+                            'msg' => 'Invalid quantity',
+                        ];
+
+                        return redirect('stock-transfers')->with('status', $output);
+                    }
                     $sell_line_arr = [
                                 'product_id' => $product['product_id'],
                                 'variation_id' => $product['variation_id'],

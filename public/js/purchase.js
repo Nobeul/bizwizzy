@@ -230,6 +230,17 @@ $(document).ready(function() {
         });
     });
 
+    function disable_purchase_form_actions(){
+        if (!window.navigator.onLine) {
+            return false;
+        }
+        $('#submit_purchase_form').attr('disabled', 'true');
+    }
+    
+    function enable_purchase_form_actions(){
+        $('#submit_purchase_form').removeAttr('disabled');
+    }
+
     //On Change of quantity
     $(document).on('change', '.purchase_quantity', function() {
         var row = $(this).closest('tr');
@@ -243,6 +254,17 @@ $(document).ready(function() {
         //Calculate sub totals
         var sub_total_before_tax = quantity * purchase_before_tax;
         var sub_total_after_tax = quantity * purchase_after_tax;
+
+        var error_msg_td = $(this).closest('tr').find('.purchase_quantity').closest('td');
+
+        if (quantity <= 0) {
+            error_msg_td.find('label.error').remove();
+            error_msg_td.append( '<label class="error "> Invalid quantity</label>');
+            disable_purchase_form_actions();
+        } else {
+            error_msg_td.find('label.error').remove();
+            enable_purchase_form_actions();
+        }
 
         row.find('.row_subtotal_before_tax').text(
             __currency_trans_from_en(sub_total_before_tax, false, true)

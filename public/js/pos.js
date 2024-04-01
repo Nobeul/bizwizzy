@@ -296,6 +296,17 @@ $(document).ready(function() {
             $(this).val(entered_qty);
         });
 
+        var error_msg_td = $(this).closest('tr').find('.pos_quantity').closest('td');
+        if (__read_number($(this)) <= 0) {
+            error_msg_td.find('label.error').remove();
+            error_msg_td.append( '<label class="error">Invalid quantity</label>');
+            disable_pos_form_actions();
+            is_msp_valid = false;
+        } else {
+            error_msg_td.find('label.error').remove();
+            enable_pos_form_actions();
+        }
+
         pos_total_row();
 
         adjustComboQty(tr);

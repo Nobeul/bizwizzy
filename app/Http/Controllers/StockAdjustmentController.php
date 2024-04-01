@@ -189,17 +189,20 @@ class StockAdjustmentController extends Controller
                 $product_data = [];
 
                 $go_ahead = true;
+                $message = 'Found mismatch in current stock on hand';
+
                 foreach ($products as $product) {
                     $stock_details = $this->productUtil->getVariationStockDetails($business_id, $product['variation_id'], $input_data['location_id']);
-                    if ($product['quantity'] < 0 && (abs($product['quantity']) > $stock_details['current_stock'])) {
+                    if ($product['quantity'] == 0 || ($product['quantity'] < 0 && (abs($product['quantity']) > $stock_details['current_stock']))) {
                         $go_ahead = false;
+                        $message = $product['quantity'] == 0 ? 'Invalid quantity' : $message;
                         break;
                     }
                 }
                 if (! $go_ahead) {
                     $output = [
                         'success' => 0,
-                        'msg' => 'Found mismatch in current stock on hand'
+                        'msg' => $message
                     ];
 
                     return redirect('stock-adjustments')->with('status', $output);

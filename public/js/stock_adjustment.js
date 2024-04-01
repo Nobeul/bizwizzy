@@ -93,9 +93,13 @@ $(document).ready(function() {
         if (inputed_quantity < 0) {
             if (Math.abs(inputed_quantity) > current_stock) {
                 error_msg_td.find('label.error').remove();
-                error_msg_td.append( '<label class="error "> Quantity in hand is'  + current_stock + '</label>');
+                error_msg_td.append( '<label class="error "> Quantity in hand is '  + current_stock + '</label>');
                 disable_stock_adjustment_form_actions();
             }
+        } else if (inputed_quantity == 0) {
+            error_msg_td.find('label.error').remove();
+            error_msg_td.append( '<label class="error "> Invalid quantity</label>');
+            disable_stock_adjustment_form_actions();
         } else {
             error_msg_td.find('label.error').remove();
             enable_stock_adjustment_form_actions();

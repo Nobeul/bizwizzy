@@ -292,6 +292,27 @@ class PurchaseController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        if (! empty($request->purchases) && count($request->purchases) > 0) {
+            
+            $go_ahead = true;
+            
+            foreach ($request->purchases as $purchase) {
+                if ($purchase['quantity'] <= 0) {
+                    $go_ahead = false;
+                    break;
+                }
+            }
+
+            if (! $go_ahead) {
+                $output = [
+                    'success' => 0,
+                    'msg' => __('Invalid quantity')
+                ];
+
+                return redirect('purchases')->with('status', $output);
+            }
+        }
+        
         try {
             $business_id = $request->session()->get('user.business_id');
 

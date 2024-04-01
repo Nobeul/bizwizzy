@@ -73,7 +73,30 @@ $(document).ready(function() {
         update_table_total();
     });
 
+    function disable_stock_transfer_form_actions(){
+        if (!window.navigator.onLine) {
+            return false;
+        }
+        $('#save_stock_transfer').attr('disabled', 'true');
+    }
+    
+    function enable_stock_transfer_form_actions(){
+        $('#save_stock_transfer').removeAttr('disabled');
+    }
+
     $(document).on('change', 'input.product_quantity', function() {
+        var inputed_quantity = parseFloat($(this).val());
+        var error_msg_td = $(this).closest('tr').find('.product_quantity').closest('td');
+
+        if (inputed_quantity <= 0) {
+            error_msg_td.find('label.error').remove();
+            error_msg_td.append( '<label class="error "> Invalid quantity</label>');
+            disable_stock_transfer_form_actions();
+        } else {
+            error_msg_td.find('label.error').remove();
+            enable_stock_transfer_form_actions();
+        }
+
         update_table_row($(this).closest('tr'));
     });
     $(document).on('change', 'input.product_unit_price', function() {
