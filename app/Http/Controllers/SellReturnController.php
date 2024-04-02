@@ -270,6 +270,24 @@ class SellReturnController extends Controller
             $input = $request->except('_token');
 
             if (!empty($input['products'])) {
+                $go_ahead = true;
+
+                foreach ($input['products'] as $product) {
+                    if ($product['quantity'] <= 0) {
+                        $go_ahead = false;
+                        break;
+                    }    
+                }
+
+                if (! $go_ahead) {
+                    $output = [
+                        'success' => 0,
+                        'msg' => 'Invalid quantity'
+                    ];
+
+                    return $output;
+                }
+
                 $business_id = $request->session()->get('user.business_id');
 
                 //Check if subscribed or not

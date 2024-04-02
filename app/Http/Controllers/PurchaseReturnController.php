@@ -240,6 +240,23 @@ class PurchaseReturnController extends Controller
             $return_quantities = $request->input('returns');
             $return_total = 0;
 
+            $go_ahead = true;
+            foreach ($return_quantities as $return) {
+                if ($return <= 0) {
+                    $go_ahead = false;
+                    break;
+                }
+            }
+
+            if (! $go_ahead) {
+                $output = [
+                    'success' => 0,
+                    'msg' => __('Invalid Quantity')
+                ];
+
+                return redirect('purchase-return')->with('status', $output);
+            }
+
             DB::beginTransaction();
 
             foreach ($purchase->purchase_lines as $purchase_line) {

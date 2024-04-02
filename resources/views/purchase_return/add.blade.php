@@ -135,7 +135,7 @@
 		<br>
 		<div class="row">
 			<div class="col-sm-12">
-				<button type="submit" class="btn btn-primary pull-right">@lang('messages.save')</button>
+				<button type="submit" class="btn btn-primary pull-right" id="purchase-return-form">@lang('messages.save')</button>
 			</div>
 		</div>
 	@endcomponent
@@ -150,7 +150,31 @@
 		$('form#purchase_return_form').validate();
 		update_purchase_return_total();
 	});
+	
+	function disable_purchase_return_form_form_actions(){
+        if (!window.navigator.onLine) {
+            return false;
+        }
+        $('#purchase-return-form').attr('disabled', 'true');
+    }
+    
+    function enable_purchase_return_form_form_actions(){
+        $('#purchase-return-form').removeAttr('disabled');
+    }
+
 	$(document).on('change', 'input.return_qty', function(){
+		var inputed_quantity = parseFloat($(this).val());
+		var error_msg_td = $(this).closest('tr').find('.input_quantity').closest('td');
+
+		if (inputed_quantity <= 0) {
+			error_msg_td.find('label.error').remove();
+			error_msg_td.append( '<label class="error "> Invalid quantity</label>');
+			disable_purchase_return_form_form_actions();
+		} else {
+			error_msg_td.find('label.error').remove();
+			enable_purchase_return_form_form_actions();
+		}
+		
 		update_purchase_return_total()
 	});
 
