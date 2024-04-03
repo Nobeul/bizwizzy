@@ -113,7 +113,7 @@ $(document).on('change', 'input.input_quantity', function() {
     var inputed_quantity = parseFloat($(this).val());
     var error_msg_td = $(this).closest('tr').find('.input_quantity').closest('td');
 
-    if (inputed_quantity <= 0) {
+    if (inputed_quantity < 0) {
         error_msg_td.find('label.error').remove();
         error_msg_td.append( '<label class="error "> Invalid quantity</label>');
         disable_sell_return_form_actions();

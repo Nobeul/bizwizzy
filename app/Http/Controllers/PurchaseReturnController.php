@@ -242,7 +242,7 @@ class PurchaseReturnController extends Controller
 
             $go_ahead = true;
             foreach ($return_quantities as $return) {
-                if ($return <= 0) {
+                if ($return < 0) {
                     $go_ahead = false;
                     break;
                 }
