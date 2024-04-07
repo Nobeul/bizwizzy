@@ -25,7 +25,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Yajra\DataTables\Facades\DataTables;
 use App\Exports\ProductsExport;
+use App\Utils\TransactionUtil;
+use App\ProductLink;
+use App\Transaction;
 use Excel;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -35,7 +39,7 @@ class ProductController extends Controller
      */
     protected $productUtil;
     protected $moduleUtil;
-
+    protected $transactionUtil;
     private $barcode_types;
 
     /**
@@ -44,10 +48,11 @@ class ProductController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(ProductUtil $productUtil, ModuleUtil $moduleUtil)
+    public function __construct(ProductUtil $productUtil, ModuleUtil $moduleUtil, TransactionUtil $transactionUtil)
     {
         $this->productUtil = $productUtil;
         $this->moduleUtil = $moduleUtil;
+        $this->transactionUtil = $transactionUtil;
 
         //barcode types
         $this->barcode_types = $this->productUtil->barcode_types();
@@ -215,6 +220,11 @@ class ProductController extends Controller
                             '<li><a href="' . action('ProductController@destroy', [$row->id]) . '" class="delete-product"><i class="fa fa-trash"></i> ' . __("messages.delete") . '</a></li>';
                         }
 
+                        if (auth()->user()->can('product.link')) {
+                            $html .=
+                            '<li><a href="' . action('ProductController@linkProduct', [$row->id]) . '"><i class="fa fa-link"></i> ' . __("Assign") . '</a></li>';
+                        }
+
                         if ($row->is_inactive == 1) {
                             $html .=
                             '<li><a href="' . action('ProductController@activate', [$row->id]) . '" class="activate-product"><i class="fas fa-check-circle"></i> ' . __("lang_v1.reactivate") . '</a></li>';
@@ -333,6 +343,8 @@ class ProductController extends Controller
 
         $is_admin = $this->productUtil->is_admin(auth()->user());
 
+        $products = Product::pluck('name', 'id');
+
         return view('product.index')
             ->with(compact(
                 'rack_enabled',
@@ -344,7 +356,8 @@ class ProductController extends Controller
                 'show_manufacturing_data',
                 'pos_module_data',
                 'is_woocommerce',
-                'is_admin'
+                'is_admin',
+                'products'
             ));
     }
 
@@ -2331,5 +2344,312 @@ class ProductController extends Controller
         $filename = 'products-export-' . \Carbon::now()->format('Y-m-d') . '.xlsx';
 
         return Excel::download(new ProductsExport, $filename);
+    }
+
+    public function linkProduct($id)
+    {
+        if (!auth()->user()->can('product.link')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $product = Product::find($id);
+        $product_list = Product::where('id', '!=', $id)->pluck('name', 'id');
+        
+        return view('product.link-product-modal')->with(compact('product_list', 'product'));
+    }
+
+    public function updateLinkProduct($id, Request $request)
+    {
+        $proceed_linking = true;
+        $data = [];
+        $products = $request->only('quantity');
+        if (empty($products)) {
+            $output = [
+                'success' => 0,
+                'msg' => __("No child product selected")
+            ];
+
+            return redirect('products')->with('status', $output);
+        }
+        foreach ($products['quantity'] as $key => $value) {
+            if ($value <= 0) {
+                $proceed_linking = false;
+            }
+
+            $data[] = [
+                'child_product_id' => $key,
+                'quantity' => $value
+            ];
+        }
+
+        if (! $proceed_linking) {
+            $output = [
+                'success' => 0,
+                'msg' => __("Invalid quantity")
+            ];
+
+            return redirect('products')->with('status', $output);
+
+        }
+
+        try {
+            DB::beginTransaction();
+            foreach($data as $product) {
+                ProductLink::updateOrCreate(
+                    [
+                        'parent_product_id' => $id,
+                        'child_product_id' => $product['child_product_id']
+                    ],
+                    [
+                        'quantity' => $product['quantity'],
+                    ],
+                );
+            }
+            DB::commit();
+
+            $output = [
+                'success' => 1,
+                'msg' => __("Assigned Successfully")
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::emergency("File:" . $e->getFile(). "Line:" . $e->getLine(). "Message:" . $e->getMessage());
+            
+            $output = [
+                'success' => 0,
+                    'msg' => __("messages.something_went_wrong")
+            ];
+        }
+
+        return redirect('products')->with('status', $output);
+    }
+
+    public function getAssignedProducts($id)
+    {
+        $child_products = [];
+        $assigned_products = ProductLink::with('assignedProduct')->where('parent_product_id', $id)->orderBy('id', 'DESC')->get();
+
+        if (! empty($assigned_products)) {
+            foreach ($assigned_products as $product_link) {
+                if (! empty($product_link->assignedProduct)) {
+                    $child_products[] = [
+                        'id' => $product_link->assignedProduct->id,
+                        'name' => $product_link->assignedProduct->name,
+                        'quantity' => $product_link->quantity,
+                    ];
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => 1,
+            'child_products' => $child_products,
+        ]);
+    }
+
+    public function breakStock(Request $request)
+    {
+        if (!auth()->user()->can('product.link')) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'parent_product_id' => 'required|exists:product_links,parent_product_id',
+            'child_product_id' => 'required|exists:product_links,child_product_id',
+            'business_location_id' => 'required|exists:business_locations,id',
+            'breaking_quantity' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $output = [
+                'success' => 0,
+                'msg' => $validator->errors()->first(),
+            ];
+
+            return redirect('products')->with('status', $output);
+        }
+
+        $product_link = ProductLink::with('assignedProduct', 'parentProduct')
+            ->join('variations as v', 'v.product_id', '=', 'product_links.parent_product_id')
+            ->leftJoin('variation_location_details as vld', function($join) use ($request) {
+                $join->on('vld.variation_id', '=', 'v.id');
+                $join->where('vld.location_id', $request->business_location_id);
+            })
+            ->where([
+                'child_product_id' => $request->child_product_id,
+                'parent_product_id' => $request->parent_product_id
+            ])
+            ->select(DB::raw('product_links.*'), 'vld.qty_available as parent_product_quantity')
+            ->first();
+
+        $output = $this->validateProductSpecs($product_link, $request->breaking_quantity);
+        if (count($output)) {
+            return redirect('products')->with('status', $output);
+        }
+
+        $input_data['type'] = 'stock_breaking';
+        $input_data['business_id'] = $request->session()->get('user.business_id');
+        $input_data['created_by'] = $request->session()->get('user.id');
+        $input_data['transaction_date'] = $this->productUtil->uf_date(\Carbon::now()->format('m/d/Y H:i'), true);
+        $input_data['location_id'] = $request->business_location_id;
+
+        try {
+            DB::beginTransaction();
+
+            $ref_count = $this->productUtil->setAndGetReferenceCount('stock_breaking');
+            //Generate reference number
+            if (empty($input_data['ref_no'])) {
+                $input_data['ref_no'] = $this->productUtil->generateReferenceNumber('stock_breaking', $ref_count);
+            }
+    
+            $adjustment_line = [
+                'product_id' => $request->parent_product_id,
+                'variation_id' => $request->parent_product_id,
+                'quantity' => $this->productUtil->num_uf(-$request->breaking_quantity),
+                'location_id' => $request->business_location_id,
+            ];
+            $product_data[] = $adjustment_line;
+
+            // Decrease parent available quantity
+            $this->productUtil->updateProductQuantity(
+                $request->business_location_id,
+                $request->parent_product_id,
+                $request->parent_product_id,
+                -$request->breaking_quantity
+            );
+
+            $stock_adjustment = Transaction::create($input_data);
+
+            unset($product_data[0]['location_id']);
+            $stock_adjustment->stock_adjustment_lines()->createMany($product_data);
+
+            $business = [
+                'id' => $request->session()->get('user.business_id'),
+                'accounting_method' => $request->session()->get('business.accounting_method'),
+                'location_id' => $request->business_location_id,
+                'qty_allocated' => -$request->breaking_quantity,
+            ];
+                    
+            $map_purchase_sell = $this->transactionUtil->mapPurchaseSell($business, $stock_adjustment->stock_adjustment_lines, 'stock_breaking');
+            if ($map_purchase_sell) {
+                $ref_count = $this->productUtil->setAndGetReferenceCount('stock_breaking');
+                //Generate reference number
+                if (empty($input_data['ref_no'])) {
+                    $input_data['ref_no'] = $this->productUtil->generateReferenceNumber('stock_breaking', $ref_count);
+                }
+    
+                $adjustment_line = [
+                    'product_id' => $request->child_product_id,
+                    'variation_id' => $request->child_product_id,
+                    'quantity' => $this->productUtil->num_uf($request->breaking_quantity * $product_link->quantity),
+                    'location_id' => $request->business_location_id,
+                ];
+                $child_data[] = $adjustment_line;
+    
+                // increase child available quantity
+                $this->productUtil->updateProductQuantity(
+                    $request->business_location_id,
+                    $request->child_product_id,
+                    $request->child_product_id,
+                    $request->breaking_quantity * $product_link->quantity
+                );
+    
+                $stock_adjustment = Transaction::create($input_data);
+                unset($child_data[0]['location_id']);
+                $stock_adjustment->stock_adjustment_lines()->createMany($child_data);
+    
+                $business = [
+                    'id' => $request->session()->get('user.business_id'),
+                    'accounting_method' => $request->session()->get('business.accounting_method'),
+                    'location_id' => $request->business_location_id,
+                    'qty_allocated' => $request->breaking_quantity * $product_link->quantity,
+                ];
+    
+                $map_purchase_sell = $this->transactionUtil->mapPurchaseSell($business, $stock_adjustment->stock_adjustment_lines, 'stock_breaking');
+                if ($map_purchase_sell) {
+                    DB::commit();
+
+                    $output = [
+                        'success' => 1,
+                        'msg' => "Stock broke successfully",
+                    ];
+                } else {
+                    DB::rollBack();
+                    $output = [
+                        'success' => 0,
+                        'msg' => "Stock break was not successfully",
+                    ];
+                }
+    
+                $this->transactionUtil->activityLog($stock_adjustment, 'added', null, [], false);
+            } else {
+                DB::rollBack();
+                $output = [
+                    'success' => 0,
+                    'msg' => "Stock break was not successfully",
+                ];
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::emergency("File:" . $e->getFile(). "Line:" . $e->getLine(). "Message:" . $e->getMessage());
+
+            $output = [
+                'success' => 0,
+                'msg' => __("messages.something_went_wrong")
+            ];
+        }
+        return redirect('products')->with('status', $output);
+    }
+
+    private function validateProductSpecs($product_link, $requested_breaking_quantity): array
+    {
+        $output = [];
+
+        if (empty($product_link)) {
+            $output = [
+                'success' => 0,
+                'msg' => 'Product is not assigned yet',
+            ];
+        }
+
+        if ($product_link->parent_product_quantity < $requested_breaking_quantity) {
+            $output = [
+                'success' => 0,
+                'msg' => 'Assigned product does not have that much of quantity',
+            ];
+        }
+
+        $assigning_product = $product_link->assignedProduct;
+        if (empty($assigning_product)) {
+            $output = [
+                'success' => 0,
+                'msg' => "Invalid child product provided",
+            ];
+        }
+
+        if ($assigning_product->enable_stock == 0) {
+            $output = [
+                'success' => 0,
+                'msg' => "{$assigning_product->name} is not enabled for stock management",
+            ];
+        }
+
+        $assigning_product = $product_link->parentProduct;
+        
+        if (empty($assigning_product)) {
+            $output = [
+                'success' => 0,
+                'msg' => "Invalid parent product provided",
+            ];
+        }
+
+        if ($assigning_product->enable_stock == 0) {
+            $output = [
+                'success' => 0,
+                'msg' => "{$assigning_product->name} is not enabled for stock management",
+            ];
+        }
+
+        return $output;
     }
 }

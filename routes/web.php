@@ -152,6 +152,13 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::post('/products/toggle-woocommerce-sync', 'ProductController@toggleWooCommerceSync');
     
     Route::resource('products', 'ProductController');
+
+    // stock linking and breaking routes
+    Route::get('/link-product/{id}', 'ProductController@linkProduct');
+    Route::post('/link-product/{id}', 'ProductController@updateLinkProduct');
+    Route::get('/get-assigned-products/{id}', 'ProductController@getAssignedProducts');
+    Route::get('/get-packaging-quantity/{id}', 'ProductController@getPackagingQuantity');
+    Route::post('/break-stock', 'ProductController@breakStock');
     
     Route::resource('vehicles', 'VehicleController');
     Route::get('/vehicles/view/{id}', 'VehicleController@view');

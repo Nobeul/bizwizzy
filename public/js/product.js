@@ -538,7 +538,125 @@ $(document).ready(function() {
             height:250
         });
     }
+
+    $("#parent_product_id").on('change', function () {
+        
+        $('#child_product_id').empty();
+
+        $('#child_product_id').append($('<option>', {
+            value: '',
+            text: 'Please Select'
+        }));
+
+        if ($(this).val().length > 0) {
+            $.ajax({
+                url: '/get-assigned-products/' + $(this).val(),
+                dataType: 'json',
+                success: function(data) {
+                    $.each(data.child_products, function(index, item) {
+                        $('#child_product_id').append($('<option>', {
+                            value: item.id,
+                            text: item.name,
+                            "data-quantity": item.quantity
+                        }));
+                    });
+                },
+            });
+        }
+    });
+
+    $("#child_product_id").on('change', function () {
+        $('#packaging_quantity').val($(this).find('option:selected').data('quantity'));
+    });
 });
+
+function disable_stock_breaking_form_actions() {
+    if (!window.navigator.onLine) {
+        return false;
+    }
+    $('#stock-breaking-submit').attr('disabled', 'true');
+}
+
+function enable_stock_breaking_form_actions() {
+    $('#stock-breaking-submit').removeAttr('disabled');
+}
+
+$(document).on("change", "#parent_product_id, #business_location_id, #child_product_id, #breaking_quantity", function () {
+    enableOrDisableFormSubmit($(this));
+});
+
+$("#stock-breaking-submit").on('click', function(e) {
+    e.preventDefault();
+    
+    $has_error = enableOrDisableFormSubmit();
+
+    if (! $has_error) {
+        $("#stock-breaking-form").submit();
+    }
+});
+
+function enableOrDisableFormSubmit(ui_object = null) {
+    $has_error = false;
+    if (ui_object) {
+        let associated_error_id = "#"+$(ui_object).attr('id')+"-error";
+        if ($(ui_object).val().length > 0) {
+            if ($(ui_object).attr('id') == 'breaking_quantity' && $(ui_object).val() <= 0) {
+                $(associated_error_id).text('Invalid quantity');
+                $(associated_error_id).show();
+                $has_error = true;
+            } else {
+                $(associated_error_id).hide();
+            }
+        } else {
+            $(associated_error_id).show();
+            $has_error = true;
+        }
+    } else {
+        if ($('#parent_product_id').val().length == 0) {
+            $('#parent_product_id-error').show();
+            $has_error = true;
+        } else {
+            $('#parent_product_id-error').hide();
+        }
+        
+        if ($('#business_location_id').val().length == 0) {
+            $('#business_location_id-error').show();
+            $has_error = true;
+        } else {
+            $('#business_location_id-error').hide();
+        }
+    
+        if ($('#child_product_id').val().length == 0) {
+            $('#child_product_id-error').show();
+            $has_error = true;
+        } else {
+            $('#child_product_id-error').hide();
+        }
+    
+        if ($('#breaking_quantity').val().length == 0) {
+            $('#breaking_quantity-error').show();
+            $has_error = true;
+        } else {
+            $('#breaking_quantity-error').hide();
+        }
+    
+        if (! isNaN($('#breaking_quantity').val()) && $('#breaking_quantity').val() <= 0) {
+            $('#breaking_quantity-error').text('Invalid Quantity');
+            $('#breaking_quantity-error').show();
+            $has_error = true;
+        } else {
+            $('#breaking_quantity-error').hide();
+        }
+    
+        if (! $has_error) {
+            enable_stock_breaking_form_actions();
+        } else {
+            disable_stock_breaking_form_actions();
+        }
+    }
+
+    return $has_error;
+}
 
 function toggle_dsp_input() {
     var tax_type = $('#tax_type').val();

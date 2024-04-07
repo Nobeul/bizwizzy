@@ -3346,6 +3346,18 @@ class TransactionUtil extends Util
                         PurchaseLine::where('id', $row->purchase_lines_id)
                             ->update(['quantity_adjusted' => $row->quantity_adjusted + $qty_allocated]);
                     }
+                } elseif ($mapping_type == 'stock_breaking') {
+                    $purchase_adjustment_map[] =
+                    ['stock_adjustment_line_id' => $line->id,
+                        'purchase_line_id' => $row->purchase_lines_id,
+                        'quantity' => $business['qty_allocated'],
+                        'created_at' => \Carbon::now(),
+                        'updated_at' => \Carbon::now()
+                    ];
+
+                    //Update purchase line
+                    PurchaseLine::where('id', $row->purchase_lines_id)
+                        ->update(['quantity_adjusted' => $row->quantity_adjusted + $business['qty_allocated']]);
                 } elseif ($mapping_type == 'purchase') {
                     //Mapping of purchase
                     // if ($qty_allocated != 0) {
@@ -3380,7 +3392,7 @@ class TransactionUtil extends Util
                 }
             }
 
-            if (($mapping_type != 'stock_adjustment' && $mapping_type != 'purchase' && $mapping_type != 'production_purchase')) {
+            if (($mapping_type != 'stock_adjustment' && $mapping_type != 'stock_breaking' && $mapping_type != 'purchase' && $mapping_type != 'production_purchase')) {
                 if (! ($qty_selling == 0 || is_null($qty_selling))) {
                     //If overselling not allowed through exception else create mapping with blank purchase_line_id
                     if (!$allow_overselling) {
@@ -3436,6 +3448,14 @@ class TransactionUtil extends Util
             }
             if (!empty($purchase_sell_map)) {
                 TransactionSellLinesPurchaseLines::insert($purchase_sell_map);
+            }
+
+            if ($mapping_type == 'stock_breaking') {
+                if (empty($purchase_adjustment_map)) {
+                    return false;
+                } else {
+                    return true;
+                }
             }
         }
     }

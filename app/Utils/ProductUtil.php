@@ -1976,7 +1976,7 @@ class ProductUtil extends Util
                                         ->orWhere('rpl.variation_id', $variation_id)
                                         ->orWhere('rsl.variation_id', $variation_id);
                                 })
-                                ->whereIn('transactions.type', ['sell', 'purchase', 'stock_adjustment', 'opening_stock', 'sell_transfer', 'purchase_transfer', 'production_purchase', 'purchase_return', 'sell_return', 'production_sell'])
+                                ->whereIn('transactions.type', ['sell', 'purchase', 'stock_adjustment', 'stock_breaking', 'opening_stock', 'sell_transfer', 'purchase_transfer', 'production_purchase', 'purchase_return', 'sell_return', 'production_sell'])
                                 ->select(
                                     'transactions.id as transaction_id',
                                     'transactions.type as transaction_type',
@@ -2051,6 +2051,17 @@ class ProductUtil extends Util
                     'stock' => $this->roundQuantity($stock),
                     'type' => 'stock_adjustment',
                     'type_label' => __('stock_adjustment.stock_adjustment'),
+                    'ref_no' => $stock_line->ref_no,
+                    'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit)
+                ]);
+            } elseif ($stock_line->transaction_type == 'stock_breaking') {
+                $quantity_change = $stock_line->stock_adjusted;
+                $stock += $quantity_change;
+                $stock_history_array[] = array_merge($temp_array, [
+                    'quantity_change' => $quantity_change,
+                    'stock' => $this->roundQuantity($stock),
+                    'type' => 'stock_breaking',
+                    'type_label' => __('Stock Breaking'),
                     'ref_no' => $stock_line->ref_no,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit)
                 ]);

@@ -108,6 +108,11 @@
                         <a href="#product_stock_report" data-toggle="tab" aria-expanded="true"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @lang('report.stock_report')</a>
                     </li>
                     @endcan
+                    @can('product.link')
+                        <li>
+                            <a href="#stock_breaking" data-toggle="tab" aria-expanded="true"><i class="fa fa-chart-line" aria-hidden="true"></i> @lang('Stock Breaking')</a>
+                        </li>
+                    @endcan
                 </ul>
 
                 <div class="tab-content">
@@ -126,6 +131,11 @@
                     <div class="tab-pane" id="product_stock_report">
                         @include('report.partials.stock_report_table')
                     </div>
+                    @endcan
+                    @can('product.link')
+                        <div class="tab-pane" id="stock_breaking">
+                            @include('product.partials.stock_breaking')
+                        </div>
                     @endcan
                 </div>
             </div>
