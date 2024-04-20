@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', __('Assigned Products'))
+@section('title', __('Stock Breakings'))
 
 @section('content')
 
     <!-- Content Header (Page header) -->
     <section class="content-header">
-        <h1>{{ __('Assigned Products') }}
-            <small>{{ __('List of assigned products') }}</small>
+        <h1>{{ __('Stock Breakings') }}
+            <small>{{ __('List of stock breakings') }}</small>
         </h1>
     </section>
 
