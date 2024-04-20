@@ -159,6 +159,8 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::get('/get-assigned-products/{id}', 'ProductController@getAssignedProducts');
     Route::get('/get-packaging-quantity/{id}', 'ProductController@getPackagingQuantity');
     Route::post('/break-stock', 'ProductController@breakStock');
+    Route::get('/link-product-list/{product_id?}', 'ProductController@assignedProductList');
+    Route::get('/stock-broken-list', 'ProductController@stockBrokenProductList');
     
     Route::resource('vehicles', 'VehicleController');
     Route::get('/vehicles/view/{id}', 'VehicleController@view');

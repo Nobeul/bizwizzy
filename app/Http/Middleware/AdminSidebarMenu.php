@@ -152,6 +152,18 @@ class AdminSidebarMenu
                                 ['icon' => 'fa fas fa-download', 'active' => request()->segment(1) == 'import-products']
                             );
                         }
+                        if (auth()->user()->can('product.link')) {
+                            $sub->url(
+                                action('ProductController@assignedProductList'),
+                                __('Assigned Products'),
+                                ['icon' => 'fa fas fa-circle', 'active' => request()->segment(1) == 'link-product-list']
+                            );
+                            $sub->url(
+                                action('ProductController@stockBrokenProductList'),
+                                __('Stock Breakings'),
+                                ['icon' => 'fa fas fa-circle', 'active' => request()->segment(1) == 'stock-broken-list']
+                            );
+                        }
                         if (auth()->user()->can('product.opening_stock')) {
                             $sub->url(
                                 action('ImportOpeningStockController@index'),

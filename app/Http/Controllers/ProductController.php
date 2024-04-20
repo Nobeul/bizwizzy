@@ -27,6 +27,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Exports\ProductsExport;
 use App\Utils\TransactionUtil;
 use App\ProductLink;
+use App\StockBreaking;
 use App\Transaction;
 use Excel;
 use Illuminate\Support\Facades\Validator;
@@ -223,6 +224,11 @@ class ProductController extends Controller
                         if (auth()->user()->can('product.link')) {
                             $html .=
                             '<li><a href="' . action('ProductController@linkProduct', [$row->id]) . '"><i class="fa fa-link"></i> ' . __("Assign") . '</a></li>';
+                        }
+
+                        if (auth()->user()->can('product.link')) {
+                            $html .=
+                            '<li><a href="' . action('ProductController@assignedProductList', [$row->id]) . '"><i class="fa fas fa-chart-bar"></i> ' . __("Assigned Product List") . '</a></li>';
                         }
 
                         if ($row->is_inactive == 1) {
@@ -2586,6 +2592,16 @@ class ProductController extends Controller
     
                 $map_purchase_sell = $this->transactionUtil->mapPurchaseSell($business, $stock_adjustment->stock_adjustment_lines, 'stock_breaking');
                 if ($map_purchase_sell) {
+
+                    // Create stock breaking entry
+                    StockBreaking::create([
+                        'parent_product_id' => $request->parent_product_id,
+                        'child_product_id' => $request->child_product_id,
+                        'business_location_id' => $request->business_location_id,
+                        'breaking_quantity' => $request->breaking_quantity,
+                        'child_quantity' => $request->breaking_quantity * $product_link->quantity,
+                    ]);
+
                     DB::commit();
 
                     $output = [
@@ -2670,5 +2686,79 @@ class ProductController extends Controller
         }
 
         return $output;
+    }
+
+    public function assignedProductList()
+    {
+        if (! auth()->user()->can('product.link')) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        $product_id = request()->product_id ?? null;
+
+        if (request()->ajax()) {
+            $business_id = request()->session()->get('user.business_id');
+
+            $products = ProductLink::with('parentProduct', 'assignedProduct')
+                ->leftJoin('products', 'products.id', '=', 'product_links.parent_product_id')
+                ->where('products.business_id', $business_id);
+            
+            if (! empty($product_id)) {
+                $products = $products->where('parent_product_id', $product_id);
+            }
+
+            return Datatables::of($products)
+                ->editColumn('product_name', function ($row) {
+                    return $row->parentProduct->name ?? '';
+                })
+                ->editColumn('assigned_to', function ($row) {
+                    return $row->assignedProduct->name ?? '';
+                })
+                ->filterColumn('product_name', function ($query, $keyword) {
+                    $query->where('parentProduct.name', 'like', ["%{$keyword}%"]);
+                })
+                ->filterColumn('assigned_to', function ($query, $keyword) {
+                    $query->where('assignedProduct.name', 'like', ["%{$keyword}%"]);
+                })
+                ->make(true);
+        }
+
+        return view('assigned_products.index');
+    }
+
+    public function stockBrokenProductList()
+    {
+        if (! auth()->user()->can('product.link')) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        if (request()->ajax()) {
+            $business_id = request()->session()->get('user.business_id');
+
+            $products = StockBreaking::with('parentProduct', 'assignedProduct', 'businessLocation');
+
+            return Datatables::of($products)
+                ->editColumn('parent_product_name', function ($row) {
+                    return $row->parentProduct->name ?? '';
+                })
+                ->editColumn('child_product_name', function ($row) {
+                    return $row->assignedProduct->name ?? '';
+                })
+                ->editColumn('business_location', function ($row) {
+                    return $row->businessLocation->name ?? '';
+                })
+                ->filterColumn('parent_product_name', function ($query, $keyword) {
+                    $query->where('parentProduct.name', 'like', ["%{$keyword}%"]);
+                })
+                ->filterColumn('child_product_name', function ($query, $keyword) {
+                    $query->where('assignedProduct.name', 'like', ["%{$keyword}%"]);
+                })
+                ->filterColumn('business_location', function ($query, $keyword) {
+                    $query->where('businessLocation.name', 'like', ["%{$keyword}%"]);
+                })
+                ->make(true);
+        }
+
+        return view('stock_breakings.index');
     }
 }
