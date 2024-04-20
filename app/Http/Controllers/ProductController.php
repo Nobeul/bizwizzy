@@ -343,7 +343,7 @@ class ProductController extends Controller
 
         $is_admin = $this->productUtil->is_admin(auth()->user());
 
-        $products = Product::pluck('name', 'id');
+        $products = Product::where('business_id', $business_id)->pluck('name', 'id');
 
         return view('product.index')
             ->with(compact(
@@ -2352,8 +2352,9 @@ class ProductController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        $business_id = request()->session()->get('user.business_id');
         $product = Product::find($id);
-        $product_list = Product::where('id', '!=', $id)->pluck('name', 'id');
+        $product_list = Product::where('id', '!=', $id)->where('business_id', $business_id)->pluck('name', 'id');
         
         return view('product.link-product-modal')->with(compact('product_list', 'product'));
     }
@@ -2492,6 +2493,7 @@ class ProductController extends Controller
         $input_data['created_by'] = $request->session()->get('user.id');
         $input_data['transaction_date'] = $this->productUtil->uf_date(\Carbon::now()->format('m/d/Y H:i'), true);
         $input_data['location_id'] = $request->business_location_id;
+        $input_data['status'] = 'received';
 
         try {
             DB::beginTransaction();
@@ -2564,6 +2566,23 @@ class ProductController extends Controller
                     'location_id' => $request->business_location_id,
                     'qty_allocated' => $request->breaking_quantity * $product_link->quantity,
                 ];
+                
+                $purchase_lines = Transaction::join('purchase_lines AS PL', 'transactions.id', '=', 'PL.transaction_id')
+                    ->where('transactions.business_id', $business['id'])
+                    ->where('transactions.location_id', $business['location_id'])
+                    ->whereIn('transactions.type', ['purchase', 'purchase_transfer', 'opening_stock', 'production_purchase', 'stock_breaking'])
+                    ->where('transactions.status', 'received')
+                    ->where('PL.product_id', $stock_adjustment->stock_adjustment_lines[0]->product_id)
+                    ->where('PL.variation_id', $stock_adjustment->stock_adjustment_lines[0]->variation_id)
+                    ->get();
+                
+                if (count($purchase_lines) == 0) {
+                    $product_data[] = [
+                        'product_id' => $stock_adjustment->stock_adjustment_lines[0]->product_id,
+                        'variation_id' => $stock_adjustment->stock_adjustment_lines[0]->variation_id,
+                    ];
+                    $stock_adjustment->purchase_lines()->createMany($product_data);
+                }
     
                 $map_purchase_sell = $this->transactionUtil->mapPurchaseSell($business, $stock_adjustment->stock_adjustment_lines, 'stock_breaking');
                 if ($map_purchase_sell) {
@@ -2577,7 +2596,7 @@ class ProductController extends Controller
                     DB::rollBack();
                     $output = [
                         'success' => 0,
-                        'msg' => "Stock break was not successfully",
+                        'msg' => "Stock break was not successful",
                     ];
                 }
     
@@ -2586,7 +2605,7 @@ class ProductController extends Controller
                 DB::rollBack();
                 $output = [
                     'success' => 0,
-                    'msg' => "Stock break was not successfully",
+                    'msg' => "Stock break was not successful",
                 ];
             }
         } catch (\Exception $e) {

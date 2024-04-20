@@ -3257,6 +3257,13 @@ class TransactionUtil extends Util
         }
 
         $qty_selling = null;
+
+        $transaction_types = ['purchase', 'purchase_transfer', 'opening_stock', 'production_purchase'];
+            
+        if ($mapping_type == 'stock_breaking') {
+            array_push($transaction_types, 'stock_breaking');
+        }
+
         foreach ($transaction_lines as $line) {
             //Check if stock is not enabled then no need to assign purchase & sell
             $product = Product::find($line->product_id);
@@ -3270,8 +3277,7 @@ class TransactionUtil extends Util
             $query = Transaction::join('purchase_lines AS PL', 'transactions.id', '=', 'PL.transaction_id')
                 ->where('transactions.business_id', $business['id'])
                 ->where('transactions.location_id', $business['location_id'])
-                ->whereIn('transactions.type', ['purchase', 'purchase_transfer',
-                    'opening_stock', 'production_purchase'])
+                ->whereIn('transactions.type', $transaction_types)
                 ->where('transactions.status', 'received')
                 // ->whereRaw("( $qty_sum_query ) < PL.quantity")
                 ->where('PL.product_id', $line->product_id)
