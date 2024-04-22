@@ -134,7 +134,16 @@
                     @endcan
                     @can('product.link')
                         <div class="tab-pane" id="stock_breaking">
-                            @include('product.partials.stock_breaking')
+                            <form method="POST" action="{{ action('ProductController@breakStock') }}" id="stock-breaking-form">
+                                @csrf
+                                @include('product.partials.stock_breaking')
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn btn-primary pull-right" id="stock-breaking-submit">@lang('messages.save')</button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     @endcan
                 </div>

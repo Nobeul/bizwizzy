@@ -2461,10 +2461,14 @@ class ProductController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'parent_product_id' => 'required|exists:product_links,parent_product_id',
-            'child_product_id' => 'required|exists:product_links,child_product_id',
-            'business_location_id' => 'required|exists:business_locations,id',
-            'breaking_quantity' => 'required'
+            'parent_product_id' => 'required|array',
+            'parent_product_id.*' => 'exists:product_links,parent_product_id',
+            'child_product_id' => 'required|array',
+            'child_product_id.*' => 'exists:product_links,child_product_id',
+            'business_location_id' => 'required|array',
+            'business_location_id.*' => 'exists:business_locations,id',
+            'breaking_quantity' => 'required|array',
+            'breaking_quantity.*' => 'min:1'
         ]);
 
         if ($validator->fails()) {
@@ -2476,138 +2480,146 @@ class ProductController extends Controller
             return redirect('products')->with('status', $output);
         }
 
-        $product_link = ProductLink::with('assignedProduct', 'parentProduct')
-            ->join('variations as v', 'v.product_id', '=', 'product_links.parent_product_id')
-            ->leftJoin('variation_location_details as vld', function($join) use ($request) {
-                $join->on('vld.variation_id', '=', 'v.id');
-                $join->where('vld.location_id', $request->business_location_id);
-            })
-            ->where([
-                'child_product_id' => $request->child_product_id,
-                'parent_product_id' => $request->parent_product_id
-            ])
-            ->select(DB::raw('product_links.*'), 'vld.qty_available as parent_product_quantity')
-            ->first();
-
-        $output = $this->validateProductSpecs($product_link, $request->breaking_quantity);
-        if (count($output)) {
-            return redirect('products')->with('status', $output);
-        }
-
-        $input_data['type'] = 'stock_breaking';
-        $input_data['business_id'] = $request->session()->get('user.business_id');
-        $input_data['created_by'] = $request->session()->get('user.id');
-        $input_data['transaction_date'] = $this->productUtil->uf_date(\Carbon::now()->format('m/d/Y H:i'), true);
-        $input_data['location_id'] = $request->business_location_id;
-        $input_data['status'] = 'received';
-
+        
         try {
             DB::beginTransaction();
-
-            $ref_count = $this->productUtil->setAndGetReferenceCount('stock_breaking');
-            //Generate reference number
-            if (empty($input_data['ref_no'])) {
-                $input_data['ref_no'] = $this->productUtil->generateReferenceNumber('stock_breaking', $ref_count);
-            }
+            for ($i = 0; $i < count($request->parent_product_id); $i++) {
+                $product_link = ProductLink::with('assignedProduct', 'parentProduct')
+                    ->join('variations as v', 'v.product_id', '=', 'product_links.parent_product_id')
+                    ->leftJoin('variation_location_details as vld', function($join) use ($request, $i) {
+                        $join->on('vld.variation_id', '=', 'v.id');
+                        $join->where('vld.location_id', $request->business_location_id[$i]);
+                    })
+                    ->where([
+                        'child_product_id' => $request->child_product_id[$i],
+                        'parent_product_id' => $request->parent_product_id[$i]
+                    ])
+                    ->select(DB::raw('product_links.*'), 'vld.qty_available as parent_product_quantity')
+                    ->first();
+        
+                $output = $this->validateProductSpecs($product_link, $request->breaking_quantity[$i]);
+                if (count($output)) {
+                    return redirect('products')->with('status', $output);
+                }
+        
+                $input_data['type'] = 'stock_breaking';
+                $input_data['business_id'] = $request->session()->get('user.business_id');
+                $input_data['created_by'] = $request->session()->get('user.id');
+                $input_data['transaction_date'] = $this->productUtil->uf_date(\Carbon::now()->format('m/d/Y H:i'), true);
+                $input_data['location_id'] = $request->business_location_id[$i];
+                $input_data['status'] = 'received';
     
-            $adjustment_line = [
-                'product_id' => $request->parent_product_id,
-                'variation_id' => $request->parent_product_id,
-                'quantity' => $this->productUtil->num_uf(-$request->breaking_quantity),
-                'location_id' => $request->business_location_id,
-            ];
-            $product_data[] = $adjustment_line;
-
-            // Decrease parent available quantity
-            $this->productUtil->updateProductQuantity(
-                $request->business_location_id,
-                $request->parent_product_id,
-                $request->parent_product_id,
-                -$request->breaking_quantity
-            );
-
-            $stock_adjustment = Transaction::create($input_data);
-
-            unset($product_data[0]['location_id']);
-            $stock_adjustment->stock_adjustment_lines()->createMany($product_data);
-
-            $business = [
-                'id' => $request->session()->get('user.business_id'),
-                'accounting_method' => $request->session()->get('business.accounting_method'),
-                'location_id' => $request->business_location_id,
-                'qty_allocated' => -$request->breaking_quantity,
-            ];
-                    
-            $map_purchase_sell = $this->transactionUtil->mapPurchaseSell($business, $stock_adjustment->stock_adjustment_lines, 'stock_breaking');
-            if ($map_purchase_sell) {
                 $ref_count = $this->productUtil->setAndGetReferenceCount('stock_breaking');
                 //Generate reference number
                 if (empty($input_data['ref_no'])) {
                     $input_data['ref_no'] = $this->productUtil->generateReferenceNumber('stock_breaking', $ref_count);
                 }
-    
+        
                 $adjustment_line = [
-                    'product_id' => $request->child_product_id,
-                    'variation_id' => $request->child_product_id,
-                    'quantity' => $this->productUtil->num_uf($request->breaking_quantity * $product_link->quantity),
-                    'location_id' => $request->business_location_id,
+                    'product_id' => $request->parent_product_id[$i],
+                    'variation_id' => $request->parent_product_id[$i],
+                    'quantity' => $this->productUtil->num_uf(-$request->breaking_quantity[$i]),
+                    'location_id' => $request->business_location_id[$i],
                 ];
-                $child_data[] = $adjustment_line;
+                $product_data[] = $adjustment_line;
     
-                // increase child available quantity
+                // Decrease parent available quantity
                 $this->productUtil->updateProductQuantity(
-                    $request->business_location_id,
-                    $request->child_product_id,
-                    $request->child_product_id,
-                    $request->breaking_quantity * $product_link->quantity
+                    $request->business_location_id[$i],
+                    $request->parent_product_id[$i],
+                    $request->parent_product_id[$i],
+                    -$request->breaking_quantity[$i]
                 );
     
                 $stock_adjustment = Transaction::create($input_data);
-                unset($child_data[0]['location_id']);
-                $stock_adjustment->stock_adjustment_lines()->createMany($child_data);
+    
+                unset($product_data[$i]['location_id']);
+                $stock_adjustment->stock_adjustment_lines()->createMany($product_data);
     
                 $business = [
                     'id' => $request->session()->get('user.business_id'),
                     'accounting_method' => $request->session()->get('business.accounting_method'),
-                    'location_id' => $request->business_location_id,
-                    'qty_allocated' => $request->breaking_quantity * $product_link->quantity,
+                    'location_id' => $request->business_location_id[$i],
+                    'qty_allocated' => -$request->breaking_quantity[$i],
                 ];
-                
-                $purchase_lines = Transaction::join('purchase_lines AS PL', 'transactions.id', '=', 'PL.transaction_id')
-                    ->where('transactions.business_id', $business['id'])
-                    ->where('transactions.location_id', $business['location_id'])
-                    ->whereIn('transactions.type', ['purchase', 'purchase_transfer', 'opening_stock', 'production_purchase', 'stock_breaking'])
-                    ->where('transactions.status', 'received')
-                    ->where('PL.product_id', $stock_adjustment->stock_adjustment_lines[0]->product_id)
-                    ->where('PL.variation_id', $stock_adjustment->stock_adjustment_lines[0]->variation_id)
-                    ->get();
-                
-                if (count($purchase_lines) == 0) {
-                    $product_data[] = [
-                        'product_id' => $stock_adjustment->stock_adjustment_lines[0]->product_id,
-                        'variation_id' => $stock_adjustment->stock_adjustment_lines[0]->variation_id,
-                    ];
-                    $stock_adjustment->purchase_lines()->createMany($product_data);
-                }
-    
+                        
                 $map_purchase_sell = $this->transactionUtil->mapPurchaseSell($business, $stock_adjustment->stock_adjustment_lines, 'stock_breaking');
                 if ($map_purchase_sell) {
-
-                    // Create stock breaking entry
-                    StockBreaking::create([
-                        'parent_product_id' => $request->parent_product_id,
-                        'child_product_id' => $request->child_product_id,
-                        'business_location_id' => $request->business_location_id,
-                        'breaking_quantity' => $request->breaking_quantity,
-                        'child_quantity' => $request->breaking_quantity * $product_link->quantity,
-                    ]);
-
-                    DB::commit();
-
-                    $output = [
-                        'success' => 1,
-                        'msg' => "Stock broke successfully",
+                    $ref_count = $this->productUtil->setAndGetReferenceCount('stock_breaking');
+                    //Generate reference number
+                    if (empty($input_data['ref_no'])) {
+                        $input_data['ref_no'] = $this->productUtil->generateReferenceNumber('stock_breaking', $ref_count);
+                    }
+        
+                    $adjustment_line = [
+                        'product_id' => $request->child_product_id[$i],
+                        'variation_id' => $request->child_product_id[$i],
+                        'quantity' => $this->productUtil->num_uf($request->breaking_quantity[$i] * $product_link->quantity),
+                        'location_id' => $request->business_location_id[$i],
                     ];
+                    $child_data[] = $adjustment_line;
+        
+                    // increase child available quantity
+                    $this->productUtil->updateProductQuantity(
+                        $request->business_location_id[$i],
+                        $request->child_product_id[$i],
+                        $request->child_product_id[$i],
+                        $request->breaking_quantity[$i] * $product_link->quantity
+                    );
+        
+                    $stock_adjustment = Transaction::create($input_data);
+                    unset($child_data[$i]['location_id']);
+                    $stock_adjustment->stock_adjustment_lines()->createMany($child_data);
+        
+                    $business = [
+                        'id' => $request->session()->get('user.business_id'),
+                        'accounting_method' => $request->session()->get('business.accounting_method'),
+                        'location_id' => $request->business_location_id[$i],
+                        'qty_allocated' => $request->breaking_quantity[$i] * $product_link->quantity,
+                    ];
+                    
+                    $purchase_lines = Transaction::join('purchase_lines AS PL', 'transactions.id', '=', 'PL.transaction_id')
+                        ->where('transactions.business_id', $business['id'])
+                        ->where('transactions.location_id', $business['location_id'])
+                        ->whereIn('transactions.type', ['purchase', 'purchase_transfer', 'opening_stock', 'production_purchase', 'stock_breaking'])
+                        ->where('transactions.status', 'received')
+                        ->where('PL.product_id', $stock_adjustment->stock_adjustment_lines[$i]->product_id)
+                        ->where('PL.variation_id', $stock_adjustment->stock_adjustment_lines[$i]->variation_id)
+                        ->get();
+                    
+                    if (count($purchase_lines) == 0) {
+                        $product_data[] = [
+                            'product_id' => $stock_adjustment->stock_adjustment_lines[$i]->product_id,
+                            'variation_id' => $stock_adjustment->stock_adjustment_lines[$i]->variation_id,
+                        ];
+                        $stock_adjustment->purchase_lines()->createMany($product_data);
+                    }
+        
+                    $map_purchase_sell = $this->transactionUtil->mapPurchaseSell($business, $stock_adjustment->stock_adjustment_lines, 'stock_breaking');
+                    if ($map_purchase_sell) {
+    
+                        // Create stock breaking entry
+                        StockBreaking::create([
+                            'parent_product_id' => $request->parent_product_id[$i],
+                            'child_product_id' => $request->child_product_id[$i],
+                            'business_location_id' => $request->business_location_id[$i],
+                            'breaking_quantity' => $request->breaking_quantity[$i],
+                            'child_quantity' => $request->breaking_quantity[$i] * $product_link->quantity,
+                        ]);
+        
+                        $output = [
+                            'success' => 1,
+                            'msg' => "Stock broke successfully",
+                        ];
+                    } else {
+                        DB::rollBack();
+                        $output = [
+                            'success' => 0,
+                            'msg' => "Stock break was not successful",
+                        ];
+                    }
+        
+                    $this->transactionUtil->activityLog($stock_adjustment, 'added', null, [], false);
                 } else {
                     DB::rollBack();
                     $output = [
@@ -2615,15 +2627,8 @@ class ProductController extends Controller
                         'msg' => "Stock break was not successful",
                     ];
                 }
-    
-                $this->transactionUtil->activityLog($stock_adjustment, 'added', null, [], false);
-            } else {
-                DB::rollBack();
-                $output = [
-                    'success' => 0,
-                    'msg' => "Stock break was not successful",
-                ];
             }
+            DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
             \Log::emergency("File:" . $e->getFile(). "Line:" . $e->getLine(). "Message:" . $e->getMessage());
@@ -2760,5 +2765,33 @@ class ProductController extends Controller
         }
 
         return view('stock_breakings.index');
+    }
+
+    public function addNewRow()
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        $business_locations = BusinessLocation::forDropdown($business_id);
+        $business_locations->prepend(__('lang_v1.none'), 'none');
+
+        if ($this->moduleUtil->isModuleInstalled('Manufacturing') && (auth()->user()->can('superadmin') || $this->moduleUtil->hasThePermissionInSubscription($business_id, 'manufacturing_module'))) {
+            $show_manufacturing_data = true;
+        } else {
+            $show_manufacturing_data = false;
+        }
+
+        //list product screen filter from module
+        $pos_module_data = $this->moduleUtil->getModuleData('get_filters_for_list_product_screen');
+
+        $is_admin = $this->productUtil->is_admin(auth()->user());
+
+        $products = Product::where('business_id', $business_id)->pluck('name', 'id');
+
+        return view('product.partials.stock_breaking')
+            ->with(compact(
+                'business_locations',
+                'products'
+            ));
+
     }
 }
