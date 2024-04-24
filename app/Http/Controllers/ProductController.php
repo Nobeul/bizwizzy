@@ -2515,6 +2515,7 @@ class ProductController extends Controller
                     $input_data['ref_no'] = $this->productUtil->generateReferenceNumber('stock_breaking', $ref_count);
                 }
         
+                $product_data = [];
                 $adjustment_line = [
                     'product_id' => $request->parent_product_id[$i],
                     'variation_id' => $request->parent_product_id[$i],
@@ -2533,7 +2534,7 @@ class ProductController extends Controller
     
                 $stock_adjustment = Transaction::create($input_data);
     
-                unset($product_data[$i]['location_id']);
+                unset($product_data[0]['location_id']);
                 $stock_adjustment->stock_adjustment_lines()->createMany($product_data);
     
                 $business = [
@@ -2551,6 +2552,7 @@ class ProductController extends Controller
                         $input_data['ref_no'] = $this->productUtil->generateReferenceNumber('stock_breaking', $ref_count);
                     }
         
+                    $child_data = [];
                     $adjustment_line = [
                         'product_id' => $request->child_product_id[$i],
                         'variation_id' => $request->child_product_id[$i],
@@ -2568,7 +2570,7 @@ class ProductController extends Controller
                     );
         
                     $stock_adjustment = Transaction::create($input_data);
-                    unset($child_data[$i]['location_id']);
+                    unset($child_data[0]['location_id']);
                     $stock_adjustment->stock_adjustment_lines()->createMany($child_data);
         
                     $business = [
@@ -2583,16 +2585,16 @@ class ProductController extends Controller
                         ->where('transactions.location_id', $business['location_id'])
                         ->whereIn('transactions.type', ['purchase', 'purchase_transfer', 'opening_stock', 'production_purchase', 'stock_breaking'])
                         ->where('transactions.status', 'received')
-                        ->where('PL.product_id', $stock_adjustment->stock_adjustment_lines[$i]->product_id)
-                        ->where('PL.variation_id', $stock_adjustment->stock_adjustment_lines[$i]->variation_id)
+                        ->where('PL.product_id', $stock_adjustment->stock_adjustment_lines[0]->product_id)
+                        ->where('PL.variation_id', $stock_adjustment->stock_adjustment_lines[0]->variation_id)
                         ->get();
                     
                     if (count($purchase_lines) == 0) {
-                        $product_data[] = [
-                            'product_id' => $stock_adjustment->stock_adjustment_lines[$i]->product_id,
-                            'variation_id' => $stock_adjustment->stock_adjustment_lines[$i]->variation_id,
+                        $purchse_line_product_data[] = [
+                            'product_id' => $stock_adjustment->stock_adjustment_lines[0]->product_id,
+                            'variation_id' => $stock_adjustment->stock_adjustment_lines[0]->variation_id,
                         ];
-                        $stock_adjustment->purchase_lines()->createMany($product_data);
+                        $stock_adjustment->purchase_lines()->createMany($purchse_line_product_data);
                     }
         
                     $map_purchase_sell = $this->transactionUtil->mapPurchaseSell($business, $stock_adjustment->stock_adjustment_lines, 'stock_breaking');
