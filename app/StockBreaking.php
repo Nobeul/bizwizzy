@@ -17,6 +17,7 @@ class StockBreaking extends Model
         'business_location_id',
         'breaking_quantity',
         'child_quantity',
+        'created_by',
     ];
 
     public function assignedProduct()

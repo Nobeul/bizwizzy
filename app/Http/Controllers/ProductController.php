@@ -29,6 +29,7 @@ use App\Utils\TransactionUtil;
 use App\ProductLink;
 use App\StockBreaking;
 use App\Transaction;
+use App\User;
 use Excel;
 use Illuminate\Support\Facades\Validator;
 
@@ -2607,6 +2608,7 @@ class ProductController extends Controller
                             'business_location_id' => $request->business_location_id[$i],
                             'breaking_quantity' => $request->breaking_quantity[$i],
                             'child_quantity' => $request->breaking_quantity[$i] * $product_link->quantity,
+                            'created_by' => auth()->user()->id,
                         ]);
         
                         $output = [
@@ -2739,10 +2741,33 @@ class ProductController extends Controller
             abort(403, 'Unauthorized action.');
         }
         
-        if (request()->ajax()) {
-            $business_id = request()->session()->get('user.business_id');
+        $business_id = request()->session()->get('user.business_id');
+        $business_locations = BusinessLocation::forDropdown($business_id);
+        $sales_representative = User::forDropdown($business_id, false, false, true);
 
-            $products = StockBreaking::with('parentProduct', 'assignedProduct', 'businessLocation');
+        if (request()->ajax()) {
+            $products = StockBreaking::with('parentProduct', 'assignedProduct', 'businessLocation')->orderBy('stock_breakings.id', 'DESC');
+
+
+            if (request()->has('location_id') && ! empty(request()->get('location_id'))) {
+                $products->where('business_location_id', request()->get('location_id'));
+            } else {
+                $permitted_locations = auth()->user()->permitted_locations();
+                if ($permitted_locations != 'all') {
+                    $products->whereIn('business_location_id', $permitted_locations);
+                }
+            }
+
+            if (request()->has('created_by') && ! empty(request()->get('created_by'))) {
+                $products->where('stock_breakings.created_by', request()->get('created_by'));
+            }
+
+            if (!empty(request()->start_date) && !empty(request()->end_date)) {
+                $start = request()->start_date;
+                $end =  request()->end_date;
+                $products->whereDate('stock_breakings.created_at', '>=', $start)
+                            ->whereDate('stock_breakings.created_at', '<=', $end);
+            }
 
             return Datatables::of($products)
                 ->editColumn('parent_product_name', function ($row) {
@@ -2766,7 +2791,7 @@ class ProductController extends Controller
                 ->make(true);
         }
 
-        return view('stock_breakings.index');
+        return view('stock_breakings.index', compact('business_locations', 'sales_representative'));
     }
 
     public function addNewRow()
