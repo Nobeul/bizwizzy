@@ -386,8 +386,14 @@
 			<tbody>
 				@php
 					$subtotal = 0;
+					$totalTax = 0;
 				@endphp
 				@foreach($receipt_details->lines as $line)
+
+					@php
+						$totalTax += str_replace(',', '', $line['tax']);
+					@endphp
+
 					<tr>
 						<td class="text-center">
 							{{$loop->iteration}}
@@ -570,7 +576,7 @@
 						{!! $receipt_details->subtotal_label !!}
 					</td>
 					<td class="text-right">
-						KSh {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
+						KSh {{number_format((float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)$totalTax, 2)}}
 					</td>
 				</tr>
 				

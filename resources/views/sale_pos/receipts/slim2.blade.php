@@ -317,7 +317,17 @@
 			<div class="bb-lg mt-15 mb-10"></div>
             <table style="padding-top: 5px !important" class="border-bottom width-100 table-f-12 mb-10">
                 <tbody>
+
+					@php
+						$totalTax = 0;
+					@endphp
+
                 	@forelse($receipt_details->lines as $line)
+
+						@php
+							$totalTax += str_replace(',', '', $line['tax']);
+						@endphp
+
 	                    <tr class="bb-lg">
 	                        <td class="description">
 	                        	<div style="display:flex; width: 100%;">
@@ -445,7 +455,11 @@
                 	<strong>{!! $receipt_details->subtotal_label !!}</strong>
                 </p>
                 <p class="width-50 text-right">
-                	<strong>KSh {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}</strong>
+                	{{-- <strong>KSh {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}</strong> --}}
+
+                	<strong>KSh {{number_format((float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)$totalTax, 2)}}</strong>
+
+					
                 </p>
             </div>
 
