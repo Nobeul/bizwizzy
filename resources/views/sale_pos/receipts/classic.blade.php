@@ -474,7 +474,7 @@
 						<td class="text-right">
 
 							
-						    {{number_format((float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)$totalTax, 2)}}
+						    {{ number_format((float) pregReplace($receipt_details->total) - (float)$totalTax, 2) }}
 							
 							{{-- @if (! empty($receipt_details->taxes))
 						    	{{(float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
@@ -626,7 +626,7 @@
 							{!! $receipt_details->total_label !!}
 						</th>
 						<td class="text-right">
-							{{(float)preg_replace('/[^0-9.]/', '', $receipt_details->total)}}
+							{{(float) pregReplace($receipt_details->total)}}
 							@if(!empty($receipt_details->total_in_words))
 								<br>
 								<small>({{$receipt_details->total_in_words}})</small>
@@ -637,7 +637,7 @@
         				@foreach($receipt_details->payments as $payment)
         					<tr>
         						<th style="width:70%">{{ strpos($payment['method'], '(-)') ? __('Change') : $payment['method'] }}:</td>
-        						<td class="text-right">{{(float)preg_replace('/[^0-9.]/', '', $payment['amount'])}}</td>
+        						<td class="text-right">{{(float)pregReplace($payment['amount'])}}</td>
         					</tr>
         				@endforeach
         			@endif

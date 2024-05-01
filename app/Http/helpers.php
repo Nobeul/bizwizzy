@@ -100,3 +100,10 @@ if (! function_exists('str_ordinal')) {
         return number_format($number) . $suffix;
     }
 }
+
+if (!function_exists('pregReplace')) {
+    function pregReplace($value)
+    {
+        return preg_replace('/[^0-9.]/', '', $value);
+    }
+}
