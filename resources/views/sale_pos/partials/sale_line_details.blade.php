@@ -110,7 +110,7 @@
             </td>
             <td>
                 @php
-                    $calTax = $sell_line->product->tax == 1 ? $subTotal - ($subTotal /1.16) : 0;
+                    $calTax = $sell_line->product->tax == TAX_APPLICABLE_PRODUCT ? $subTotal - ($subTotal /1.16) : 0;
                     $totalCalTax += $calTax;
                 @endphp
 

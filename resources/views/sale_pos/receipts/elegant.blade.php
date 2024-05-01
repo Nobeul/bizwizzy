@@ -576,7 +576,7 @@
 						{!! $receipt_details->subtotal_label !!}
 					</td>
 					<td class="text-right">
-						KSh {{number_format((float)pregReplace($receipt_details->total) - (float)$totalTax, 2)}}
+						KSh {{number_format(pregReplaceFloat($receipt_details->total) - (float)$totalTax, 2)}}
 					</td>
 				</tr>
 				
