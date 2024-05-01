@@ -474,7 +474,7 @@
 						<td class="text-right">
 
 							
-						    {{ number_format( pregReplaceFloat($receipt_details->total) - (float)$totalTax, 2) }}
+						    {{ number_format( pregReplaceFloat($receipt_details->total) - round($receipt_details->vat, 2), 2) }}
 							
 							{{-- @if (! empty($receipt_details->taxes))
 						    	{{(float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
