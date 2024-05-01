@@ -116,27 +116,19 @@
                 @php
                     $taxRate = \App\TaxRate::where('id', $sell_line->tax_id)->first();
 
-                    if (!empty($taxRate) && $sell_line->product->tax == \App\TaxRate::TAX_APPLICABLE_PRODUCT && $taxRate->amount == 16) {
+                    $calTax = $sell_line->item_tax;
+
+                    if (!empty($taxRate) && $taxRate->amount == 16) {
                         $calTax = $subTotal - ($subTotal /1.16);
                     }
-                    // $totalCalTax += $calTax;
                 @endphp
 
                 @if(!empty($for_ledger))
-                    @if (isset($calTax))
-                        @format_currency($calTax)
-                    @else
-                        @format_currency($sell_line->item_tax)
-                    @endif
+                    @format_currency($calTax)
                 @else
                     {{-- <span class="display_currency" data-currency_symbol="true">{{ $sell_line->item_tax }}</span>  --}}
                     <span class="display_currency" data-currency_symbol="true">
-
-                        @if (isset($calTax))
-                            @format_currency($calTax)
-                        @else
-                            @format_currency($sell_line->item_tax)
-                        @endif
+                        @format_currency($calTax)
                     </span> 
                 @endif
                 @if(!empty($taxes[$sell_line->tax_id]))
