@@ -286,7 +286,15 @@
 				</tr>
 			</thead>
 			<tbody>
+				@php
+					$totalTax = 0;
+				@endphp
 				@forelse($receipt_details->lines as $line)
+
+					@php
+						$totalTax += str_replace(',', '', $line['tax']);
+					@endphp
+
 					<tr>
 						<td>
 							@if(!empty($line['image']))
@@ -464,16 +472,20 @@
 						</th>
 
 						<td class="text-right">
+
+							
+						    {{ number_format( pregReplaceFloat($receipt_details->total) - (float)$totalTax, 2) }}
+							
 							{{-- @if (! empty($receipt_details->taxes))
 						    	{{(float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
 							@else
 							 	{{ (float)preg_replace('/[^0-9.]/', '', $receipt_details->total) }}
 							@endif --}}
-							{{ (float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) }}
+							{{-- {{ (float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) }} --}}
 						</td>
 					</tr>
 					<tr>
-					    @if (count($receipt_details->taxes) > 0)
+					    @if ($totalTax > 0)
     					    {{-- @foreach ($receipt_details->taxes as $key => $val)
     					        @if ($key != 'Total Tax')
             					    <th style="width:70%">
@@ -488,7 +500,9 @@
     					        {{ __('VAT') }}:
     					    </th>
     					    <td class="text-right">
-    					        {{ (float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) }}
+    					        {{-- {{ (float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) }} --}}
+
+								{{ (float)$totalTax }}
     					    </td>
 					    @else
 					        <th style="width:70%">
@@ -612,7 +626,7 @@
 							{!! $receipt_details->total_label !!}
 						</th>
 						<td class="text-right">
-							{{(float)preg_replace('/[^0-9.]/', '', $receipt_details->total)}}
+							{{ pregReplaceFloat($receipt_details->total)}}
 							@if(!empty($receipt_details->total_in_words))
 								<br>
 								<small>({{$receipt_details->total_in_words}})</small>
@@ -623,7 +637,7 @@
         				@foreach($receipt_details->payments as $payment)
         					<tr>
         						<th style="width:70%">{{ strpos($payment['method'], '(-)') ? __('Change') : $payment['method'] }}:</td>
-        						<td class="text-right">{{(float)preg_replace('/[^0-9.]/', '', $payment['amount'])}}</td>
+        						<td class="text-right">{{pregReplaceFloat($payment['amount'])}}</td>
         					</tr>
         				@endforeach
         			@endif

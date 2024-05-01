@@ -349,7 +349,16 @@
                     </tr>
                 </thead>
                 <tbody>
+					@php
+						$totalTax = 0;
+					@endphp
+
                 	@forelse($receipt_details->lines as $line)
+
+						@php
+							$totalTax += str_replace(',', '', $line['tax']);
+						@endphp
+
 	                    <tr>
 	                        <td class="serial_number" style="vertical-align: top;">
 	                        	{{$loop->iteration}}
@@ -478,7 +487,9 @@
                     	{!! $receipt_details->subtotal_label !!}
                     </p>
                     <p class="width-50 text-right sub-headings">
-                    	KSh {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}
+                    	{{-- KSh {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}} --}}
+
+						KSh {{number_format(pregReplaceFloat($receipt_details->total) - (float)$totalTax, 2)}}
                     </p>
                 </div>
 

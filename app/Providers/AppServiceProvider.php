@@ -46,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
         //Laravel 5.6 uses Bootstrap 4 by default. Shift did not update your front-end resources or dependencies as this could impact your UI. If you are using Bootstrap and wish to continue using Bootstrap 3, you should add Paginator::useBootstrapThree() to your AppServiceProvider boot method.
         Paginator::useBootstrapThree();
 
+
         $asset_v = config('constants.asset_version', 1);
         View::share('asset_v', $asset_v);
         

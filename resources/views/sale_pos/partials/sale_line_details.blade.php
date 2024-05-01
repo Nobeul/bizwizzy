@@ -20,7 +20,16 @@
         <th>{{ __('sale.price_inc_tax') }}</th>
         <th>{{ __('sale.subtotal') }}</th>
     </tr>
+
+    @php
+        $totalCalTax = 0;
+    @endphp
+
     @foreach($sell->sell_lines as $sell_line)
+
+        @php
+            $subTotal = $sell_line->quantity * $sell_line->unit_price_inc_tax;
+        @endphp
         <tr>
             <td>{{ $loop->iteration }}</td>
             <td>
@@ -100,10 +109,18 @@
                 @if($sell_line->line_discount_type == 'percentage') ({{$sell_line->line_discount_amount}}%) @endif
             </td>
             <td>
+
+                @php
+                    $calTax = $sell_line->product->tax == \App\TaxRate::TAX_APPLICABLE_PRODUCT ? $subTotal - ($subTotal /1.16) : 0;
+                    $totalCalTax += $calTax;
+                @endphp
+
                 @if(!empty($for_ledger))
-                    @format_currency($sell_line->item_tax)
+                    {{-- @format_currency($sell_line->item_tax) --}}
+                    @format_currency($calTax)
                 @else
-                    <span class="display_currency" data-currency_symbol="true">{{ $sell_line->item_tax }}</span> 
+                    {{-- <span class="display_currency" data-currency_symbol="true">{{ $sell_line->item_tax }}</span>  --}}
+                    <span class="display_currency" data-currency_symbol="true">{{ $calTax }}</span> 
                 @endif
                 @if(!empty($taxes[$sell_line->tax_id]))
                 ( {{ $taxes[$sell_line->tax_id]}} )
@@ -118,9 +135,9 @@
             </td>
             <td>
                 @if(!empty($for_ledger))
-                    @format_currency($sell_line->quantity * $sell_line->unit_price_inc_tax)
+                    @format_currency($subTotal)
                 @else
-                    <span class="display_currency" data-currency_symbol="true">{{ $sell_line->quantity * $sell_line->unit_price_inc_tax }}</span>
+                    <span class="display_currency" data-currency_symbol="true">{{ $subTotal }}</span>
                 @endif
             </td>
         </tr>

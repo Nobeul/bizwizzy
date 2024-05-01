@@ -22,6 +22,8 @@ class TaxRate extends Model
      */
     protected $guarded = ['id'];
 
+    const TAX_APPLICABLE_PRODUCT = 1;
+
     /**
      * Return list of tax rate dropdown for a business
      *
