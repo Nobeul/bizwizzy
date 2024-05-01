@@ -109,8 +109,9 @@
                 @if($sell_line->line_discount_type == 'percentage') ({{$sell_line->line_discount_amount}}%) @endif
             </td>
             <td>
+
                 @php
-                    $calTax = $sell_line->product->tax == TAX_APPLICABLE_PRODUCT ? $subTotal - ($subTotal /1.16) : 0;
+                    $calTax = $sell_line->product->tax == \App\TaxRate::TAX_APPLICABLE_PRODUCT ? $subTotal - ($subTotal /1.16) : 0;
                     $totalCalTax += $calTax;
                 @endphp
 
