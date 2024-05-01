@@ -502,7 +502,7 @@
     					    <td class="text-right">
     					        {{-- {{ (float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) }} --}}
 
-								{{ (float)$totalTax }}
+								{{ round($receipt_details->vat, 2) }}
     					    </td>
 					    @else
 					        <th style="width:70%">
