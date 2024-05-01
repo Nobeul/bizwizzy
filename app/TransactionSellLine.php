@@ -23,6 +23,11 @@ class TransactionSellLine extends Model
         return $this->belongsTo(\App\Product::class, 'product_id');
     }
 
+    public function tax()
+    {
+        return $this->belongsTo(\App\TaxRate::class, 'tax_id');
+    }
+
     public function variations()
     {
         return $this->belongsTo(\App\Variation::class, 'variation_id');

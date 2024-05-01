@@ -110,16 +110,11 @@
             </td>
             <td>
 
-
-
-
                 @php
-                    $taxRate = \App\TaxRate::where('id', $sell_line->tax_id)->first();
 
-                    if (!empty($taxRate) && $sell_line->product->tax == \App\TaxRate::TAX_APPLICABLE_PRODUCT && $taxRate->amount == 16) {
+                    if ($sell_line->product->tax == \App\TaxRate::TAX_APPLICABLE_PRODUCT && $sell_line->tax->amount == 16) {
                         $calTax = $subTotal - ($subTotal /1.16);
                     }
-                    // $totalCalTax += $calTax;
                 @endphp
 
                 @if(!empty($for_ledger))
