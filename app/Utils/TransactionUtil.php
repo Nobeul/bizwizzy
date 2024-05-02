@@ -1304,7 +1304,10 @@ class TransactionUtil extends Util
                 $sell_line_relations[] = 'lot_details';
             }
 
-            $lines = $transaction->sell_lines()->whereNull('parent_sell_line_id')->with($sell_line_relations)->get();
+            $lines = $transaction->sell_lines()->whereNull('parent_sell_line_id')->with($sell_line_relations)
+                    ->leftJoin('tax_rates', 'tax_rates.id', '=', 'transaction_sell_lines.tax_id')
+                    ->select('transaction_sell_lines.*', 'tax_rates.amount as tax_rate')
+                    ->get();
 
             foreach ($lines as $key => $value) {
                 if (!empty($value->sub_unit_id)) {
@@ -1331,6 +1334,7 @@ class TransactionUtil extends Util
             $subtotal_exc_tax = 0;
             $unique_items = [];
             $output['subtotal'] = 0;
+            $output['vat'] = 0;
             foreach ($details['lines'] as $line) {
                 if (!empty($line['group_tax_details'])) {
                     foreach ($line['group_tax_details'] as $tax_group_detail) {
@@ -1362,6 +1366,10 @@ class TransactionUtil extends Util
                     $output['subtotal'] += $line['line_total_uf']/1.16;
                 } else {
                     $output['subtotal'] += $line['line_total_uf'];
+                }
+
+                if (! empty($line['tax_rate']) && $line['tax_rate'] == 16) {
+                    $output['vat'] += ($line['line_total_uf'] - ($line['line_total_uf']/1.16));
                 }
             }
 
@@ -2057,7 +2065,8 @@ class TransactionUtil extends Util
                 'line_total_exc_tax' => $this->num_f($line->unit_price * $line->quantity, false, $business_details),
                 'line_total_exc_tax_uf' => $line->unit_price * $line->quantity,
                 'variation_id' => $variation->id,
-                'vehicle_reg_no' => ! empty($line->vehicle_id) ? Vehicle::where('id', $line->vehicle_id)->value('license_plate') : ''
+                'vehicle_reg_no' => ! empty($line->vehicle_id) ? Vehicle::where('id', $line->vehicle_id)->value('license_plate') : '',
+                'tax_rate' => $line->tax_rate ?? '',
             ];
 
             $temp = [];

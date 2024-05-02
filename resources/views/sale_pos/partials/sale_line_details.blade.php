@@ -114,6 +114,7 @@
                     $calTax = $sell_line->item_tax;
 
                     if ($sell_line->tax->amount == 16) {
+
                         $calTax = $subTotal - ($subTotal /1.16);
                     }
                 @endphp
@@ -123,7 +124,7 @@
                 @else
                     {{-- <span class="display_currency" data-currency_symbol="true">{{ $sell_line->item_tax }}</span>  --}}
                     <span class="display_currency" data-currency_symbol="true">
-                       @format_currency($calTax)
+                        @format_currency($calTax)
                     </span> 
                 @endif
                 @if(!empty($taxes[$sell_line->tax_id]))

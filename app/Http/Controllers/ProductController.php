@@ -2746,16 +2746,12 @@ class ProductController extends Controller
         $sales_representative = User::forDropdown($business_id, false, false, true);
 
         if (request()->ajax()) {
-            $products = StockBreaking::with('parentProduct', 'assignedProduct', 'businessLocation')->orderBy('stock_breakings.id', 'DESC');
-
+            $products = StockBreaking::with('parentProduct', 'assignedProduct', 'businessLocation')->orderBy('stock_breakings.id', 'DESC')->select("stock_breakings.*");
 
             if (request()->has('location_id') && ! empty(request()->get('location_id'))) {
                 $products->where('business_location_id', request()->get('location_id'));
             } else {
-                $permitted_locations = auth()->user()->permitted_locations();
-                if ($permitted_locations != 'all') {
-                    $products->whereIn('business_location_id', $permitted_locations);
-                }
+                $products->whereIn('business_location_id', array_keys($business_locations->toArray()));
             }
 
             if (request()->has('created_by') && ! empty(request()->get('created_by'))) {
@@ -2778,6 +2774,9 @@ class ProductController extends Controller
                 })
                 ->editColumn('business_location', function ($row) {
                     return $row->businessLocation->name ?? '';
+                })
+                ->editColumn('created_at', function ($row) {
+                    return $row->created_at ?? '';
                 })
                 ->filterColumn('parent_product_name', function ($query, $keyword) {
                     $query->where('parentProduct.name', 'like', ["%{$keyword}%"]);

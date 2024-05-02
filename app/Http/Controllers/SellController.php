@@ -807,6 +807,7 @@ class SellController extends Controller
            ->get();
 
         $line_taxes = [];
+        $calTax = 0;
         foreach ($sell->sell_lines as $key => $value) {
             if (!empty($value->sub_unit_id)) {
                 $formated_sell_line = $this->transactionUtil->recalculateSellLineTotals($business_id, $value);
@@ -814,10 +815,18 @@ class SellController extends Controller
             }
 
             if (!empty($taxes[$value->tax_id])) {
+                $subTotal = $value->quantity * $value->unit_price_inc_tax;
+                $taxRate = TaxRate::where('id', $value->tax_id)->first();
+
                 if(isset($line_taxes[$taxes[$value->tax_id]])) {
                     $line_taxes[$taxes[$value->tax_id]] += ($value->item_tax * $value->quantity);
                 } else {
-                    $line_taxes[$taxes[$value->tax_id]] = ($value->item_tax * $value->quantity);
+                    if (!empty($taxRate) && $taxRate->amount == 16) {
+                        $calTax += $subTotal - ($subTotal /1.16);
+                        $line_taxes[$taxes[$value->tax_id]] = $calTax;
+                    } else {
+                        $line_taxes[$taxes[$value->tax_id]] = ($value->item_tax * $value->quantity);
+                    }
                 }
             }
         }
