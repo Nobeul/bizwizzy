@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\PinnacleSmsEvent;
+use App\Listeners\SendSms;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -27,6 +29,10 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\TransactionPaymentDeleted::class => [
             \App\Listeners\DeleteAccountTransaction::class,
         ],
+
+        PinnacleSmsEvent::class => [
+            SendSms::class,
+        ]
     ];
 
     /**

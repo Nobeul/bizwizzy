@@ -65,6 +65,12 @@
         </div>
         <div class="col-xs-3">
             <div class="form-group">
+                {!! Form::label('pinnacle_senderid', __('Pinnacle Sender ID') . ':') !!}
+                {!! Form::text('sms_settings[pinnacle_senderid]', !empty($sms_settings['pinnacle_senderid']) ? $sms_settings['pinnacle_senderid'] : null, ['class' => 'form-control','placeholder' => __('Pinnacle Sender ID'), 'id' => 'pinnacle_senderid']); !!}
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="form-group">
                 {!! Form::label('api_key', __('API Key') . ':') !!}
                 {!! Form::text('', $business->pinnacle_api_key, ['class' => 'form-control','placeholder' => __('API Key'), 'id' => 'api_key', 'readonly']); !!}
             </div>
