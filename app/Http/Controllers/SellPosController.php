@@ -598,18 +598,20 @@ class SellPosController extends Controller
 
                 DB::commit();
 
-                $due = $this->transactionUtil->getLedgerDetails($input['contact_id'], \Carbon::now()->startOfYear()->format('Y-m-d'), \Carbon::now()->format('Y-m-d'))['balance_due'];
-
-                $output = $due != 0 ? $this->transactionUtil->num_f($due, true) : 0;
+                if ($is_credit_sale) {
+                    $due = $this->transactionUtil->getLedgerDetails($input['contact_id'], \Carbon::now()->startOfYear()->format('Y-m-d'), \Carbon::now()->format('Y-m-d'))['balance_due'];
     
-                $contact = Contact::find($input['contact_id']);
-                
-                $message = "Dear {$contact->first_name}, An invoice no {$transaction->invoice_no} of amount {$transaction->total_before_tax} has been debited in your credit account. Your account balance is {$output}."; 
-                
-                $business = Business::where('id', $business_id)->first();
-
-                if ($business->pinnacle_api_key) {
-                    event(new PinnacleSmsEvent($business->sms_settings['pinnacle_username'], $business->sms_settings['pinnacle_password'], $business->pinnacle_api_key, $business->sms_settings['pinnacle_senderid'], $message, $contact->mobile));
+                    $output = $due != 0 ? $this->transactionUtil->num_f($due, true) : 0;
+        
+                    $contact = Contact::find($input['contact_id']);
+                    
+                    $message = "Dear {$contact->first_name}, An invoice no {$transaction->invoice_no} of amount {$transaction->total_before_tax} has been debited in your credit account. Your account balance is {$output}."; 
+                    
+                    $business = Business::where('id', $business_id)->first();
+    
+                    if ($business->pinnacle_api_key) {
+                        event(new PinnacleSmsEvent($business->sms_settings['pinnacle_username'], $business->sms_settings['pinnacle_password'], $business->pinnacle_api_key, $business->sms_settings['pinnacle_senderid'], $message, $contact->mobile));
+                    }
                 }
 
                 if ($request->input('is_save_and_print') == 1) {
