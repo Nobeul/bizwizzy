@@ -81,12 +81,29 @@
 				</p>
 			</div>
 			<div class="textbox-info">
+				<p class="f-left"><strong>{{ __('Company PIN') }}</strong></p>
+				<p class="f-right">
+					{{ $receipt_details->website ?? ''}}
+				</p>
+			</div>
+			<div class="textbox-info">
+				<p class="f-left"><strong>{{ __('Customer PIN') }}</strong></p>
+				<p class="f-right">
+					{{ $receipt_details->customer_pin ?? ''}}
+				</p>
+			</div>
+			<div class="textbox-info">
+				<p class="f-left"><strong>{{ __('Customer Name') }}</strong></p>
+				<p class="f-right">
+					{{ $receipt_details->pos_customer_name ?? ''}}
+				</p>
+			</div>
+			<div class="textbox-info">
 				<p class="f-left"><strong>{!! $receipt_details->date_label !!}</strong></p>
 				<p class="f-right">
 					{{$receipt_details->invoice_date}}
 				</p>
 			</div>
-			
 			@if(!empty($receipt_details->due_date_label))
 				<div class="textbox-info">
 					<p class="f-left"><strong>{{$receipt_details->due_date_label}}</strong></p>
@@ -381,7 +398,7 @@
 	                        		<p class="text-left width-60 quantity m-0 bw" style="direction: ltr;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	                        			{{$line['quantity']}} 
 	                        			@if(empty($receipt_details->hide_price))
-	                        			x {{$line['unit_price_before_discount']}}
+	                        			x {{$line['unit_price_inc_tax']}}
 	                        			
 	                        			@if(!empty($line['total_line_discount']) && $line['total_line_discount'] != 0)
 	                        				- {{$line['total_line_discount']}}
@@ -455,13 +472,18 @@
                 	<strong>{!! $receipt_details->subtotal_label !!}</strong>
                 </p>
                 <p class="width-50 text-right">
-                	{{-- <strong>KSh {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}}</strong> --}}
-
-                	<strong>KSh {{number_format( pregReplaceFloat($receipt_details->total) - (float)$totalTax, 2)}}</strong>
-
-					
+                	<strong>KSh {{number_format( pregReplaceFloat($receipt_details->total) - round($receipt_details->vat, 2), 2)}}</strong>
                 </p>
             </div>
+
+			<div class="flex-box">
+				<p class="left text-left">
+					<strong>{{ __('VAT') }}:</strong>
+				</p>
+				<p class="width-50 text-right">
+					<strong>KSh {{number_format(round($receipt_details->vat, 2), 2)}}</strong>
+				</p>
+			</div>
 
             <!-- Shipping Charges -->
 			@if(!empty($receipt_details->shipping_charges))

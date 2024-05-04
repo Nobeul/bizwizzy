@@ -89,6 +89,24 @@
 				</p>
 			</div>
 			<div class="textbox-info">
+				<p class="f-left"><strong>{{ __('Company PIN') }}</strong></p>
+				<p class="f-right">
+					{{ $receipt_details->website ?? ''}}
+				</p>
+			</div>
+			<div class="textbox-info">
+				<p class="f-left"><strong>{{ __('Customer PIN') }}</strong></p>
+				<p class="f-right">
+					{{ $receipt_details->customer_pin ?? ''}}
+				</p>
+			</div>
+			<div class="textbox-info">
+				<p class="f-left"><strong>{{ __('Customer Name') }}</strong></p>
+				<p class="f-right">
+					{{ $receipt_details->pos_customer_name ?? ''}}
+				</p>
+			</div>
+			<div class="textbox-info">
 				<p class="f-left"><strong>{!! $receipt_details->date_label !!}</strong></p>
 				<p class="f-right">
 					{{$receipt_details->invoice_date}}
@@ -408,7 +426,7 @@
                             </small>
                             @endif</td>
 	                        @if(empty($receipt_details->hide_price))
-	                        <td class="unit_price text-right">{{$line['unit_price_before_discount']}}</td>
+	                        <td class="unit_price text-right">{{$line['unit_price_inc_tax']}}</td>
 
 	                        @if(!empty($receipt_details->discounted_unit_price_label))
 								<td class="text-right">
@@ -487,9 +505,16 @@
                     	{!! $receipt_details->subtotal_label !!}
                     </p>
                     <p class="width-50 text-right sub-headings">
-                    	{{-- KSh {{(float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->taxes[array_key_last($receipt_details->taxes)])}} --}}
+						KSh {{ number_format(pregReplaceFloat($receipt_details->total) - round($receipt_details->vat, 2), 2) }}
+                    </p>
+                </div>
 
-						KSh {{number_format(pregReplaceFloat($receipt_details->total) - (float)$totalTax, 2)}}
+				<div class="flex-box">
+                    <p class="left text-right sub-headings">
+                    	{{ __('VAT') }}:
+                    </p>
+                    <p class="width-50 text-right sub-headings">
+						KSh {{number_format(round($receipt_details->vat, 2), 2)}}
                     </p>
                 </div>
 
