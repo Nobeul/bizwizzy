@@ -80,18 +80,22 @@
 					{{$receipt_details->invoice_no}}
 				</p>
 			</div>
-			<div class="textbox-info">
-				<p class="f-left"><strong>{{ __('Company PIN') }}</strong></p>
-				<p class="f-right">
-					{{ $receipt_details->website ?? ''}}
-				</p>
-			</div>
-			<div class="textbox-info">
-				<p class="f-left"><strong>{{ __('Customer PIN') }}</strong></p>
-				<p class="f-right">
-					{{ $receipt_details->customer_pin ?? ''}}
-				</p>
-			</div>
+			@if ($receipt_details->show_company_pin)
+				<div class="textbox-info">
+					<p class="f-left"><strong>{{ __('Company PIN') }}</strong></p>
+					<p class="f-right">
+						{{ $receipt_details->website ?? ''}}
+					</p>
+				</div>
+			@endif
+			@if ($receipt_details->show_customer_pin)
+				<div class="textbox-info">
+					<p class="f-left"><strong>{{ __('Customer PIN') }}</strong></p>
+					<p class="f-right">
+						{{ $receipt_details->customer_pin ?? ''}}
+					</p>
+				</div>
+			@endif
 			<div class="textbox-info">
 				<p class="f-left"><strong>{{ __('Customer Name') }}</strong></p>
 				<p class="f-right">
