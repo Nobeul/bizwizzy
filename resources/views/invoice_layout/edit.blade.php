@@ -133,7 +133,23 @@
               'placeholder' => __('lang_v1.sub_heading_line', ['_number_' => 5]) ]); !!}
           </div>
         </div>
-
+        <div class="clearfix"></div>
+        <div class="col-sm-3">
+          <div class="form-group">
+            <div class="checkbox">
+              <label>
+                {!! Form::checkbox('common_settings[show_company_pin]', 1, !empty($invoice_layout->common_settings['show_company_pin']), ['class' => 'input-icheck']); !!} @lang('Show Company PIN')</label>
+              </div>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="form-group">
+            <div class="checkbox">
+              <label>
+                {!! Form::checkbox('common_settings[show_customer_pin]', 1, !empty($invoice_layout->common_settings['show_customer_pin']), ['class' => 'input-icheck']); !!} @lang('Show Customer PIN')</label>
+              </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
