@@ -33,6 +33,11 @@
 					</span>
 					<br/>
 				@endif
+
+				<span class="headings">
+					{{ $receipt_details->cash_or_credit_sale }}
+				</span>
+				<br/>
 				
 				@if(!empty($receipt_details->address))
 					{!! $receipt_details->address !!}
@@ -83,7 +88,7 @@
 			</p>
 			</div>
 			<div class="border-top textbox-info">
-				<p class="f-left"><strong>{!! $receipt_details->invoice_no_prefix !!}</strong></p>
+				<p class="f-left"><strong>{!! $receipt_details->cash_or_credit_sale == 'INVOICE' ? $receipt_details->invoice_no_prefix : 'Cash Sale No' !!}</strong></p>
 				<p class="f-right">
 					{{$receipt_details->invoice_no}}
 				</p>

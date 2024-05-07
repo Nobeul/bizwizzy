@@ -22,7 +22,7 @@
 				{{$receipt_details->display_name}}
 			@endif
 		</h2>
-		<p class="text-center">{{ __('CASH SALE') }}</p>
+		<p class="text-center">{{ $receipt_details->cash_or_credit_sale }}</p>
 
 		<!-- Address -->
 		<p>
@@ -90,7 +90,7 @@
 				<b>{{$receipt_details->date_label}}</b> {{$receipt_details->invoice_date}}
 				<br>
 				@if(!empty($receipt_details->invoice_no_prefix))
-					<b>{!! $receipt_details->invoice_no_prefix !!}</b>
+					<b>{!! $receipt_details->cash_or_credit_sale == 'INVOICE' ? $receipt_details->invoice_no_prefix : "Cash Sale No" !!}</b>
 				@endif
 				{{$receipt_details->invoice_no}}
 
