@@ -1954,6 +1954,7 @@ class TransactionUtil extends Util
         $output['table_tax_headings'] = !empty($il->table_tax_headings) ? array_filter(json_decode($il->table_tax_headings), 'strlen') : null;
         $output['show_company_pin'] = $il->common_settings['show_company_pin'] ?? false;
         $output['show_customer_pin'] = $il->common_settings['show_customer_pin'] ?? false;
+        $output['show_vat'] = $il->common_settings['show_vat'] ?? false;
         $output['cash_or_credit_sale'] = $transaction->payment_status == 'paid' ? "CASH SALE" : "INVOICE";
 
         return (object)$output;

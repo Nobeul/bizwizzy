@@ -392,11 +392,11 @@
 	                        </td>
 	                        <td class="description">
 	                        	{{$line['name']}} {{$line['product_variation']}} {{$line['variation']}} 
-	                        	@if(!empty($line['sub_sku'])), {{$line['sub_sku']}} @endif @if(!empty($line['brand'])), {{$line['brand']}} @endif @if(!empty($line['cat_code'])), {{$line['cat_code']}}@endif
+	                        	@if(!empty($line['sub_sku'])), {{'SKU-'.$line['sub_sku']}} @endif @if(!empty($line['brand'])), {{'Brand-'.$line['brand']}} @endif @if(!empty($line['cat_code'])), {{'Cat Code-'.$line['cat_code']}}@endif
 	                        	@if(!empty($line['product_custom_fields'])), {{$line['product_custom_fields']}} @endif
 	                        	@if(!empty($line['product_description']))
 	                            	<div class="f-8">
-	                            		{!!$line['product_description']!!}
+	                            		{{ __('Product Description-') }}{!!$line['product_description']!!}
 	                            	</div>
 	                            @endif
 	                        	@if(!empty($line['sell_line_note']))
@@ -518,15 +518,16 @@
                     </p>
                 </div>
 
-				<div class="flex-box">
-                    <p class="left text-right sub-headings">
-                    	{{ __('VAT') }}:
-                    </p>
-                    <p class="width-50 text-right sub-headings">
-						KSh {{number_format(round($receipt_details->vat, 2), 2)}}
-                    </p>
-                </div>
-
+				@if ($receipt_details->show_vat)
+					<div class="flex-box">
+						<p class="left text-right sub-headings">
+							{{ __('VAT') }}:
+						</p>
+						<p class="width-50 text-right sub-headings">
+							KSh {{number_format(round($receipt_details->vat, 2), 2)}}
+						</p>
+					</div>
+				@endif
                 <!-- Shipping Charges -->
 				@if(!empty($receipt_details->shipping_charges))
 					<div class="flex-box">

@@ -150,6 +150,14 @@
               </div>
           </div>
         </div>
+        <div class="col-sm-3">
+          <div class="form-group">
+            <div class="checkbox">
+              <label>
+                {!! Form::checkbox('common_settings[show_vat]', 1, !empty($invoice_layout->common_settings['show_vat']), ['class' => 'input-icheck']); !!} @lang('Show VAT')</label>
+              </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

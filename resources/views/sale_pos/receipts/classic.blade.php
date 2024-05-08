@@ -301,11 +301,11 @@
 								<img src="{{$line['image']}}" alt="Image" width="50" style="float: left; margin-right: 8px;">
 							@endif
                             {{$line['name']}} {{$line['product_variation']}} {{$line['variation']}} 
-                            @if(!empty($line['sub_sku'])), {{$line['sub_sku']}} @endif @if(!empty($line['brand'])), {{$line['brand']}} @endif @if(!empty($line['cat_code'])), {{$line['cat_code']}}@endif
+                            @if(!empty($line['sub_sku'])), {{'SKU-'.$line['sub_sku']}} @endif @if(!empty($line['brand'])), {{'Brand-'.$line['brand']}} @endif @if(!empty($line['cat_code'])), {{'Cat Code-'.$line['cat_code']}}@endif
                             @if(!empty($line['product_custom_fields'])), {{$line['product_custom_fields']}} @endif
                             @if(!empty($line['product_description']))
                             	<small>
-                            		{!!$line['product_description']!!}
+                            		{{ __('Product Description-') }}{!!$line['product_description']!!}
                             	</small>
                             @endif 
                             @if(!empty($line['sell_line_note']))
@@ -496,14 +496,16 @@
             					    </td>
         					    @endif
     					    @endforeach --}}
-    					    <th style="width:70%">
-    					        {{ __('VAT') }}:
-    					    </th>
-    					    <td class="text-right">
-    					        {{-- {{ (float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) }} --}}
+							@if ($receipt_details->show_vat)
+								<th style="width:70%">
+									{{ __('VAT') }}:
+								</th>
+								<td class="text-right">
+									{{-- {{ (float)preg_replace('/[^0-9.]/', '', $receipt_details->total) - (float)preg_replace('/[^0-9.]/', '', $receipt_details->subtotal) }} --}}
 
-								{{ round($receipt_details->vat, 2) }}
-    					    </td>
+									{{ round($receipt_details->vat, 2) }}
+								</td>
+							@endif
 					    @else
 					        <th style="width:70%">
         					    {{ Tax }}:

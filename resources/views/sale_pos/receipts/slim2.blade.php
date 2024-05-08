@@ -485,14 +485,16 @@
                 </p>
             </div>
 
-			<div class="flex-box">
-				<p class="left text-left">
-					<strong>{{ __('VAT') }}:</strong>
-				</p>
-				<p class="width-50 text-right">
-					<strong>KSh {{number_format(round($receipt_details->vat, 2), 2)}}</strong>
-				</p>
-			</div>
+			@if ($receipt_details->show_vat)
+				<div class="flex-box">
+					<p class="left text-left">
+						<strong>{{ __('VAT') }}:</strong>
+					</p>
+					<p class="width-50 text-right">
+						<strong>KSh {{number_format(round($receipt_details->vat, 2), 2)}}</strong>
+					</p>
+				</div>
+			@endif
 
             <!-- Shipping Charges -->
 			@if(!empty($receipt_details->shipping_charges))
