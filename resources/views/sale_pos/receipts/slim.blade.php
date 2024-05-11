@@ -691,12 +691,20 @@
 	            		<tr>
 	            			<th colspan="2" class="text-center">{{$receipt_details->tax_summary_label}}</th>
 	            		</tr>
-	            		@foreach($receipt_details->taxes as $key => $val)
+	            		{{-- @foreach($receipt_details->taxes as $key => $val)
 	            			<tr>
 	            				<td class="left">{{$key}}</td>
 	            				<td class="right">{{$val}}</td>
 	            			</tr>
-	            		@endforeach
+	            		@endforeach --}}
+						<tr>
+							<td class="left">Tax</td>
+							<td class="right">{{ round($receipt_details->vat, 2) }}</td>
+						</tr>
+						<tr>
+							<td class="left">Total Tax</td>
+							<td class="right">{{ round($receipt_details->vat, 2) }}</td>
+						</tr>
 	            	</table>
 	            @endif
             @endif
