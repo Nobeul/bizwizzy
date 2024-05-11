@@ -23,7 +23,7 @@
 									<th>@lang( 'purchase.subtotal_before_tax' )</th>
 									<th>@lang( 'lang_v1.date' )</th>
 									<th>@lang( 'brand.note' )</th>
-									<th>&nbsp;</th>
+									{{-- <th>&nbsp;</th> --}}
 								</tr>
 								</thead>
 								<tbody>
@@ -109,7 +109,7 @@
 	<td>
 		{!! Form::textarea('stocks[' . $key . '][' . $variation->id . '][' . $sub_key . '][purchase_line_note]', $purchase_line_note , ['class' => 'form-control input-sm', 'rows' => 3 ]); !!}
 	</td>
-	<td>
+	{{-- <td>
 		@if($loop->index == 0)
 			<button type="button" class="btn btn-primary btn-xs add_stock_row" data-sub-key="{{ count($purchases[$key][$variation->id])}}" 
 				data-row-html='<tr>
@@ -157,7 +157,7 @@
 	@else
 		&nbsp;
 	@endif
-			</td>
+			</td> --}}
 			</tr>
 		@endforeach
 	@endforeach

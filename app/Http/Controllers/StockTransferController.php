@@ -161,10 +161,12 @@ class StockTransferController extends Controller
 
         $business_locations = BusinessLocation::forDropdown($business_id);
 
+        $transfer_to_locations = BusinessLocation::where('business_id', $business_id)->Active()->pluck('name', 'id');
+
         $statuses = $this->stockTransferStatuses();
 
         return view('stock_transfer.create')
-                ->with(compact('business_locations', 'statuses'));
+                ->with(compact('business_locations', 'statuses', 'transfer_to_locations'));
     }
 
     private function stockTransferStatuses()
@@ -613,6 +615,8 @@ class StockTransferController extends Controller
 
         $business_locations = BusinessLocation::forDropdown($business_id);
 
+        $transfer_to_locations = BusinessLocation::where('business_id', $business_id)->Active()->pluck('name', 'id');
+
         $statuses = $this->stockTransferStatuses();
 
         $sell_transfer = Transaction::where('business_id', $business_id)
@@ -654,7 +658,7 @@ class StockTransferController extends Controller
         }
 
         return view('stock_transfer.edit')
-                ->with(compact('sell_transfer', 'purchase_transfer', 'business_locations', 'statuses', 'products'));
+                ->with(compact('sell_transfer', 'purchase_transfer', 'business_locations', 'statuses', 'products', 'transfer_to_locations'));
     }
 
     /**
