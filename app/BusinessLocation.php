@@ -26,6 +26,8 @@ class BusinessLocation extends Model
         'featured_products' => 'array'
     ];
 
+    const SELECT_ALL = 0;
+
     /**
      * Return list of locations for a business
      *

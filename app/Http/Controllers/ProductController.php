@@ -403,7 +403,8 @@ class ProductController extends Controller
         $default_profit_percent = request()->session()->get('business.default_profit_percent');;
 
         //Get all business locations
-        $business_locations = BusinessLocation::forDropdown($business_id);
+        $business_locations = BusinessLocation::forDropdown($business_id)->toArray();
+        $business_locations = ['Select all']+$business_locations;
 
         //Duplicate product
         $duplicate_product = null;
@@ -524,7 +525,12 @@ class ProductController extends Controller
             //Add product locations
             $product_locations = $request->input('product_locations');
             if (!empty($product_locations)) {
-                $product->product_locations()->sync($product_locations);
+                if (in_array(BusinessLocation::SELECT_ALL, $product_locations)) {
+                    $business_locations = BusinessLocation::forDropdown($business_id)->toArray();
+                    $product->product_locations()->sync(array_keys($business_locations));
+                } else {
+                    $product->product_locations()->sync($product_locations);
+                }
             }
             
             if ($product->type == 'single') {
@@ -661,7 +667,9 @@ class ProductController extends Controller
         $sub_units = $this->productUtil->getSubUnits($business_id, $product->unit_id, true);
         
         //Get all business locations
-        $business_locations = BusinessLocation::forDropdown($business_id);
+        $business_locations = $locations = BusinessLocation::forDropdown($business_id)->toArray();
+        $business_locations = ['Select All']+$business_locations;
+        $selected_locations = array_diff(array_keys($locations), $product->product_locations->pluck('id')->toArray()) == [] ? [0] : $product->product_locations->pluck('id');
         //Rack details
         $rack_details = $this->productUtil->getRackDetails($business_id, $id);
 
@@ -678,7 +686,7 @@ class ProductController extends Controller
         $alert_quantity = !is_null($product->alert_quantity) ? $this->productUtil->num_f($product->alert_quantity, false, null, true) : null;
 
         return view('product.edit')
-                ->with(compact('categories', 'brands', 'units', 'sub_units', 'taxes', 'tax_attributes', 'barcode_types', 'product', 'sub_categories', 'default_profit_percent', 'business_locations', 'rack_details', 'selling_price_group_count', 'module_form_parts', 'product_types', 'common_settings', 'warranties', 'pos_module_data', 'alert_quantity'));
+                ->with(compact('categories', 'brands', 'units', 'sub_units', 'taxes', 'tax_attributes', 'barcode_types', 'product', 'sub_categories', 'default_profit_percent', 'business_locations', 'rack_details', 'selling_price_group_count', 'module_form_parts', 'product_types', 'common_settings', 'warranties', 'pos_module_data', 'alert_quantity', 'selected_locations'));
     }
 
     /**
@@ -786,6 +794,11 @@ class ProductController extends Controller
             $product_locations = !empty($request->input('product_locations')) ?
                                 $request->input('product_locations') : [];
 
+            if (in_array(BusinessLocation::SELECT_ALL, $product_locations)) {
+                $business_locations = BusinessLocation::forDropdown($business_id)->toArray();
+                $product_locations = array_keys($business_locations);
+            }
+                
             $permitted_locations = auth()->user()->permitted_locations();
             //If not assigned location exists don't remove it
             if ($permitted_locations != 'all') {

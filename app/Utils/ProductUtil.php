@@ -1968,6 +1968,7 @@ class ProductUtil extends Util
                                 ->leftjoin('transaction_sell_lines as rsl', 
                                         'rsl.transaction_id', '=', 'return.id')
                                 ->leftjoin('contacts as c', 'transactions.contact_id', '=', 'c.id')
+                                ->leftJoin('users as u', 'transactions.created_by', '=', 'u.id')
                                 ->where('transactions.location_id', $location_id)
                                 ->where( function($q) use ($variation_id){
                                     $q->where('sl.variation_id', $variation_id)
@@ -1995,7 +1996,8 @@ class ProductUtil extends Util
                                     'c.name as contact_name',
                                     'c.supplier_business_name',
                                     'pl.secondary_unit_quantity as purchase_secondary_unit_quantity',
-                                    'sl.secondary_unit_quantity as sell_secondary_unit_quantity'
+                                    'sl.secondary_unit_quantity as sell_secondary_unit_quantity',
+                                    \DB::raw("CONCAT(u.first_name, ' ', u.last_name) as user")
                                 )
                                 ->orderBy('transactions.transaction_date', 'asc')
                                 ->get();
@@ -2008,7 +2010,8 @@ class ProductUtil extends Util
                 'date' => $stock_line->transaction_date,
                 'transaction_id' => $stock_line->transaction_id,
                 'contact_name' => $stock_line->contact_name,
-                'supplier_business_name' => $stock_line->supplier_business_name
+                'supplier_business_name' => $stock_line->supplier_business_name,
+                'user' => $stock_line->user,
             ];
             if ($stock_line->transaction_type == 'sell') {
                 if ($stock_line->status != 'final') {
