@@ -113,7 +113,7 @@
                         { data: 'location_name', name: 'location_name', searchable: true },
                         { data: 'quantity', name: 'quantity', searchable: false, sortable: false },
                         { data: 'total_amount', name: 'total_amount', searchable: false, sortable: false },
-                        { data: 'created_at', name: 'created_at', searchable: false, sortable: false }
+                        { data: 'updated_at', name: 'created_at', searchable: false, sortable: false }
                     ],
                     fnDrawCallback: function(oSettings) {
                         __currency_convert_recursively($('#deselected_product_report_table'));
