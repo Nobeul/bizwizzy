@@ -71,7 +71,7 @@ class DeselectReport extends Model
         }
 
         if (! empty($filters['start_date']) && ! empty($filters['end_date'])) {
-            $query->whereBetween(\DB::raw("DATE(created_at)"), [$filters['start_date'], $filters['end_date']]);
+            $query->whereBetween(\DB::raw("DATE(updated_at)"), [$filters['start_date'], $filters['end_date']]);
         }
 
         $query = $query->orderBy('id', 'DESC');
