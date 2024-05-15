@@ -970,6 +970,8 @@ class ReportController extends Controller
         }
         $business_id = $request->session()->get('user.business_id');
 
+        $business_locations = BusinessLocation::forDropdown($business_id, true);
+
         //Return the details in ajax call
         if ($request->ajax()) {
             $registers = CashRegister::leftjoin(
@@ -1014,6 +1016,10 @@ class ReportController extends Controller
             $permitted_locations = auth()->user()->permitted_locations();
             if ($permitted_locations != 'all') {
                 $registers->whereIn('cash_registers.location_id', $permitted_locations);
+            }
+
+            if (! empty($request->location_id)) {
+                $registers->where('cash_registers.location_id', $request->location_id);
             }
 
             if (!empty($request->input('user_id'))) {
@@ -1098,7 +1104,7 @@ class ReportController extends Controller
         $payment_types = $this->transactionUtil->payment_types(null, true, $business_id);
 
         return view('report.register_report')
-                    ->with(compact('users', 'payment_types'));
+                    ->with(compact('users', 'payment_types', 'business_locations'));
     }
 
     /**

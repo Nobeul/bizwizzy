@@ -404,7 +404,7 @@ $(document).ready(function() {
         updateRegisterReport();
     });
 
-    $('#register_user_id, #register_status').change(function() {
+    $('#register_user_id, #register_status, #register_report_location_id').change(function() {
         updateRegisterReport();
     });
 
@@ -1576,18 +1576,20 @@ function updateStockAdjustmentReport() {
 }
 
 function updateRegisterReport() {
-    var start = $('#register_report_date_range')
-        .data('daterangepicker')
-        .startDate.format('YYYY-MM-DD');
-    var end = $('#register_report_date_range')
-        .data('daterangepicker')
-        .endDate.format('YYYY-MM-DD');
+    var start = '';
+    var end = '';
+
+    if ($('#register_report_date_range').val().length > 0) {
+        start = $('#register_report_date_range').data('daterangepicker').startDate.format('YYYY-MM-DD');
+        end = $('#register_report_date_range').data('daterangepicker').endDate.format('YYYY-MM-DD');
+    }
 
     var data = {
         user_id: $('#register_user_id').val(),
         status: $('#register_status').val(),
         start_date: start,
-        end_date: end
+        end_date: end,
+        location_id: $("#register_report_location_id").val()
     };
     var out = [];
 

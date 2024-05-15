@@ -14,22 +14,29 @@
         <div class="col-md-12">
             @component('components.filters', ['title' => __('report.filters')])
               {!! Form::open(['url' => action('ReportController@getStockReport'), 'method' => 'get', 'id' => 'register_report_filter_form' ]) !!}
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         {!! Form::label('register_user_id',  __('report.user') . ':') !!}
                         {!! Form::select('register_user_id', $users, null, ['class' => 'form-control select2', 'style' => 'width:100%', 'placeholder' => __('report.all_users')]); !!}
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         {!! Form::label('register_status',  __('sale.status') . ':') !!}
                         {!! Form::select('register_status', ['open' => __('cash_register.open'), 'close' => __('cash_register.close')], null, ['class' => 'form-control select2', 'style' => 'width:100%', 'placeholder' => __('report.all')]); !!}
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         {!! Form::label('register_report_date_range', __('report.date_range') . ':') !!}
                         {!! Form::text('register_report_date_range', null , ['placeholder' => __('lang_v1.select_a_date_range'), 'class' => 'form-control', 'id' => 'register_report_date_range', 'readonly']); !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('location_id', __('Business Location') . ':') !!}
+                        {!! Form::select('location_id', $business_locations, null, ['class' => 'form-control select2', 'style' => 'width:100%', 'id' => 'register_report_location_id', 'placeholder' => __('lang_v1.all')]); !!}
+
                     </div>
                 </div>
                 {!! Form::close() !!}

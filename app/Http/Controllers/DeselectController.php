@@ -111,9 +111,10 @@ class DeselectController extends Controller
             return $datatable->rawColumns($rawColumns)->make(true);
         }
 
-        $products = Product::pluck('name', 'id')->toArray();
-        $users = User::pluck('username', 'id')->toArray();
-        $locations = BusinessLocation::pluck('name', 'id')->toArray();
+        $business_id = $request->session()->get('user.business_id');
+        $products = Product::where('business_id', $business_id)->pluck('name', 'id')->toArray();
+        $users = User::forDropdown($business_id, false);
+        $locations = BusinessLocation::forDropdown($business_id, true);
 
         return view('deselect_report.index')->with(compact('products', 'users', 'locations'));
     }
