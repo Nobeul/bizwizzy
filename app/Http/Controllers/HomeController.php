@@ -254,7 +254,7 @@ class HomeController extends Controller
             $output['total_expense'] = $transaction_totals['total_expense'];
 
             //NET = TOTAL SALES - EXPENSE
-            $output['net'] = $output['total_sell'] - $output['invoice_due'] - $output['total_sell_return'] - $output['total_purchase'] - $output['total_purchase_return'] - $output['total_expense'];
+            $output['net'] = $output['total_sell'] - $output['invoice_due'] - $output['total_sell_return'] - $output['total_expense'];
             
             return $output;
         }
