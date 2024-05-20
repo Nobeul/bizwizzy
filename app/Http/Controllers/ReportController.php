@@ -991,11 +991,12 @@ class ReportController extends Controller
                     '=',
                     'cash_registers.location_id'
                 )
+                ->leftJoin('users as closed_by_user', 'cash_registers.closed_by', '=', 'closed_by_user.id')
                 ->where('cash_registers.business_id', $business_id)
                 ->select(
                     'cash_registers.*',
                     DB::raw(
-                        "CONCAT(COALESCE(surname, ''), ' ', COALESCE(first_name, ''), ' ', COALESCE(last_name, ''), '<br>', COALESCE(u.email, '')) as user_name"
+                        "CONCAT(COALESCE(u.surname, ''), ' ', COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, ''), '<br>', COALESCE(u.email, '')) as user_name"
                     ),
                     'bl.name as location_name',
                     DB::raw("SUM(IF(pay_method='cash', IF(transaction_type='sell', amount, 0), 0)) as total_cash_payment"),
@@ -1010,7 +1011,12 @@ class ReportController extends Controller
                     DB::raw("SUM(IF(pay_method='custom_pay_4', IF(transaction_type='sell', amount, 0), 0)) as total_custom_pay_4"),
                     DB::raw("SUM(IF(pay_method='custom_pay_5', IF(transaction_type='sell', amount, 0), 0)) as total_custom_pay_5"),
                     DB::raw("SUM(IF(pay_method='custom_pay_6', IF(transaction_type='sell', amount, 0), 0)) as total_custom_pay_6"),
-                    DB::raw("SUM(IF(pay_method='custom_pay_7', IF(transaction_type='sell', amount, 0), 0)) as total_custom_pay_7")
+                    DB::raw("SUM(IF(pay_method='custom_pay_7', IF(transaction_type='sell', amount, 0), 0)) as total_custom_pay_7"),
+                    DB::raw("CASE 
+                                WHEN cash_registers.closed_by IS NOT NULL 
+                                THEN CONCAT(closed_by_user.first_name, ' ', closed_by_user.last_name) 
+                                ELSE '' 
+                            END as closed_by_name")
                 )->groupBy('cash_registers.id');
 
             $permitted_locations = auth()->user()->permitted_locations();
@@ -1035,6 +1041,11 @@ class ReportController extends Controller
                 $registers->whereDate('cash_registers.created_at', '>=', $start_date)
                         ->whereDate('cash_registers.created_at', '<=', $end_date);
             }
+
+            if (! empty($request->register_closed_by)) {
+                $registers->where('closed_by', $request->register_closed_by);
+            }
+
             return Datatables::of($registers)
                 ->editColumn('total_card_payment', function ($row) {
                     return '<span data-orig-value="' . $row->total_card_payment . '" >' . $this->transactionUtil->num_f($row->total_card_payment, true) . ' (' . $row->total_card_slips . ')</span>';
@@ -1082,6 +1093,9 @@ class ReportController extends Controller
                         return '';
                     }
                 })
+                ->editColumn('closed_by', function ($row) {
+                    return $row->closed_by_name;
+                })
                 ->editColumn('created_at', function ($row) {
                     return $this->productUtil->format_date($row->created_at, true);
                 })
@@ -1094,7 +1108,7 @@ class ReportController extends Controller
                     data-container=".view_register"><i class="fas fa-eye" aria-hidden="true"></i> @lang("messages.view")</button> @if($status != "close" && auth()->user()->can("close_cash_register"))<button type="button" data-href="{{action(\'CashRegisterController@getCloseRegister\', [$id])}}" class="btn btn-xs btn-danger btn-modal" 
                         data-container=".view_register"><i class="fas fa-window-close"></i> @lang("messages.close")</button> @endif')
                 ->filterColumn('user_name', function ($query, $keyword) {
-                    $query->whereRaw("CONCAT(COALESCE(surname, ''), ' ', COALESCE(first_name, ''), ' ', COALESCE(last_name, ''), '<br>', COALESCE(u.email, '')) like ?", ["%{$keyword}%"]);
+                    $query->whereRaw("CONCAT(COALESCE(u.surname, ''), ' ', COALESCE(u.first_name, ''), ' ', COALESCE(u.last_name, ''), '<br>', COALESCE(u.email, '')) like ?", ["%{$keyword}%"]);
                 })
                 ->rawColumns(['action', 'user_name', 'total_card_payment', 'total_cheque_payment', 'total_cash_payment', 'total_bank_transfer_payment', 'total_other_payment', 'total_advance_payment', 'total_custom_pay_1', 'total_custom_pay_2', 'total_custom_pay_3', 'total_custom_pay_4', 'total_custom_pay_5', 'total_custom_pay_6', 'total_custom_pay_7', 'total'])
                 ->make(true);

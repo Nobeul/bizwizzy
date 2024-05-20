@@ -306,6 +306,7 @@ $(document).ready(function() {
             { data: 'location_name', name: 'bl.name' },
             { data: 'user_name', name: 'user_name' },
             { data: 'total_card_payment', name: 'total_card_payment', searchable: false },
+            { data: 'closed_by', name: 'closed_by', searchable: false },
             { data: 'total_cheque_payment', name: 'total_cheque_payment', searchable: false },
             { data: 'total_cash_payment', name: 'total_cash_payment', searchable: false },
             { data: 'total_bank_transfer_payment', name: 'total_bank_transfer_payment', searchable: false },
@@ -404,7 +405,7 @@ $(document).ready(function() {
         updateRegisterReport();
     });
 
-    $('#register_user_id, #register_status, #register_report_location_id').change(function() {
+    $('#register_user_id, #register_status, #location_id, #register_closed_by').change(function() {
         updateRegisterReport();
     });
 
@@ -1589,7 +1590,8 @@ function updateRegisterReport() {
         status: $('#register_status').val(),
         start_date: start,
         end_date: end,
-        location_id: $("#register_report_location_id").val()
+        location_id: $("#location_id").val(),
+        register_closed_by: $("#register_closed_by").val()
     };
     var out = [];
 

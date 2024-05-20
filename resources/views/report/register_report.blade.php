@@ -35,8 +35,14 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         {!! Form::label('location_id', __('Business Location') . ':') !!}
-                        {!! Form::select('location_id', $business_locations, null, ['class' => 'form-control select2', 'style' => 'width:100%', 'id' => 'register_report_location_id', 'placeholder' => __('lang_v1.all')]); !!}
+                        {!! Form::select('location_id', $business_locations, null, ['class' => 'form-control select2', 'style' => 'width:100%', 'placeholder' => __('lang_v1.all')]); !!}
 
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('register_closed_by',  __('Closed By User') . ':') !!}
+                        {!! Form::select('register_closed_by', $users, null, ['class' => 'form-control select2', 'style' => 'width:100%', 'placeholder' => __('report.all_users')]); !!}
                     </div>
                 </div>
                 {!! Form::close() !!}
@@ -54,6 +60,7 @@
                             <th>@lang('sale.location')</th>
                             <th>@lang('report.user')</th>
                             <th>@lang('cash_register.total_card_slips')</th>
+                            <th>{{ __('Closed By') }}</th>
                             <th>@lang('cash_register.total_cheques')</th>
                             <th>@lang('cash_register.total_cash')</th>
                             <th>@lang('lang_v1.total_bank_transfer')</th>

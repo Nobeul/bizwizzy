@@ -212,7 +212,7 @@ class CashRegisterController extends Controller
         $is_mpesa_enabled = $business_location['mpesa']['is_enabled'];
 
         return view('cash_register.close_register_modal')
-                    ->with(compact('register_details', 'details', 'payment_types', 'pos_settings', 'sell_return'));
+                    ->with(compact('register_details', 'details', 'payment_types', 'pos_settings', 'sell_return', 'is_mpesa_enabled'));
     }
 
     /**
@@ -241,6 +241,7 @@ class CashRegisterController extends Controller
             $user_id = $request->input('user_id');
             $input['closed_at'] = \Carbon::now()->format('Y-m-d H:i:s');
             $input['status'] = 'close';
+            $input['closed_by'] = auth()->user()->id;
             $input['denominations'] = !empty(request()->input('denominations')) ? json_encode(request()->input('denominations')) : null;
 
             CashRegister::where('user_id', $user_id)
