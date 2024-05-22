@@ -160,6 +160,16 @@
             </div>
         </div>
 
+        <div class="col-sm-4">
+          <div class="form-group">
+            <div class="checkbox">
+              <label>
+                {!! Form::checkbox('disable_stock_management', 1, $business->disable_stock_management, [ 'class' => 'input-icheck']); !!} {{ __( 'Disable Stock Management' ) }}
+              </label>
+            </div>
+        </div>
+      </div>
+
         <div class="col-sm-4 @if(config('constants.enable_secondary_unit') == false) hide @endif">
             <div class="form-group">
                 <div class="checkbox">

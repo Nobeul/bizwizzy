@@ -1,19 +1,21 @@
 //This file contains all functions used products tab
 
 $(document).ready(function () {
-    $(document).on('ifChecked', 'input#enable_stock', function () {
-        $('div#alert_quantity_div').show();
-        $('div#quick_product_opening_stock_div').show();
-
-        //Enable expiry selection
-        if ($('#expiry_period_type').length) {
-            $('#expiry_period_type').removeAttr('disabled');
-        }
-
-        if ($('#opening_stock_button').length) {
-            $('#opening_stock_button').removeAttr('disabled');
-        }
-    });
+    if (disable_stock_management == 1) {
+        $(document).on('ifChecked', 'input#enable_stock', function () {
+            $('div#alert_quantity_div').show();
+            $('div#quick_product_opening_stock_div').show();
+    
+            //Enable expiry selection
+            if ($('#expiry_period_type').length) {
+                $('#expiry_period_type').removeAttr('disabled');
+            }
+    
+            if ($('#opening_stock_button').length) {
+                $('#opening_stock_button').removeAttr('disabled');
+            }
+        });
+    }
     $(document).on('ifUnchecked', 'input#enable_stock', function () {
         $('div#alert_quantity_div').hide();
         $('div#quick_product_opening_stock_div').hide();
