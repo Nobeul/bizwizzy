@@ -2723,8 +2723,9 @@ class ProductController extends Controller
 
             $products = ProductLink::with('parentProduct', 'assignedProduct')
                 ->leftJoin('products', 'products.id', '=', 'product_links.parent_product_id')
-                ->where('products.business_id', $business_id);
-            
+                ->where('products.business_id', $business_id)
+                ->select('product_links.*');
+
             if (! empty($product_id)) {
                 $products = $products->where('parent_product_id', $product_id);
             }
@@ -2736,6 +2737,7 @@ class ProductController extends Controller
                 ->editColumn('assigned_to', function ($row) {
                     return $row->assignedProduct->name ?? '';
                 })
+                ->addColumn('action', '<button data-href="{{ action(\'ProductController@deassignProduct\', [$id]) }}" class="btn btn-xs btn-danger delete_assigned_product_button"><i class="glyphicon glyphicon-trash"></i> @lang("messages.delete")</button>')
                 ->filterColumn('product_name', function ($query, $keyword) {
                     $query->where('parentProduct.name', 'like', ["%{$keyword}%"]);
                 })
@@ -2746,6 +2748,24 @@ class ProductController extends Controller
         }
 
         return view('assigned_products.index');
+    }
+
+    public function deassignProduct($product_id)
+    {
+        $assigned_product = ProductLink::find($product_id);
+
+        if (empty($assigned_product)) {
+            return [
+                'success' => 0,
+                'msg' => "Invalid product provided",
+            ];
+        }
+        $assigned_product->delete();
+
+        return [
+            'success' => 1,
+            'msg' => "Assigned product removed successfully",
+        ];
     }
 
     public function stockBrokenProductList()

@@ -26,6 +26,7 @@
                                         <th>{{ __('Assigned To') }}</th>
                                         <th>{{ __('Assigned Quantity') }}</th>
                                         <th>{{ __('Created At') }}</th>
+                                        <th>{{ __('Action') }}</th>
                                     </tr>
                                 </thead>
                                 <tfoot>
@@ -84,6 +85,11 @@
                     {
                         data: 'created_at',
                         name: 'created_at',
+                        searchable: false
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
                         searchable: false
                     }
                 ],

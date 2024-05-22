@@ -162,6 +162,7 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::get('/link-product-list/{product_id?}', 'ProductController@assignedProductList');
     Route::get('/stock-broken-list', 'ProductController@stockBrokenProductList');
     Route::get('/stock-breaking-add-row', 'ProductController@addNewRow');
+    Route::delete('deassign-product/{product_id}', 'ProductController@deassignProduct');
     
     Route::resource('vehicles', 'VehicleController');
     Route::get('/vehicles/view/{id}', 'VehicleController@view');

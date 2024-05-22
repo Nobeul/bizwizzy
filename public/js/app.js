@@ -369,6 +369,36 @@ $(document).ready(function() {
         });
     });
 
+    $(document).on('click', 'button.delete_assigned_product_button', function() {
+        swal({
+            title: LANG.sure,
+            text: 'This product would be removed from assigned list',
+            icon: 'warning',
+            buttons: true,
+            dangerMode: true,
+        }).then(willDelete => {
+            if (willDelete) {
+                var href = $(this).data('href');
+                var data = $(this).serialize();
+
+                $.ajax({
+                    method: 'DELETE',
+                    url: href,
+                    dataType: 'json',
+                    data: data,
+                    success: function(result) {
+                        if (result.success == true) {
+                            toastr.success(result.msg);
+                            product_link_table.ajax.reload();
+                        } else {
+                            toastr.error(result.msg);
+                        }
+                    },
+                });
+            }
+        });
+    });
+
     //Start: CRUD for Contacts
     //contacts table
     var contact_table_type = $('#contact_type').val();
