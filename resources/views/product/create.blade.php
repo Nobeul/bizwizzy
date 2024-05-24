@@ -117,8 +117,8 @@
           <div class="form-group">
           <br>
             <label>
-              {!! Form::checkbox('enable_stock', 1, !empty($duplicate_product) ? $duplicate_product->enable_stock : true, ['class' => 'input-icheck', 'id' => 'enable_stock', $disable_stock_management == 0 ? 'disabled' : '']); !!} <strong>@lang('product.manage_stock')</strong>
-              <input type="hidden" name="enable_stock" value="{{ !empty($duplicate_product) ? $duplicate_product->enable_stock : true }}">
+              {!! Form::checkbox('enable_stock', 1, !empty($duplicate_product) ? $duplicate_product->enable_stock : true, ['class' => 'input-icheck', 'id' => 'enable_stock']); !!} <strong>@lang('product.manage_stock')</strong>
+              {{-- <input type="hidden" name="enable_stock" value="{{ !empty($duplicate_product) ? $duplicate_product->enable_stock : true }}"> --}}
             </label>@show_tooltip(__('tooltip.enable_stock')) <p class="help-block"><i>@lang('product.enable_stock_help')</i></p>
           </div>
         </div>
@@ -373,9 +373,9 @@
 
 @section('javascript')
   @php $asset_v = env('APP_VERSION'); @endphp
-  <script>
+  {{-- <script>
     var disable_stock_management = "{{ $disable_stock_management }}";
-  </script>
+  </script> --}}
   <script src="{{ asset('js/product.js?v=' . $asset_v) }}"></script>
 
     <script type="text/javascript">

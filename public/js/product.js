@@ -1,7 +1,7 @@
 //This file contains all functions used products tab
 
 $(document).ready(function () {
-    if (disable_stock_management == 1) {
+    // if (disable_stock_management == 1) {
         $(document).on('ifChecked', 'input#enable_stock', function () {
             $('div#alert_quantity_div').show();
             $('div#quick_product_opening_stock_div').show();
@@ -15,7 +15,7 @@ $(document).ready(function () {
                 $('#opening_stock_button').removeAttr('disabled');
             }
         });
-    }
+    // }
     $(document).on('ifUnchecked', 'input#enable_stock', function () {
         $('div#alert_quantity_div').hide();
         $('div#quick_product_opening_stock_div').hide();

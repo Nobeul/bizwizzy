@@ -160,7 +160,7 @@
             </div>
         </div>
 
-        <div class="col-sm-4">
+        {{-- <div class="col-sm-4">
           <div class="form-group">
             <div class="checkbox">
               <label>
@@ -168,7 +168,7 @@
               </label>
             </div>
         </div>
-      </div>
+      </div> --}}
 
         <div class="col-sm-4 @if(config('constants.enable_secondary_unit') == false) hide @endif">
             <div class="form-group">

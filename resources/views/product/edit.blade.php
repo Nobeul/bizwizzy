@@ -118,7 +118,7 @@
               <div class="form-group">
               <br>
                 <label>
-                  {!! Form::checkbox('enable_stock', 1, $product->enable_stock, ['class' => 'input-icheck', 'id' => 'enable_stock', $disable_stock_management == 0 ? 'disabled' : '']); !!} <strong>@lang('product.manage_stock')</strong>
+                  {!! Form::checkbox('enable_stock', 1, $product->enable_stock, ['class' => 'input-icheck', 'id' => 'enable_stock']); !!} <strong>@lang('product.manage_stock')</strong>
                 </label>@show_tooltip(__('tooltip.enable_stock')) <p class="help-block"><i>@lang('product.enable_stock_help')</i></p>
               </div>
             </div>
@@ -382,9 +382,9 @@
 @endsection
 
 @section('javascript')
-  <script>
+  {{-- <script>
     var disable_stock_management = "{{ $disable_stock_management }}";
-  </script>
+  </script> --}}
   <script src="{{ asset('js/product.js?v=' . $asset_v) }}"></script>
   <script type="text/javascript">
     $(document).ready( function(){

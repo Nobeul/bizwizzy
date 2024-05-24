@@ -359,7 +359,7 @@ class BusinessController extends Controller
                 'redeem_amount_per_unit_rp', 'min_order_total_for_redeem',
                 'min_redeem_point', 'max_redeem_point', 'rp_expiry_period',
                 'rp_expiry_type', 'custom_labels', 'weighing_scale_setting',
-                'code_label_1', 'code_1', 'code_label_2', 'code_2', 'currency_precision', 'quantity_precision', 'disable_stock_management']);
+                'code_label_1', 'code_1', 'code_label_2', 'code_2', 'currency_precision', 'quantity_precision']);
 
             if (!empty($request->input('enable_rp')) &&  $request->input('enable_rp') == 1) {
                 $business_details['enable_rp'] = 1;
@@ -413,7 +413,7 @@ class BusinessController extends Controller
             $checkboxes = ['enable_editing_product_from_purchase',
                 'enable_inline_tax',
                 'enable_brand', 'enable_category', 'enable_sub_category', 'enable_price_tax', 'enable_purchase_status',
-                'enable_lot_number', 'enable_racks', 'enable_row', 'enable_position', 'enable_sub_units', 'disable_stock_management'];
+                'enable_lot_number', 'enable_racks', 'enable_row', 'enable_position', 'enable_sub_units'];
             foreach ($checkboxes as $value) {
                 $business_details[$value] = !empty($request->input($value)) &&  $request->input($value) == 1 ? 1 : 0;
             }
