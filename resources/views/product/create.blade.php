@@ -118,6 +118,7 @@
           <br>
             <label>
               {!! Form::checkbox('enable_stock', 1, !empty($duplicate_product) ? $duplicate_product->enable_stock : true, ['class' => 'input-icheck', 'id' => 'enable_stock', $disable_stock_management == 0 ? 'disabled' : '']); !!} <strong>@lang('product.manage_stock')</strong>
+              <input type="hidden" name="enable_stock" value="{{ !empty($duplicate_product) ? $duplicate_product->enable_stock : true }}">
             </label>@show_tooltip(__('tooltip.enable_stock')) <p class="help-block"><i>@lang('product.enable_stock_help')</i></p>
           </div>
         </div>
