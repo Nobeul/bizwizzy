@@ -422,6 +422,15 @@
                     <div class="col-md-12">
                         <div class="checkbox">
                             <label>
+                                {!! Form::checkbox('permissions[]', 'product.stock.management', in_array('product.stock.management', $role_permissions), [
+                                    'class' => 'input-icheck',
+                                ]) !!} {{ __('Enable/Disable Product Stock') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
                                 {!! Form::checkbox('permissions[]', 'product.link', in_array('product.link', $role_permissions), [
                                     'class' => 'input-icheck',
                                 ]) !!} {{ __('Stock Break') }}

@@ -348,6 +348,13 @@
                     <div class="col-md-12">
                         <div class="checkbox">
                             <label>
+                                {!! Form::checkbox('permissions[]', 'product.stock.management', false, ['class' => 'input-icheck']) !!} {{ __('Enable/Disable Product Stock') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
                                 {!! Form::checkbox('permissions[]', 'product.link', false, ['class' => 'input-icheck']) !!} {{ __('Stock Break') }}
                             </label>
                         </div>

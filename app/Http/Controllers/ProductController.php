@@ -440,10 +440,10 @@ class ProductController extends Controller
         //product screen view from module
         $pos_module_data = $this->moduleUtil->getModuleData('get_product_screen_top_view');
 
-        // $disable_stock_management = $business->disable_stock_management;
+        $enabled_stock_management = auth()->user()->can('product.stock.management');
 
         return view('product.create')
-            ->with(compact('categories', 'brands', 'units', 'taxes', 'barcode_types', 'default_profit_percent', 'tax_attributes', 'barcode_default', 'business_locations', 'duplicate_product', 'sub_categories', 'rack_details', 'selling_price_group_count', 'module_form_parts', 'product_types', 'common_settings', 'warranties', 'pos_module_data'));
+            ->with(compact('categories', 'brands', 'units', 'taxes', 'barcode_types', 'default_profit_percent', 'tax_attributes', 'barcode_default', 'business_locations', 'duplicate_product', 'sub_categories', 'rack_details', 'selling_price_group_count', 'module_form_parts', 'product_types', 'common_settings', 'warranties', 'pos_module_data', 'enabled_stock_management'));
     }
 
     private function product_types()
@@ -690,10 +690,10 @@ class ProductController extends Controller
 
         $alert_quantity = !is_null($product->alert_quantity) ? $this->productUtil->num_f($product->alert_quantity, false, null, true) : null;
 
-        // $disable_stock_management = $business->disable_stock_management;
+        $enabled_stock_management = auth()->user()->can('product.stock.management');
 
         return view('product.edit')
-                ->with(compact('categories', 'brands', 'units', 'sub_units', 'taxes', 'tax_attributes', 'barcode_types', 'product', 'sub_categories', 'default_profit_percent', 'business_locations', 'rack_details', 'selling_price_group_count', 'module_form_parts', 'product_types', 'common_settings', 'warranties', 'pos_module_data', 'alert_quantity', 'selected_locations'));
+                ->with(compact('categories', 'brands', 'units', 'sub_units', 'taxes', 'tax_attributes', 'barcode_types', 'product', 'sub_categories', 'default_profit_percent', 'business_locations', 'rack_details', 'selling_price_group_count', 'module_form_parts', 'product_types', 'common_settings', 'warranties', 'pos_module_data', 'alert_quantity', 'selected_locations', 'enabled_stock_management'));
     }
 
     /**
