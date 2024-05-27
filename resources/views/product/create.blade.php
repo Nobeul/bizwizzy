@@ -376,7 +376,7 @@
 @section('javascript')
   @php $asset_v = env('APP_VERSION'); @endphp
   <script>
-    var enabled_stock_management = "{{ $enabled_stock_management }}";
+    var enabled_stock_management = "{{ $enabled_stock_management ?? false }}";
   </script>
   <script src="{{ asset('js/product.js?v=' . $asset_v) }}"></script>
 

@@ -383,7 +383,7 @@
 
 @section('javascript')
   <script>
-    var enabled_stock_management = "{{ $enabled_stock_management }}";
+    var enabled_stock_management = "{{ $enabled_stock_management ?? false }}";
   </script>
   <script src="{{ asset('js/product.js?v=' . $asset_v) }}"></script>
   <script type="text/javascript">
