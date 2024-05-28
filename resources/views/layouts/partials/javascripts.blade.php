@@ -137,3 +137,7 @@
         $("#session-flash-div").hide();
     });
 </script>
+
+<script>
+    var enabled_stock_management = "{{ $enabled_stock_management ?? false }}";
+</script>
