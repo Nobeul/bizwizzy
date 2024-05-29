@@ -814,6 +814,22 @@
                             </label>
                         </div>
                     </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'enable_credit_sale', in_array('enable_credit_sale', $role_permissions), ['class' => 'input-icheck']) !!}
+                                {{ __('Enable Credit Sale') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'enable_cash_sale', in_array('enable_cash_sale', $role_permissions), ['class' => 'input-icheck']) !!}
+                                {{ __('Enable Cash Sale') }}
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
             <hr>

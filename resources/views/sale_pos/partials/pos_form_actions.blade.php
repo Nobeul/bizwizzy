@@ -25,15 +25,17 @@
 				</button>
 			@endif
 
-			@if(empty($pos_settings['disable_credit_sale_button']))
-				<input type="hidden" name="is_credit_sale" value="0" id="is_credit_sale">
-				<button type="button" 
-				class="btn bg-purple btn-default btn-flat no-print pos-express-finalize @if($is_mobile) col-xs-6 @endif" 
-				data-pay_method="credit_sale"
-				title="@lang('lang_v1.tooltip_credit_sale')" >
-					<i class="fas fa-check" aria-hidden="true"></i> @lang('lang_v1.credit_sale')
-				</button>
-			@endif
+			@can('enable_credit_sale')
+				@if(empty($pos_settings['disable_credit_sale_button']))
+					<input type="hidden" name="is_credit_sale" value="0" id="is_credit_sale">
+					<button type="button" 
+					class="btn bg-purple btn-default btn-flat no-print pos-express-finalize @if($is_mobile) col-xs-6 @endif" 
+					data-pay_method="credit_sale"
+					title="@lang('lang_v1.tooltip_credit_sale')" >
+						<i class="fas fa-check" aria-hidden="true"></i> @lang('lang_v1.credit_sale')
+					</button>
+				@endif
+			@endcan
 			<button type="button" 
 				class="btn bg-maroon btn-default btn-flat no-print @if(!empty($pos_settings['disable_suspend'])) @endif pos-express-finalize @if(!array_key_exists('card', $payment_types)) hide @endif @if($is_mobile) col-xs-6 @endif" 
 				data-pay_method="card"
@@ -41,9 +43,11 @@
 				<i class="fas fa-credit-card" aria-hidden="true"></i> @lang('lang_v1.express_checkout_card')
 			</button>
 
-			<button type="button" class="btn bg-navy btn-default @if(!$is_mobile) @endif btn-flat no-print @if($pos_settings['disable_pay_checkout'] != 0) hide @endif @if($is_mobile) col-xs-6 @endif" id="pos-finalize" title="@lang('lang_v1.tooltip_checkout_multi_pay')"><i class="fas fa-money-check-alt" aria-hidden="true"></i> @lang('lang_v1.checkout_multi_pay') </button>
+			@can('enable_credit_sale')
+				<button type="button" class="btn bg-navy btn-default @if(!$is_mobile) @endif btn-flat no-print @if($pos_settings['disable_pay_checkout'] != 0) hide @endif @if($is_mobile) col-xs-6 @endif" id="pos-finalize" title="@lang('lang_v1.tooltip_checkout_multi_pay')"><i class="fas fa-money-check-alt" aria-hidden="true"></i> @lang('lang_v1.checkout_multi_pay') </button>
 
-			<button type="button" class="btn btn-success @if(!$is_mobile) @endif btn-flat no-print @if($pos_settings['disable_express_checkout'] != 0 || !array_key_exists('cash', $payment_types)) hide @endif pos-express-finalize @if($is_mobile) col-xs-6 @endif" data-pay_method="cash" title="@lang('tooltip.express_checkout')"> <i class="fas fa-money-bill-alt" aria-hidden="true"></i> @lang('lang_v1.express_checkout_cash')</button>
+				<button type="button" class="btn btn-success @if(!$is_mobile) @endif btn-flat no-print @if($pos_settings['disable_express_checkout'] != 0 || !array_key_exists('cash', $payment_types)) hide @endif pos-express-finalize @if($is_mobile) col-xs-6 @endif" data-pay_method="cash" title="@lang('tooltip.express_checkout')"> <i class="fas fa-money-bill-alt" aria-hidden="true"></i> @lang('lang_v1.express_checkout_cash')</button>
+			@endcan
 
 			@if(empty($edit))
 				<button type="button" class="btn btn-danger btn-flat @if($is_mobile) col-xs-6 @else btn-xs @endif" id="pos-cancel"> <i class="fas fa-window-close"></i> @lang('sale.cancel')</button>
