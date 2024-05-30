@@ -119,6 +119,9 @@
               <br>
                 <label>
                   {!! Form::checkbox('enable_stock', 1, $product->enable_stock, ['class' => 'input-icheck', 'id' => 'enable_stock', $enabled_stock_management == false ? 'disabled' : '']); !!} <strong>@lang('product.manage_stock')</strong>
+                  @if ($enabled_stock_management == false)
+                    <input type="hidden" name="enable_stock" id="enable_stock" value="1">
+                  @endif
                 </label>@show_tooltip(__('tooltip.enable_stock')) <p class="help-block"><i>@lang('product.enable_stock_help')</i></p>
               </div>
             </div>
