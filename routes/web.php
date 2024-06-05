@@ -38,7 +38,7 @@ Route::get('mpesa-pay-testing', 'TestingController@index');
 
 Route::middleware(['setData'])->group(function () {
     Route::get('/', function () {
-        return view('welcome');
+        return redirect()->to('/login');
     });
 
     Auth::routes();

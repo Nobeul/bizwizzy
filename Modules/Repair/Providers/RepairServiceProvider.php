@@ -38,11 +38,11 @@ class RepairServiceProvider extends ServiceProvider
             'repair::layouts.partials.header'
             ], function ($view) {
                 if (auth()->user()->can('superadmin')) {
-                    $__is_repair_enabled = true;
+                    $__is_repair_enabled = false;
                 } else {
                     $business_id = session()->get('user.business_id');
                     $module_util = new ModuleUtil();
-                    $__is_repair_enabled = (boolean)$module_util->hasThePermissionInSubscription($business_id, 'repair_module');
+                    $__is_repair_enabled = false;
                 }
 
                 $view->with(compact('__is_repair_enabled'));
