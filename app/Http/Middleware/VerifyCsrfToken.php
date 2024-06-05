@@ -25,6 +25,7 @@ class VerifyCsrfToken extends BaseVerifier
         '/api/ecom/customers',
         '/api/ecom/orders',
         '/confirmation',
-        '/validation'
+        '/validation',
+        '/api/coop-bank-entry',
     ];
 }
