@@ -10,53 +10,94 @@ RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
+<Files 403.shtml>
+order allow,deny
+allow from all
+</Files>
+
 RewriteCond %{HTTP_REFERER} !^http://bizelevate.com/.*$      [NC]
 RewriteCond %{HTTP_REFERER} !^http://bizelevate.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://bizelevate.com.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://bizelevate.com.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://pos.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://pos.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://test.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://test.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://ulti1.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://ulti1.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://bizelevate.com.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://bizelevate.com.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://pos.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://pos.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://test.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://test.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://ulti1.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://ulti1.pearlbizna.com$      [NC]
 RewriteCond %{HTTP_REFERER} !^http://www.bizelevate.com/.*$      [NC]
 RewriteCond %{HTTP_REFERER} !^http://www.bizelevate.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://www.bizelevate.com.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://www.bizelevate.com.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://www.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://www.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://www.pos.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://www.pos.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://www.test.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://www.test.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://www.ulti1.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^http://www.ulti1.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.bizelevate.com.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.bizelevate.com.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.pos.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.pos.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.test.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.test.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.ulti1.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^http://www.ulti1.pearlbizna.com$      [NC]
 RewriteCond %{HTTP_REFERER} !^https://bizelevate.com/.*$      [NC]
 RewriteCond %{HTTP_REFERER} !^https://bizelevate.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://bizelevate.com.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://bizelevate.com.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://pos.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://pos.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://test.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://test.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://ulti1.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://ulti1.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://bizelevate.com.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://bizelevate.com.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://pos.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://pos.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://test.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://test.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://ulti1.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://ulti1.pearlbizna.com$      [NC]
 RewriteCond %{HTTP_REFERER} !^https://www.bizelevate.com/.*$      [NC]
 RewriteCond %{HTTP_REFERER} !^https://www.bizelevate.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://www.bizelevate.com.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://www.bizelevate.com.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://www.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://www.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://www.pos.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://www.pos.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://www.test.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://www.test.bizwizzy.com$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://www.ulti1.bizwizzy.com/.*$      [NC]
-RewriteCond %{HTTP_REFERER} !^https://www.ulti1.bizwizzy.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.bizelevate.com.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.bizelevate.com.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.pos.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.pos.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.test.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.test.pearlbizna.com$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.ulti1.pearlbizna.com/.*$      [NC]
+RewriteCond %{HTTP_REFERER} !^https://www.ulti1.pearlbizna.com$      [NC]
 RewriteRule .*\.(jpg|jpeg|gif|png|bmp)$ - [F,NC]
 
+# BEGIN cPanel-generated php ini directives, do not edit
+# Manual editing of this file may result in unexpected behavior.
+# To make changes to this file, use the cPanel MultiPHP INI Editor (Home >> Software >> MultiPHP INI Editor)
+# For more information, read our documentation (https://go.cpanel.net/EA4ModifyINI)
+<IfModule php7_module>
+   php_flag display_errors On
+   php_value max_execution_time 90
+   php_value max_input_time 90
+   php_value max_input_vars 1000
+   php_value memory_limit 5800M
+   php_value post_max_size 3400M
+   php_value session.gc_maxlifetime 1440
+   php_value session.save_path "/var/cpanel/php/sessions/ea-php74"
+   php_value upload_max_filesize 1200M
+   php_flag zlib.output_compression Off
+</IfModule>
+<IfModule lsapi_module>
+   php_flag display_errors On
+   php_value max_execution_time 90
+   php_value max_input_time 90
+   php_value max_input_vars 1000
+   php_value memory_limit 5800M
+   php_value post_max_size 3400M
+   php_value session.gc_maxlifetime 1440
+   php_value session.save_path "/var/cpanel/php/sessions/ea-php74"
+   php_value upload_max_filesize 1200M
+   php_flag zlib.output_compression Off
+</IfModule>
+# END cPanel-generated php ini directives, do not edit
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php74” package as the default “PHP” programming language.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php74 .php .php7 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit

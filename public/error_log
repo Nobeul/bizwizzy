@@ -15594,3 +15594,4 @@ Stack trace:
 #9 /home/bizwizzy/public_html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(116): Illuminate\Foundation\Http\Kernel->sendRequestThroughRouter(Object(Illuminate\Http\Request))
 #10 /home/bizwizzy/public_html/public/index.php(52): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
 #11 {main} in /home/bizwizzy/public_html/vendor/laravel/framework/src/Illuminate/Support/Collection.php on line 40
+[02-Jun-2024 20:39:45 UTC] PHP Fatal error:  require(): Failed opening required '/home/bizwizzy/tenderstoresltd.pearlbizna.com/public/../bootstrap/autoload.php' (include_path='.:/opt/cpanel/ea-php74/root/usr/share/pear') in /home/bizwizzy/tenderstoresltd.pearlbizna.com/public/index.php on line 22
