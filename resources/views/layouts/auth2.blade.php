@@ -46,7 +46,7 @@
             </div>
             <div class="col-md-7 col-sm-7 col-xs-12 right-col eq-height-col">
                 <div class="row">
-                <div class="col-md-3 col-xs-4" style="text-align: left;">
+                {{-- <div class="col-md-3 col-xs-4" style="text-align: left;">
                     <select class="form-control input-sm" id="change_lang" style="margin: 10px;">
                     @foreach(config('constants.langs') as $key => $val)
                         <option value="{{$key}}" 
@@ -59,7 +59,7 @@
                         </option>
                     @endforeach
                     </select>
-                </div>
+                </div> --}}
                 <div class="col-md-9 col-xs-8" style="text-align: right;padding-top: 10px;">
                     @if(!($request->segment(1) == 'business' && $request->segment(2) == 'register'))
                         <!-- Register Url -->
