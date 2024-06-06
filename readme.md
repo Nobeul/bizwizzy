@@ -1,1 +1,1 @@
-Tenderstore Git repo updated
+Tenderstore
