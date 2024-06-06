@@ -2,8 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/bizwizzy/public_html/tenderstoresltd.pearlbizna.com
-    - /bin/cp -r $DEPLOYPATH/* $DEPLOYPATH_backup/ # Backup current deployment
-    - echo "Starting deployment"
-    - /bin/rm -rf $DEPLOYPATH/*
-    - /usr/bin/git --work-tree=$DEPLOYPATH --git-dir=$DEPLOYPATH/.git checkout -f tenderstore
-    - echo "Deployment finished"
+    - /bin/cp -R * $DEPLOYPATH
