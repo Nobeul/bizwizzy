@@ -132,7 +132,7 @@ class CashRegisterController extends Controller
 
         $business_location = BusinessLocation::where('business_id', $business_id)->first();
         $business_location = json_decode($business_location->default_payment_accounts, true);
-        $is_mpesa_enabled = $business_location['mpesa']['is_enabled'];
+        $is_mpesa_enabled = $business_location['mpesa']['is_enabled'] ?? false;
 
         return view('cash_register.register_details')
                     ->with(compact('register_details', 'details', 'payment_types', 'close_time', 'sell_return', 'is_mpesa_enabled'));
@@ -172,7 +172,7 @@ class CashRegisterController extends Controller
 
         $business_location = BusinessLocation::where('business_id', $business_id)->first();
         $business_location = json_decode($business_location->default_payment_accounts, true);
-        $is_mpesa_enabled = $business_location['mpesa']['is_enabled'];
+        $is_mpesa_enabled = $business_location['mpesa']['is_enabled'] ?? false;
         
         return view('cash_register.register_details')
                 ->with(compact('register_details', 'details', 'payment_types', 'close_time', 'sell_return', 'is_mpesa_enabled'));
