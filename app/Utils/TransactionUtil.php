@@ -1297,6 +1297,8 @@ class TransactionUtil extends Util
 
         $output['lines'] = [];
         $total_exempt = 0;
+        $output['subtotal'] = 0;
+
         if (in_array($transaction_type, ['sell', 'sales_order'])) {
             $sell_line_relations = ['modifiers', 'sub_unit', 'warranties'];
 
@@ -1333,7 +1335,6 @@ class TransactionUtil extends Util
             $total_line_taxes = 0;
             $subtotal_exc_tax = 0;
             $unique_items = [];
-            $output['subtotal'] = 0;
             $output['vat'] = 0;
             foreach ($details['lines'] as $line) {
                 if (!empty($line['group_tax_details'])) {
