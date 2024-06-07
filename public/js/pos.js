@@ -603,6 +603,15 @@ $(document).ready(function() {
 
     //Finalize invoice, open payment modal
     $('button#pos-finalize').click(function() {
+        let customer_name = $('#customer-name').val();
+        let customer_pin = $('#customer-pin').val();
+        
+        if (customer_name === undefined || customer_pin === undefined) {
+            $('form#edit_pos_sell_form').submit();
+            $('form#add_pos_sell_form').submit();
+            return false;
+        }
+            
         //Check if product is present or not.
         if ($('table#pos_table tbody').find('.product_row').length <= 0) {
             toastr.warning(LANG.no_products_added);
@@ -644,6 +653,14 @@ $(document).ready(function() {
 
     //Finalize without showing payment options
     $('button.pos-express-finalize').click(function() {
+        let customer_name = $('#customer-name').val();
+        let customer_pin = $('#customer-pin').val();
+
+        if (customer_name === undefined || customer_pin === undefined) {
+            $('form#edit_pos_sell_form').submit();
+            $('form#add_pos_sell_form').submit();
+            return false;
+        }
 
         //Check if product is present or not.
         if ($('table#pos_table tbody').find('.product_row').length <= 0) {
