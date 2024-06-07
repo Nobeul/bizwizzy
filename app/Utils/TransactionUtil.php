@@ -262,6 +262,8 @@ class TransactionUtil extends Util
             'additional_expense_key_2' => !empty($input['additional_expense_key_2']) ? $input['additional_expense_key_2'] : null,
             'additional_expense_key_3' => !empty($input['additional_expense_key_3']) ? $input['additional_expense_key_3'] : null,
             'additional_expense_key_4' => !empty($input['additional_expense_key_4']) ? $input['additional_expense_key_4'] : null,
+            'customer_pin' => !empty($input['customer_pin']) ? $input['customer_pin'] : null,
+            'customer_name' => ! empty($input['customer_name']) ? $input['customer_name'] : null,
         ];
 
         if (!empty($input['transaction_date'])) {

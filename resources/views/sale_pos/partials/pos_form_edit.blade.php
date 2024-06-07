@@ -147,6 +147,26 @@
       		<div class="col-md-3"></div>
     	</span>
     @endif
+	<div class="col-sm-4">
+    	<div class="form-group">
+    		<div class="input-group">
+    			<span class="input-group-addon">
+    				<i class="fa fa-user-secret"></i>
+    			</span>
+    			{!! Form::text('customer_pin', $transaction->customer_pin, ['class' => 'form-control', 'id' => 'customer_pin', 'placeholder' => __('Customer PIN')]); !!}
+    		</div>
+    	</div>
+    </div>
+	<div class="col-sm-4">
+    	<div class="form-group">
+    		<div class="input-group">
+    			<span class="input-group-addon">
+    				<i class="fa fa-user"></i>
+    			</span>
+    			{!! Form::text('customer_name', $transaction->customer_name, ['class' => 'form-control', 'id' => 'customer_name', 'placeholder' => __('Customer Name'), 'required']); !!}
+    		</div>
+    	</div>
+    </div>
     @if(in_array('subscription', $enabled_modules))
 		<div class="col-md-4 col-sm-6">
 			<label>
