@@ -603,12 +603,11 @@ $(document).ready(function() {
 
     //Finalize invoice, open payment modal
     $('button#pos-finalize').click(function() {
-        let customer_name = $('#customer-name').val();
-        let customer_pin = $('#customer-pin').val();
-        
-        if (customer_name === undefined || customer_pin === undefined) {
-            $('form#edit_pos_sell_form').submit();
-            $('form#add_pos_sell_form').submit();
+        let customer_name = $('#customer_name').val();
+        let customer_pin = $('#customer_pin').val();
+
+        if (customer_name.length <= 0 || customer_pin.length <= 0) {
+            pos_form_obj.submit();
             return false;
         }
             
@@ -653,12 +652,11 @@ $(document).ready(function() {
 
     //Finalize without showing payment options
     $('button.pos-express-finalize').click(function() {
-        let customer_name = $('#customer-name').val();
-        let customer_pin = $('#customer-pin').val();
+        let customer_name = $('#customer_name').val();
+        let customer_pin = $('#customer_pin').val();
 
-        if (customer_name === undefined || customer_pin === undefined) {
-            $('form#edit_pos_sell_form').submit();
-            $('form#add_pos_sell_form').submit();
+        if (customer_name.length <= 0 || customer_pin.length <= 0) {
+            pos_form_obj.submit();
             return false;
         }
 
