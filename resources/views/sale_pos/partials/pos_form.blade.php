@@ -175,7 +175,7 @@
     			<span class="input-group-addon">
     				<i class="fa fa-user-secret"></i>
     			</span>
-    			{!! Form::text('customer_pin', null, ['class' => 'form-control', 'id' => 'customer_pin', 'placeholder' => __('Customer PIN'), 'required']); !!}
+    			{!! Form::text('customer_pin', null, ['class' => 'form-control', 'id' => 'customer_pin', 'placeholder' => __('Customer PIN')]); !!}
     		</div>
     	</div>
     </div>
