@@ -508,7 +508,7 @@
 							@endif
 					    @else
 					        <th style="width:70%">
-        					    {{ Tax }}:
+        					    {{ 'Tax' }}:
         					</th>
         					<td class="text-right">
         					    0
