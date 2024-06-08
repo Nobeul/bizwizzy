@@ -28,7 +28,7 @@
             <div class="col-md-3">
                 <div class="form-group">
                     {!! Form::label('type', __('Locations') . ':') !!}
-                    {!! Form::select('brand_id', $locations, null, ['class' => 'form-control select2', 'style' => 'width:100%', 'id' => 'location_id', 'placeholder' => __('lang_v1.all')]); !!}
+                    {!! Form::select('brand_id', $locations, null, ['class' => 'form-control select2', 'style' => 'width:100%', 'id' => 'location_id']); !!}
                 </div>
             </div>
             <div class="col-md-3">
