@@ -64,6 +64,7 @@
                     'class' => 'form-control',
                     'required',
                     'min' => 1,
+                    'step' => "any",
                     'placeholder' => __('Please enter quantity to break'),
                     'id' => 'breaking_quantity',
                 ]) !!}
