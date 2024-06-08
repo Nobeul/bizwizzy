@@ -1404,15 +1404,17 @@ $(document).ready(function() {
     });
 
     //Confirmation before page load.
-    window.onbeforeunload = function() {
-        if($('form#edit_pos_sell_form').length == 0){
-            if($('table#pos_table tbody tr').length > 0) {
-                return LANG.sure;
-            } else {
-                return null;
-            }
-        }
-    }
+    // window.onbeforeunload = function() {
+        // if($('form#edit_pos_sell_form').length == 0){
+        //     if($('table#pos_table tbody tr').length > 0) {
+        //         return LANG.sure;
+        //     } else {
+        //         return null;
+        //     }
+        // }
+    // }
+    window.onbeforeunload = null;
+    
     $(window).resize(function() {
         var win_height = $(window).height();
         div_height = __calculate_amount('percentage', 63, win_height);
@@ -2032,9 +2034,9 @@ function reset_pos_form(){
 	//If on edit page then redirect to Add POS page
 	if($('form#edit_pos_sell_form').length > 0){
 		setTimeout(function() {
-			window.location = $("input#pos_redirect_url").val();
+			window.location = 'https://bizwizzy.test/pos/create';
 		}, 4000);
-		return true;
+		// return true;
 	}
 	
     //reset all repair defects tags
