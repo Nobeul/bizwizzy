@@ -42,7 +42,7 @@ class DeselectReport extends Model
         return $obj->save();
     }
 
-    public function findByFilters(array $filters, $first = false, $paginate = false, $limit = 10, $datatable = false)
+    public function findByFilters(array $filters, $first = false, $paginate = false, $limit = 10, $datatable = false, $locations = null)
     {
         $query = self::query();
 
@@ -56,6 +56,11 @@ class DeselectReport extends Model
 
         if (! empty($filters['business_location_id'])) {
             $query->where('business_location_id', $filters['business_location_id']);
+        } else {
+            if (! empty($locations)) {
+                $locations = array_filter(array_keys($locations->toArray()));
+                $query->whereIn('business_location_id', $locations);
+            }
         }
 
         if (! empty($filters['quantity'])) {
