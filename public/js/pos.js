@@ -830,15 +830,15 @@ $(document).ready(function() {
             var cnf = true;
 
             //Ignore if the difference is less than 0.5
-            if ($('input#in_balance_due').val() >= 0.5) {
-                cnf = confirm(LANG.paid_amount_is_less_than_payable);
+            // if ($('input#in_balance_due').val() >= 0.5) {
+                // cnf = confirm(LANG.paid_amount_is_less_than_payable);
                 // if( total_payble > total_paying ){
                 // 	cnf = confirm( LANG.paid_amount_is_less_than_payable );
                 // } else if(total_payble < total_paying) {
                 // 	alert( LANG.paid_amount_is_more_than_payable );
                 // 	cnf = false;
                 // }
-            }
+            // }
 
             var total_advance_payments = 0;
             $('#payment_rows_div').find('select.payment_types_dropdown').each( function(){
@@ -1614,12 +1614,15 @@ function reloadPageWithDelay() {
     }, 10000); // Delay in milliseconds (e.g., 2000 ms = 2 seconds)
 }
 
-$(window).on('beforeunload', function() {
-    reloadPageWithDelay();
+if($('form#add_pos_sell_form').length != 0) {
+    $(window).on('beforeunload', function() {
+        reloadPageWithDelay();
 
-    // Return a message to prompt the user to confirm leaving the page
-    return 'Are you sure you want to leave this page?';
-});
+        // Return a message to prompt the user to confirm leaving the page
+        // "Changes you made may not be saved" alert showing from here.
+        return 'Are you sure you want to leave this page?';
+    });
+}
 
 //variation_id is null when weighing_scale_barcode is used.
 function pos_product_row(variation_id = null, purchase_line_id = null, weighing_scale_barcode = null, quantity = 1) {
@@ -2047,9 +2050,9 @@ function reset_pos_form(){
 	//If on edit page then redirect to Add POS page
 	if($('form#edit_pos_sell_form').length > 0){
 		setTimeout(function() {
-			window.location = $("input#pos_redirect_url").val();
+			window.location.href = $("input#pos_redirect_url").val();
 		}, 4000);
-		// return true;
+		return true;
 	}
 	
     //reset all repair defects tags
