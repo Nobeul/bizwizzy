@@ -5253,8 +5253,8 @@ class TransactionUtil extends Util
                 'payment_status' => !in_array($transaction->type, ['ledger_discount']) ?  __('lang_v1.' . $transaction->payment_status) : '',
                 'total' => '',
                 'payment_method' => '',
-                'debit' => in_array($transaction->type, ['sell', 'purchase_return']) || ($transaction->sub_type == 'purchase_discount') ? $transaction->final_total : '',
-                'credit' => in_array($transaction->type, ['purchase', 'sell_return']) || ($transaction->sub_type == 'sell_discount') ? $transaction->final_total : '',
+                'debit' => in_array($transaction->type, ['sell', 'purchase_return']) || ($transaction->sub_type == 'purchase_discount') ? $transaction->final_total : 0,
+                'credit' => in_array($transaction->type, ['purchase', 'sell_return']) || ($transaction->sub_type == 'sell_discount') ? $transaction->final_total : 0,
                 'others' => $transaction->additional_notes,
                 'transaction_id' => $transaction->id,
                 'transaction_type' => $transaction->type
@@ -5333,8 +5333,8 @@ class TransactionUtil extends Util
                 'total' => '',
                 'payment_method' => !empty($paymentTypes[$payment->method]) ? $paymentTypes[$payment->method] : '',
                 'payment_method_key' => $payment->method,
-                'debit' => in_array($payment->transaction_type, ['purchase', 'sell_return']) || ($payment->is_advance == 1 && $contact->type == 'supplier') || (in_array($payment->transaction_type, ['sell', 'purchase_return', 'opening_balance']) &&  $payment->is_return == 1) || $payment->payment_type == 'debit' ? $payment->amount : '',
-                'credit' => (in_array($payment->transaction_type, ['sell', 'purchase_return', 'opening_balance']) || ($payment->is_advance == 1 && in_array($contact->type, ['customer', 'both']))) && $payment->is_return == 0 || $payment->payment_type == 'credit' ? $payment->amount : '',
+                'debit' => in_array($payment->transaction_type, ['purchase', 'sell_return']) || ($payment->is_advance == 1 && $contact->type == 'supplier') || (in_array($payment->transaction_type, ['sell', 'purchase_return', 'opening_balance']) &&  $payment->is_return == 1) || $payment->payment_type == 'debit' ? $payment->amount : 0,
+                'credit' => (in_array($payment->transaction_type, ['sell', 'purchase_return', 'opening_balance']) || ($payment->is_advance == 1 && in_array($contact->type, ['customer', 'both']))) && $payment->is_return == 0 || $payment->payment_type == 'credit' ? $payment->amount : 0,
                 'others' =>  $note 
             ];
         }
@@ -5389,8 +5389,8 @@ class TransactionUtil extends Util
                 'payment_status' => '',
                 'total' => '',
                 'payment_method' => '',
-                'debit' => $contact->type == 'customer' ? abs($total_opening_bal) : '',
-                'credit' => $contact->type == 'supplier' ? abs($total_opening_bal) : '',
+                'debit' => $contact->type == 'customer' ? abs($total_opening_bal) : 0,
+                'credit' => $contact->type == 'supplier' ? abs($total_opening_bal) : 0,
                 'others' => '',
                 'final_total' => abs($total_opening_bal),
                 'total_due' => 0,
