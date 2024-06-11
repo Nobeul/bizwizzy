@@ -123,6 +123,8 @@
 @endif
 
 <script type="text/javascript">
+    var BASE_URL = "{{ url('/') }}";
+    
     $(document).ready( function(){
         var locale = "{{session()->get('user.language', config('app.locale'))}}";
         var isRTL = @if(in_array(session()->get('user.language', config('app.locale')), config('constants.langs_rtl'))) true; @else false; @endif

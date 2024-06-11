@@ -1544,7 +1544,7 @@ class SellPosController extends Controller
         ];
     }
 
-    private function getSellLineRow($variation_id, $location_id, $quantity, $row_count, $is_direct_sell, $so_line = null)
+    private function getSellLineRow($variation_id, $location_id, $quantity, $row_count, $is_direct_sell, $so_line = null, $business_id = null)
     {
         $business_id = request()->session()->get('user.business_id');
         $business_details = $this->businessUtil->getDetails($business_id);
@@ -1627,9 +1627,12 @@ class SellPosController extends Controller
             $last_sell_line = $this->getLastSellLineForCustomer($variation_id, $customer_id, $location_id);
         }
 
+        //Selling Price Group Dropdown
+        $price_groups = SellingPriceGroup::forDropdown($business_id);
+        
         if (request()->get('type') == 'sell-return') {
             $output['html_content'] =  view('sell_return.partials.product_row')
-                        ->with(compact('product', 'row_count', 'tax_dropdown', 'enabled_modules', 'sub_units'))
+                        ->with(compact('product', 'row_count', 'tax_dropdown', 'enabled_modules', 'sub_units', 'price_groups'))
                         ->render();
         } else {
             $is_cg = !empty($cg->id) ? true : false;
@@ -1653,8 +1656,52 @@ class SellPosController extends Controller
             }
             
             $output['html_content'] =  view('sale_pos.product_row')
-                        ->with(compact('product', 'row_count', 'tax_dropdown', 'enabled_modules', 'pos_settings', 'sub_units', 'discount', 'waiters', 'edit_discount', 'edit_price', 'purchase_line_id', 'warranties', 'quantity', 'is_direct_sell', 'so_line', 'is_sales_order', 'last_sell_line', 'vehicles', 'showCrossButton'))
+                        ->with(compact('product', 'row_count', 'tax_dropdown', 'enabled_modules', 'pos_settings', 'sub_units', 'discount', 'waiters', 'edit_discount', 'edit_price', 'purchase_line_id', 'warranties', 'quantity', 'is_direct_sell', 'so_line', 'is_sales_order', 'last_sell_line', 'vehicles', 'showCrossButton', 'price_groups'))
                         ->render();
+        }
+
+        return $output;
+    }
+
+    public function getPriceFromGroup(Request $request)
+    {
+        $output = [];
+
+        $business_id = request()->session()->get('user.business_id');
+        if (! empty($request->product_id) && ! empty($request->price_group_id) && $request->price_group_id != 0) {
+            $product = Product::leftJoin('variations', 'variations.product_id', '=', 'products.id')
+                        ->leftJoin('variation_group_prices as gp', 'gp.variation_id', '=', 'variations.id')
+                        ->where('products.id', $request->product_id)
+                        ->where('products.business_id', $business_id)
+                        ->where('gp.price_group_id', $request->price_group_id)
+                        ->select('gp.*')
+                        ->first();
+            if (empty($product)) {
+                $output['success'] = false;
+                $output['msg'] = __('Product was not found');
+            } else {
+                $output['success'] = true;
+                $output['data'] = $product;
+            }
+        } else if (! empty($request->product_id) && $request->price_group_id == 0) {
+            $product = Product::leftJoin('variations', 'variations.product_id', '=', 'products.id')
+                    ->where('products.id', $request->product_id)
+                    ->where('products.business_id', $business_id)
+                    ->select('variations.sell_price_inc_tax')
+                    ->first();
+
+            if (empty($product)) {
+                $output['success'] = false;
+                $output['msg'] = __('Product was not found');
+            } else {
+                $product->price_inc_tax = $product->sell_price_inc_tax;
+
+                $output['success'] = true;
+                $output['data'] = $product;
+            }
+        } else {
+            $output['success'] = false;
+            $output['msg'] = __('No data to filter');
         }
 
         return $output;
@@ -1713,11 +1760,12 @@ class SellPosController extends Controller
                 }
             }
 
-            $output = $this->getSellLineRow($variation_id, $location_id, $quantity, $row_count, $is_direct_sell);
+            $business_id = request()->session()->get('user.business_id');
+
+            $output = $this->getSellLineRow($variation_id, $location_id, $quantity, $row_count, $is_direct_sell, null, $business_id);
 
             if ($this->transactionUtil->isModuleEnabled('modifiers')  && !$is_direct_sell) {
                 $variation = Variation::find($variation_id);
-                $business_id = request()->session()->get('user.business_id');
                 $this_product = Product::where('business_id', $business_id)
                                         ->with(['modifier_sets'])
                                         ->find($variation->product_id);

@@ -199,6 +199,7 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::get('/sells/pos/get-product-suggestion', 'SellPosController@getProductSuggestion');
     Route::get('/sells/pos/get-featured-products/{location_id}', 'SellPosController@getFeaturedProducts');
     Route::get('/reset-mapping', 'SellController@resetMapping');
+    Route::get('/get-price-from-group', 'SellPosController@getPriceFromGroup');
 
     Route::resource('pos', 'SellPosController');
 

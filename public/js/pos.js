@@ -353,6 +353,29 @@ $(document).ready(function() {
         pos_each_row(tr);
     });
 
+    $('table#pos_table tbody').on('change', 'select.pos_price_group', function() {
+        let quantity = $(this).closest('tr').find('.input_quantity').val();
+        let product_id = $(this).closest('tr').find('.product_id').val();
+        let price_group_id = $(this).val();
+        
+        var tr = $(this).closest('tr');
+
+        $.ajax({
+            url: BASE_URL + '/get-price-from-group?product_id=' + product_id + '&price_group_id=' + price_group_id,
+            dataType: 'html',
+            success: function(result) {
+                let response = JSON.parse(result);
+                if (response.success == true) {
+                    let updated_price = quantity*response.data.price_inc_tax;
+                    __write_number(tr.find('input.pos_unit_price_inc_tax'), response.data.price_inc_tax);
+                    tr.find('span.pos_line_total_text').text(__currency_trans_from_en(updated_price, true));
+                } else {
+                    console.log(result);
+                }
+            },
+        });
+    });
+
     //If change in unit price including tax, update unit price
     $('table#pos_table tbody').on('change', 'input.pos_unit_price_inc_tax', function() {
         var unit_price_inc_tax = __read_number($(this));

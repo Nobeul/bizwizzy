@@ -98,7 +98,7 @@
 			</div>
 		</div>
 	@endif
-	@if(!empty($price_groups) && count($price_groups) > 1)
+	{{-- @if(!empty($price_groups) && count($price_groups) > 1)
 		<div class="col-md-4 col-sm-6">
 			<div class="form-group">
 				<div class="input-group">
@@ -122,7 +122,7 @@
 			reset($price_groups);
 		@endphp
 		{!! Form::hidden('price_group', key($price_groups), ['id' => 'price_group']) !!}
-	@endif
+	@endif --}}
 	@if(!empty($default_price_group_id))
 		{!! Form::hidden('default_price_group', $default_price_group_id, ['id' => 'default_price_group']) !!}
 	@endif

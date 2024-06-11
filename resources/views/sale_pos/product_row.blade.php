@@ -384,6 +384,14 @@
 		@endif
 	@endif
 	<td class="{{$hide_tax}}">
+		@if(!empty($price_groups) && count($price_groups) > 1)
+			<select name="products[{{$row_count}}][price_group]" class="form-control input-sm pos_price_group">
+				@foreach ($price_groups as $key => $group)
+					<option value="{{ $key }}">{{ $group }}</option>
+				@endforeach
+			</select>
+			<br>
+		@endif
 		<input type="text" data-min-unit-price="{{$product->dpp_inc_tax}}" name="products[{{$row_count}}][unit_price_inc_tax]" class="form-control pos_unit_price_inc_tax input_number" value="{{@num_format($unit_price_inc_tax)}}" @if(!$edit_price) readonly @endif @if(!empty($pos_settings['enable_msp'])) data-rule-min-value="{{$unit_price_inc_tax}}" data-msg-min-value="{{__('lang_v1.minimum_selling_price_error_msg', ['price' => @num_format($unit_price_inc_tax)])}}" @endif>
 	</td>
 	@if(!empty($common_settings['enable_product_warranty']) && !empty($is_direct_sell))
