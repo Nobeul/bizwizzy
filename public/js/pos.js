@@ -358,21 +358,28 @@ $(document).ready(function() {
         let product_id = $(this).closest('tr').find('.product_id').val();
         let price_group_id = $(this).val();
         
-        var tr = $(this).closest('tr');
-
+        var tr = $(this).parents('tr');
         $.ajax({
             url: BASE_URL + '/get-price-from-group?product_id=' + product_id + '&price_group_id=' + price_group_id,
             dataType: 'html',
-            success: function(result) {
-                let response = JSON.parse(result);
-                if (response.success == true) {
-                    let updated_price = quantity*response.data.price_inc_tax;
-                    __write_number(tr.find('input.pos_unit_price_inc_tax'), response.data.price_inc_tax);
-                    tr.find('span.pos_line_total_text').text(__currency_trans_from_en(updated_price, true));
+        }).done(function(result) {
+            let response = JSON.parse(result);
+            if (response.success == true) {
+                let updated_price = quantity*response.data.price_inc_tax;
+                __write_number(tr.find('input.pos_line_total'), updated_price);
+                __write_number(tr.find('input.pos_unit_price_inc_tax'), response.data.price_inc_tax);
+                tr.find('span.pos_line_total_text').text(__currency_trans_from_en(updated_price, true));
+
+                if ($('.error').length > 0) {
+                    disable_pos_form_actions();
                 } else {
-                    console.log(result);
+                    enable_pos_form_actions();
                 }
-            },
+        
+                pos_total_row();
+            } else {
+                console.log(result);
+            }
         });
     });
 
