@@ -370,11 +370,11 @@ $(document).ready(function() {
                 __write_number(tr.find('input.pos_unit_price_inc_tax'), response.data.price_inc_tax);
                 tr.find('span.pos_line_total_text').text(__currency_trans_from_en(updated_price, true));
 
-                if ($('.error').length > 0) {
-                    disable_pos_form_actions();
-                } else {
-                    enable_pos_form_actions();
-                }
+                // if ($('.error').length > 0) {
+                //     disable_pos_form_actions();
+                // } else {
+                //     enable_pos_form_actions();
+                // }
         
                 pos_total_row();
             } else {
@@ -533,11 +533,11 @@ $(document).ready(function() {
             .parents('tr')
             .remove();
         
-        if ($('.error').length > 0) {
-            disable_pos_form_actions();
-        } else {
-            enable_pos_form_actions();
-        }
+        // if ($('.error').length > 0) {
+        //     disable_pos_form_actions();
+        // } else {
+        //     enable_pos_form_actions();
+        // }
         
         pos_total_row();
     });
@@ -635,7 +635,7 @@ $(document).ready(function() {
     $('button#pos-finalize').click(function() {
         let customer_name = $('#customer_name').val();
 
-        if (customer_name.length <= 0) {
+        if (customer_name.length <= 0 || $('.error').length > 0) {
             pos_form_obj.submit();
             return false;
         }
@@ -683,7 +683,7 @@ $(document).ready(function() {
     $('button.pos-express-finalize').click(function() {
         let customer_name = $('#customer_name').val();
 
-        if (customer_name.length <= 0) {
+        if (customer_name.length <= 0 || $('.error').length > 0) {
             pos_form_obj.submit();
             return false;
         }
