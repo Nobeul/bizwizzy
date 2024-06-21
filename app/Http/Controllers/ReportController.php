@@ -1764,6 +1764,7 @@ class ReportController extends Controller
                 ->where('t.business_id', $business_id)
                 ->where('t.type', 'sell')
                 ->where('t.status', 'final')
+                ->where('t.is_suspend', '!=', 1)
                 ->select(
                     'p.name as product_name',
                     'p.type as product_type',
@@ -2364,6 +2365,7 @@ class ReportController extends Controller
                     'transaction_payments.id as DT_RowId',
                     'CG.name as customer_group'
                 )
+                ->where('t.is_suspend', '!=', 1)
                 ->groupBy('transaction_payments.id');
 
             $start_date = $request->get('start_date');
@@ -2547,6 +2549,7 @@ class ReportController extends Controller
                 ->where('t.business_id', $business_id)
                 ->where('t.type', 'sell')
                 ->where('t.status', 'final')
+                ->where('t.is_suspend', '!=', 1)
                 ->select(
                     'p.name as product_name',
                     'p.enable_stock',

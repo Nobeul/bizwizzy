@@ -704,7 +704,8 @@ class ProductUtil extends Util
                     ->leftjoin('units as u', 'u.id', '=', 'p.unit_id')
                     ->where('transactions.business_id', $business_id)
                     ->where('transactions.type', 'sell')
-                    ->where('transactions.status', 'final');
+                    ->where('transactions.status', 'final')
+                    ->where('transactions.is_suspend', '!=', 1);
 
         $permitted_locations = auth()->user()->permitted_locations();
         if ($permitted_locations != 'all') {

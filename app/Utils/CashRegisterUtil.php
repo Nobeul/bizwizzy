@@ -331,6 +331,7 @@ class CashRegisterUtil extends Util
                 ->where('transactions.type', 'sell')
                 ->where('transactions.status', 'final')
                 ->where('transactions.is_direct_sale', 0)
+                ->where('transactions.is_suspend', '!=', 1)
                 ->join('transaction_sell_lines AS TSL', 'transactions.id', '=', 'TSL.transaction_id')
                 ->join('products AS P', 'TSL.product_id', '=', 'P.id')
                 ->where('TSL.children_type', '!=', 'combo')
@@ -349,6 +350,7 @@ class CashRegisterUtil extends Util
                 ->where('transactions.type', 'sell')
                 ->where('transactions.status', 'final')
                 ->where('transactions.is_direct_sale', 0)
+                ->where('transactions.is_suspend', '!=', 1)
                 ->join('transaction_sell_lines AS TSL', 'transactions.id', '=', 'TSL.transaction_id')
                 ->join('variations AS v', 'TSL.variation_id', '=', 'v.id')
                 ->join('product_variations AS pv', 'v.product_variation_id', '=', 'pv.id')
@@ -374,6 +376,7 @@ class CashRegisterUtil extends Util
                 ->where('transactions.is_direct_sale', 0)
                 ->where('transactions.type', 'sell')
                 ->where('transactions.status', 'final')
+                ->where('transactions.is_suspend', '!=', 1)
                 ->leftjoin('types_of_services AS tos', 'tos.id', '=', 'transactions.types_of_service_id')
                 ->groupBy('tos.id')
                 ->select(
@@ -389,6 +392,7 @@ class CashRegisterUtil extends Util
                 ->where('transactions.type', 'sell')
                 ->where('transactions.is_direct_sale', 0)
                 ->where('transactions.status', 'final')
+                ->where('transactions.is_suspend', '!=', 1)
                 ->select(
                     DB::raw('SUM(tax_amount) as total_tax'),
                     DB::raw('SUM(IF(discount_type = "percentage", total_before_tax*discount_amount/100, discount_amount)) as total_discount'),

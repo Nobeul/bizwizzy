@@ -2442,6 +2442,7 @@ class TransactionUtil extends Util
     {
         $query = Transaction::where('business_id', $business_id)
                         ->where('type', 'purchase')
+                        ->where('is_suspend', '!=', 1)
                         ->select(
                             DB::raw('SUM(final_total) as final_total_sum'),
                             //DB::raw("SUM(final_total - tax_amount) as total_exc_tax"),
@@ -2670,6 +2671,7 @@ class TransactionUtil extends Util
                         ->leftjoin('tax_rates as T', 'transactions.tax_id', '=', 'T.id')
                         ->whereIn('type', ['purchase', 'purchase_return'])
                         ->whereNotNull('transactions.tax_id')
+                        ->where('transactions.is_suspend', '!=', 1)
                         ->select(
                             DB::raw("SUM( IF(type='purchase', transactions.tax_amount, -1 * transactions.tax_amount) ) as transaction_tax"),
                             'T.name as tax_name',
@@ -2683,6 +2685,7 @@ class TransactionUtil extends Util
                         ->leftjoin('tax_rates as T', 'pl.tax_id', '=', 'T.id')
                         ->where('type', 'purchase')
                         ->whereNotNull('pl.tax_id')
+                        ->where('transactions.is_suspend', '!=', 1)
                         ->select(
                             DB::raw("SUM( (pl.quantity - pl.quantity_returned) * pl.item_tax ) as product_tax"),
                             'T.name as tax_name',
@@ -2772,6 +2775,7 @@ class TransactionUtil extends Util
                         ->whereIn('type', ['sell', 'sell_return'])
                         ->whereNotNull('transactions.tax_id')
                         ->where('transactions.status', '=', 'final')
+                        ->where('transactions.is_suspend', '!=', 1)
                         ->select(
                             DB::raw("SUM( IF(type='sell', transactions.tax_amount, -1 * transactions.tax_amount) ) as transaction_tax"),
                             'T.name as tax_name',
@@ -2786,6 +2790,7 @@ class TransactionUtil extends Util
                         ->where('type', 'sell')
                         ->whereNotNull('tsl.tax_id')
                         ->where('transactions.status', '=', 'final')
+                        ->where('transactions.is_suspend', '!=', 1)
                         ->select(
                             DB::raw("SUM( (tsl.quantity - tsl.quantity_returned) * tsl.item_tax ) as product_tax"),
                             'T.name as tax_name',
@@ -2874,6 +2879,7 @@ class TransactionUtil extends Util
                         ->leftjoin('tax_rates as T', 'transactions.tax_id', '=', 'T.id')
                         ->where('type', 'expense')
                         ->whereNotNull('transactions.tax_id')
+                        ->where('transactions.is_suspend', '!=', 1)
                         ->select(
                             DB::raw("SUM(transactions.tax_amount) as transaction_tax"),
                             'T.name as tax_name',
@@ -2980,7 +2986,8 @@ class TransactionUtil extends Util
     ) {
         $query = Transaction::leftjoin('expense_categories AS ec', 'transactions.expense_category_id', '=', 'ec.id')
                             ->where('transactions.business_id', $business_id)
-                            ->whereIn('type', ['expense', 'expense_refund']);
+                            ->whereIn('type', ['expense', 'expense_refund'])
+                            ->where('transactions.is_suspend', '!=', 1);
         // ->where('payment_status', 'paid');
 
         $permitted_locations = auth()->user()->permitted_locations();
@@ -4518,7 +4525,7 @@ class TransactionUtil extends Util
         $created_by = null,
         $vehicle_id = null
         ) {
-        $query = Transaction::where('transactions.business_id', $business_id);
+        $query = Transaction::where('transactions.business_id', $business_id)->where('transactions.is_suspend', '!=', 1);
         
         //Check for permitted locations of a user
         $permitted_locations = auth()->user()->permitted_locations();
