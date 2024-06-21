@@ -328,7 +328,7 @@ class TransactionUtil extends Util
                                     $modifiers_formatted[] = new TransactionSellLine([
                                         'product_id' => $product['modifier_set_id'][$key],
                                         'variation_id' => $value,
-                                        'quantity' => $modifier_quantity,
+                                        'quantity' => $transaction->is_suspend == 1 ? 0 : $modifier_quantity,
                                         'unit_price_before_discount' => $this_price,
                                         'unit_price' => $this_price,
                                         'unit_price_inc_tax' => $this_price,
@@ -373,7 +373,7 @@ class TransactionUtil extends Util
                 $line = [
                     'product_id' => $product['product_id'],
                     'variation_id' => $product['variation_id'],
-                    'quantity' =>  $uf_quantity * $multiplier,
+                    'quantity' =>  $transaction->is_suspend == 1 ? 0 : $uf_quantity * $multiplier,
                     'unit_price_before_discount' => $unit_price_before_discount,
                     'unit_price' => $unit_price,
                     'line_discount_type' => !empty($product['line_discount_type']) ? $product['line_discount_type'] : null,
