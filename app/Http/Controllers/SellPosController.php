@@ -1357,6 +1357,35 @@ class SellPosController extends Controller
                     }
                 }
 
+                //update product stock if not suspended sale
+                if ($transaction->is_suspend != 1) {
+                    foreach ($input['products'] as $product) {
+                        $decrease_qty = $this->productUtil
+                                    ->num_uf($product['quantity']);
+                        if (!empty($product['base_unit_multiplier'])) {
+                            $decrease_qty = $decrease_qty * $product['base_unit_multiplier'];
+                        }
+
+                        if ($product['enable_stock']) {
+                            $this->productUtil->decreaseProductQuantity(
+                                $product['product_id'],
+                                $product['variation_id'],
+                                $input['location_id'],
+                                $decrease_qty
+                            );
+                        }
+
+                        if ($product['product_type'] == 'combo') {
+                            //Decrease quantity of combo as well.
+                            $this->productUtil
+                                ->decreaseProductQuantityCombo(
+                                    $product['combo'],
+                                    $input['location_id']
+                                );
+                        }
+                    }
+                }
+
                 if ($request->session()->get('business.enable_rp') == 1) {
                     $this->transactionUtil->updateCustomerRewardPoints($contact_id, $transaction->rp_earned, $rp_earned_before, $transaction->rp_redeemed, $rp_redeemed_before);
                 }
