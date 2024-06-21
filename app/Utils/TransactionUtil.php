@@ -2575,6 +2575,7 @@ class TransactionUtil extends Util
         $query = Transaction::where('transactions.business_id', $business_id)
                     ->where('transactions.type', 'sell')
                     ->where('transactions.status', 'final')
+                    ->where('transactions.is_suspend', '!=', 1)
                     ->select(
                         DB::raw('SUM(final_total) as total_sell'),
                         DB::raw("SUM(final_total - tax_amount) as total_exc_tax"),
