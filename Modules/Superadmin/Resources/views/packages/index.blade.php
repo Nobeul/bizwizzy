@@ -20,7 +20,7 @@
         <div class="box-header">
             <h3 class="box-title">&nbsp;</h3>
         	<div class="box-tools">
-                <a href="{{action('\Modules\Superadmin\Http\Controllers\PackagesController@create')}}" 
+                <a href="{{action([\Modules\Superadmin\Http\Controllers\PackagesController::class, 'create'])}}" 
                     class="btn btn-block btn-primary">
                 	<i class="fa fa-plus"></i> @lang( 'messages.add' )</a>
             </div>
@@ -59,8 +59,8 @@
 									</span>
 								@endif
 								
-								<a href="{{action('\Modules\Superadmin\Http\Controllers\PackagesController@edit', [$package->id])}}" class="btn btn-box-tool" title="edit"><i class="fa fa-edit"></i></a>
-								<a href="{{action('\Modules\Superadmin\Http\Controllers\PackagesController@destroy', [$package->id])}}" class="btn btn-box-tool link_confirmation" title="delete"><i class="fa fa-trash"></i></a>
+								<a href="{{action([\Modules\Superadmin\Http\Controllers\PackagesController::class, 'edit'], [$package->id])}}" class="btn btn-box-tool" title="edit"><i class="fa fa-edit"></i></a>
+								<a href="{{action([\Modules\Superadmin\Http\Controllers\PackagesController::class, 'destroy'], [$package->id])}}" class="btn btn-box-tool link_confirmation" title="delete"><i class="fa fa-trash"></i></a>
               					
 							</div>
 						</div>

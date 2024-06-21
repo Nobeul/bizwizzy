@@ -4,28 +4,26 @@ namespace Modules\Superadmin\Http\Controllers;
 
 use App\System;
 use App\Utils\BusinessUtil;
-
 use App\Utils\ModuleUtil;
 use Illuminate\Http\Request;
-
 use Illuminate\Http\Response;
 use Modules\Superadmin\Entities\Package;
-
 use Modules\Superadmin\Entities\Subscription;
+use Illuminate\Routing\Controller;
 
-class PackagesController extends BaseController
+class PackagesController extends Controller
 {
     /**
      * All Utils instance.
-     *
      */
     protected $businessUtil;
+
     protected $moduleUtil;
 
     /**
      * Constructor
      *
-     * @param ProductUtils $product
+     * @param  ProductUtils  $product
      * @return void
      */
     public function __construct(BusinessUtil $businessUtil, ModuleUtil $moduleUtil)
@@ -36,11 +34,12 @@ class PackagesController extends BaseController
 
     /**
      * Display a listing of the resource.
+     *
      * @return Response
      */
     public function index()
     {
-        if (!auth()->user()->can('superadmin')) {
+        if (! auth()->user()->can('superadmin')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -62,11 +61,12 @@ class PackagesController extends BaseController
 
     /**
      * Show the form for creating a new resource.
+     *
      * @return Response
      */
     public function create()
     {
-        if (!auth()->user()->can('superadmin')) {
+        if (! auth()->user()->can('superadmin')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -80,18 +80,19 @@ class PackagesController extends BaseController
 
     /**
      * Store a newly created resource in storage.
-     * @param  Request $request
+     *
+     * @param  Request  $request
      * @return Response
      */
     public function store(Request $request)
     {
-        if (!auth()->user()->can('superadmin')) {
+        if (! auth()->user()->can('superadmin')) {
             abort(403, 'Unauthorized action.');
         }
 
         try {
             $input = $request->only(['name', 'description', 'location_count', 'user_count', 'product_count', 'invoice_count', 'interval', 'interval_count', 'trial_days', 'price', 'sort_order', 'is_active', 'custom_permissions', 'is_private', 'is_one_time', 'enable_custom_link', 'custom_link',
-                'custom_link_text']);
+                'custom_link_text', ]);
 
             $currency = System::getCurrency();
 
@@ -112,20 +113,21 @@ class PackagesController extends BaseController
 
             $output = ['success' => 1, 'msg' => __('lang_v1.success')];
         } catch (\Exception $e) {
-            \Log::emergency("File:" . $e->getFile(). "Line:" . $e->getLine(). "Message:" . $e->getMessage());
-            
+            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+
             $output = ['success' => 0,
-                            'msg' => __('messages.something_went_wrong')
-                        ];
+                'msg' => __('messages.something_went_wrong'),
+            ];
         }
 
         return redirect()
-            ->action('\Modules\Superadmin\Http\Controllers\PackagesController@index')
+            ->action([\Modules\Superadmin\Http\Controllers\PackagesController::class, 'index'])
             ->with('status', $output);
     }
 
     /**
      * Show the specified resource.
+     *
      * @return Response
      */
     public function show()
@@ -135,13 +137,14 @@ class PackagesController extends BaseController
 
     /**
      * Show the form for editing the specified resource.
+     *
      * @return Response
      */
     public function edit($id)
     {
         $packages = Package::where('id', $id)
                             ->first();
-        
+
         $intervals = ['days' => __('lang_v1.days'), 'months' => __('lang_v1.months'), 'years' => __('lang_v1.years')];
 
         $permissions = $this->moduleUtil->getModuleData('superadmin_package', true);
@@ -152,18 +155,19 @@ class PackagesController extends BaseController
 
     /**
      * Update the specified resource in storage.
-     * @param  Request $request
+     *
+     * @param  Request  $request
      * @return Response
      */
     public function update(Request $request, $id)
     {
-        if (!auth()->user()->can('superadmin')) {
+        if (! auth()->user()->can('superadmin')) {
             abort(403, 'Unauthorized action.');
         }
 
         try {
             $packages_details = $request->only(['name', 'id', 'description', 'location_count', 'user_count', 'product_count', 'invoice_count', 'interval', 'interval_count', 'trial_days', 'price', 'sort_order', 'is_active', 'custom_permissions', 'is_private', 'is_one_time', 'enable_custom_link', 'custom_link', 'custom_link_text']);
-            
+
             $packages_details['is_active'] = empty($packages_details['is_active']) ? 0 : 1;
             $packages_details['custom_permissions'] = empty($packages_details['custom_permissions']) ? null : $packages_details['custom_permissions'];
 
@@ -178,15 +182,15 @@ class PackagesController extends BaseController
             $package->fill($packages_details);
             $package->save();
 
-            if (!empty($request->input('update_subscriptions'))) {
+            if (! empty($request->input('update_subscriptions'))) {
                 $package_details = [
                     'location_count' => $package->location_count,
                     'user_count' => $package->user_count,
                     'product_count' => $package->product_count,
                     'invoice_count' => $package->invoice_count,
-                    'name' => $package->name
+                    'name' => $package->name,
                 ];
-                if (!empty($package->custom_permissions)) {
+                if (! empty($package->custom_permissions)) {
                     foreach ($package->custom_permissions as $name => $value) {
                         $package_details[$name] = $value;
                     }
@@ -200,43 +204,44 @@ class PackagesController extends BaseController
 
             $output = ['success' => 1, 'msg' => __('lang_v1.success')];
         } catch (\Exception $e) {
-            \Log::emergency("File:" . $e->getFile(). "Line:" . $e->getLine(). "Message:" . $e->getMessage());
-            
+            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+
             $output = ['success' => 0,
-                            'msg' => __('messages.something_went_wrong')
-                        ];
+                'msg' => __('messages.something_went_wrong'),
+            ];
         }
 
         return redirect()
-            ->action('\Modules\Superadmin\Http\Controllers\PackagesController@index')
+            ->action([\Modules\Superadmin\Http\Controllers\PackagesController::class, 'index'])
             ->with('status', $output);
     }
 
     /**
      * Remove the specified resource from storage.
+     *
      * @return Response
      */
     public function destroy($id)
     {
-        if (!auth()->user()->can('superadmin')) {
+        if (! auth()->user()->can('superadmin')) {
             abort(403, 'Unauthorized action.');
         }
 
         try {
             Package::where('id', $id)
                 ->delete();
-            
+
             $output = ['success' => 1, 'msg' => __('lang_v1.success')];
         } catch (\Exception $e) {
-            \Log::emergency("File:" . $e->getFile(). "Line:" . $e->getLine(). "Message:" . $e->getMessage());
-            
+            \Log::emergency('File:'.$e->getFile().'Line:'.$e->getLine().'Message:'.$e->getMessage());
+
             $output = ['success' => 0,
-                            'msg' => __('messages.something_went_wrong')
-                        ];
+                'msg' => __('messages.something_went_wrong'),
+            ];
         }
 
         return redirect()
-            ->action('\Modules\Superadmin\Http\Controllers\PackagesController@index')
+            ->action([\Modules\Superadmin\Http\Controllers\PackagesController::class, 'index'])
             ->with('status', $output);
     }
 }

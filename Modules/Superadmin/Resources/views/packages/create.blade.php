@@ -22,7 +22,7 @@
 	<input type="hidden" id="p_thousand" value="{{$currency->thousand_separator}}">
 	<input type="hidden" id="p_decimal" value="{{$currency->decimal_separator}}">
 
-	{!! Form::open(['url' => action('\Modules\Superadmin\Http\Controllers\PackagesController@store'), 'method' => 'post', 'id' => 'add_package_form']) !!}
+	{!! Form::open(['url' => action([\Modules\Superadmin\Http\Controllers\PackagesController::class, 'store']), 'method' => 'post', 'id' => 'add_package_form']) !!}
 
 	<div class="box box-solid">
 		<div class="box-body">
@@ -180,12 +180,23 @@
 				@foreach($permissions as $module => $module_permissions)
 					@foreach($module_permissions as $permission)
 					<div class="col-sm-3">
-						<div class="checkbox">
-						<label>
-							{!! Form::checkbox("custom_permissions[$permission[name]]", 1, $permission['default'], ['class' => 'input-icheck']); !!}
-	                        {{$permission['label']}}
-						</label>
+                        @if(isset($permission['field_type']) && in_array($permission['field_type'], ['number', 'input']))
+                        <div class="form-group">
+							{!! Form::label("custom_permissions[$permission[name]]", $permission['label'].':') !!} 
+                            @if(isset($permission['tooltip']))
+                                @show_tooltip($permission['tooltip'])
+                            @endif
+                            
+							{!! Form::text("custom_permissions[$permission[name]]", null, ['class' => 'form-control', 'type' => $permission['field_type']]); !!} 
 						</div>
+                        @else
+                            <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox("custom_permissions[$permission[name]]", 1, $permission['default'], ['class' => 'input-icheck']); !!}
+                                {{$permission['label']}}
+                            </label>
+                            </div>
+                        @endif
 					</div>
 					@endforeach
 				@endforeach

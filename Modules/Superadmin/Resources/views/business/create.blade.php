@@ -12,7 +12,7 @@
         </div>
 
         <div class="box-body">
-                {!! Form::open(['url' => action('\Modules\Superadmin\Http\Controllers\BusinessController@store'), 'method' => 'post', 'id' => 'business_register_form','files' => true ]) !!}
+                {!! Form::open(['url' => action([\Modules\Superadmin\Http\Controllers\BusinessController::class, 'store']), 'method' => 'post', 'id' => 'business_register_form','files' => true ]) !!}
                     @include('business.partials.register_form')
                     <div class="clearfix"></div>
                     <div class="col-md-12"><hr></div>

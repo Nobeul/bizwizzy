@@ -53,7 +53,7 @@
         <div class="box-header">
             <h3 class="box-title">&nbsp;</h3>
         	<div class="box-tools">
-                <a href="{{action('\Modules\Superadmin\Http\Controllers\BusinessController@create')}}" 
+                <a href="{{action([\Modules\Superadmin\Http\Controllers\BusinessController::class, 'create'])}}" 
                     class="btn btn-block btn-primary">
                 	<i class="fa fa-plus"></i> @lang( 'messages.add' )</a>
             </div>
@@ -99,7 +99,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: "{{action('\Modules\Superadmin\Http\Controllers\BusinessController@index')}}",
+                url: "{{action([\Modules\Superadmin\Http\Controllers\BusinessController::class, 'index'])}}",
                 data: function(d) {
                     d.package_id = $('#package_id').val();
                     d.subscription_status = $('#subscription_status').val();

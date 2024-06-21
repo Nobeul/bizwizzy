@@ -1,5 +1,5 @@
 <div class="col-md-12">
-    <form method="POST" action="{{action('\Modules\Superadmin\Http\Controllers\SubscriptionController@getRedirectToPaystack')}}">
+    <form method="POST" action="{{action([\Modules\Superadmin\Http\Controllers\SubscriptionController::class, 'getRedirectToPaystack'])}}">
         {{ csrf_field() }}
         <!-- customer details -->
         <input type="hidden" name="email" value="{{$user['email']}}">{{-- required --}}

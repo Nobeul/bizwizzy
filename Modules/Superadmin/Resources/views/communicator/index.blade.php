@@ -18,7 +18,7 @@
 					<h3 class="box-title">@lang('superadmin::lang.compose_message')</h3>
 				</div>
 		        <div class="box-body">
-		        	{!! Form::open(['url' => action('\Modules\Superadmin\Http\Controllers\CommunicatorController@send'), 'method' => 'post', 'id' => 'communication_form']) !!}
+		        	{!! Form::open(['url' => action([\Modules\Superadmin\Http\Controllers\CommunicatorController::class, 'send']), 'method' => 'post', 'id' => 'communication_form']) !!}
 		        		<div class="col-md-12 form-group">
 		        			{!! Form::label('recipients', __('superadmin::lang.recipients').':*') !!} <button type="button" class="btn btn-primary btn-xs select-all">@lang('lang_v1.select_all')</button> <button type="button" class="btn btn-primary btn-xs deselect-all">@lang('lang_v1.deselect_all')</button>
 							{!! Form::select('recipients[]', $businesses, null, ['class' => 'form-control select2', 'required', 'multiple', 'id' => 'recipients']); !!}
@@ -88,7 +88,7 @@
 			dom:'lfrtip',
 			processing: true,
 			serverSide: true,
-			ajax: '{{action("\Modules\Superadmin\Http\Controllers\CommunicatorController@getHistory")}}'
+			ajax: '{{action([\Modules\Superadmin\Http\Controllers\CommunicatorController::class, 'getHistory'])}}'
 	    });
 
 	    init_tinymce('message');
