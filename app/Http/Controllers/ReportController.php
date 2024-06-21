@@ -574,6 +574,7 @@ class ReportController extends Controller
             $sells = Transaction::leftJoin('tax_rates as tr', 'transactions.tax_id', '=', 'tr.id')
                             ->leftJoin('contacts as c', 'transactions.contact_id', '=', 'c.id')
                 ->where('transactions.business_id', $business_id)
+                ->where('transactions.is_suspend', '!=', 1)
                 ->with(['payment_lines'])
                 ->select('c.name as contact_name', 
                         'c.supplier_business_name',
