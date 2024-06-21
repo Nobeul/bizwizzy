@@ -1889,6 +1889,7 @@ class ProductUtil extends Util
                     ->leftjoin('purchase_lines as pl', 'pl.variation_id', '=', 'variations.id')
                     ->leftjoin('transactions as t', 'pl.transaction_id', '=', 't.id')
                     ->where('t.location_id', $location_id)
+                    ->where('t.is_suspend', '!=', 1)
                     //->where('t.status', 'received')
                     ->where('p.business_id', $business_id)
                     ->where('variations.id', $variation_id)
@@ -1916,6 +1917,7 @@ class ProductUtil extends Util
                     ->join('transactions as t', 'sl.transaction_id', '=', 't.id')
                     ->where('t.location_id', $location_id)
                     ->where('t.status', 'final')
+                    ->where('t.is_suspend', '!=', 1)
                     ->where('p.business_id', $business_id)
                     ->where('variations.id', $variation_id)
                     ->select(
@@ -1970,6 +1972,7 @@ class ProductUtil extends Util
                                 ->leftjoin('contacts as c', 'transactions.contact_id', '=', 'c.id')
                                 ->leftJoin('users as u', 'transactions.created_by', '=', 'u.id')
                                 ->where('transactions.location_id', $location_id)
+                                ->where('transactions.is_suspend', '!=', 1)
                                 ->where( function($q) use ($variation_id){
                                     $q->where('sl.variation_id', $variation_id)
                                         ->orWhere('pl.variation_id', $variation_id)
