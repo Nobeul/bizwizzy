@@ -707,7 +707,9 @@ $(document).ready(function() {
         //If pay method is credit sale submit form
         if (pay_method == 'credit_sale') {
             $('#is_credit_sale').val(1);
-            pos_form_obj.submit();
+            setTimeout(function() {
+                pos_form_obj.submit();
+            }, 100);
             return true;
         } else {
             if ($('#is_credit_sale').length) {
