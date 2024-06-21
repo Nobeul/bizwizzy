@@ -2965,6 +2965,8 @@ class ReportController extends Controller
                 ->where('sale.business_id', $business_id)
                 ->where('transaction_sell_lines.children_type', '!=', 'combo');
         }
+
+        $query->where('sale.is_suspend', '!=', 1);
         
         if (! empty(request()->vehicle_id)) {
             $query = $query->where('transaction_sell_lines.vehicle_id', request()->vehicle_id);
