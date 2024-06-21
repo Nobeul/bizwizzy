@@ -5091,7 +5091,6 @@ class TransactionUtil extends Util
                 )
                 ->where('transactions.business_id', $business_id)
                 ->where('transactions.type', $sale_type)
-                ->where('transactions.is_suspend', '!=', 1)
                 ->select(
                     'transactions.id',
                     'transactions.transaction_date',

@@ -318,6 +318,8 @@ class SellController extends Controller
                             ->get();
 
                 return view('sale_pos.partials.suspended_sales_modal')->with(compact('sales', 'is_tables_enabled', 'is_service_staff_enabled', 'transaction_sub_type'));
+            } else {
+                $sells->where('transactions.is_suspend', '!=', 1);
             }
 
             $with[] = 'payment_lines';
