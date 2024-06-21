@@ -426,6 +426,8 @@ class TransactionUtil extends Util
                     $line['vehicle_id'] = $product['vehicle_id'];
                 }
 
+                $line['price_group_id'] = isset($product['price_group']) && $product['price_group'] != 0 ? $product['price_group'] : null;
+
                 $lines_formatted[] = new TransactionSellLine($line);
 
                 $sell_line_warranties[] = !empty($product['warranty_id']) ? $product['warranty_id'] : 0;

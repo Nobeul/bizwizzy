@@ -387,7 +387,7 @@
 		@if(!empty($price_groups) && count($price_groups) > 1)
 			<select name="products[{{$row_count}}][price_group]" class="form-control input-sm pos_price_group">
 				@foreach ($price_groups as $key => $group)
-					<option value="{{ $key }}">{{ $group }}</option>
+					<option value="{{ $key }}" {{ $product->price_group_id == $key ? 'selected' : '' }}>{{ $group }}</option>
 				@endforeach
 			</select>
 			<br>
