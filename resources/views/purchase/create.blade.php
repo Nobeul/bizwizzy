@@ -267,10 +267,12 @@
 								<th class="@if(!session('business.enable_editing_product_from_purchase')) hide @endif">
 									@lang( 'lang_v1.profit_margin' )
 								</th>
-								<th>
-									@lang( 'purchase.unit_selling_price' )
-									<small>(@lang('product.inc_of_tax'))</small>
-								</th>
+								@can('purchase.unit_selling_price')
+									<th>
+										@lang( 'purchase.unit_selling_price' )
+										<small>(@lang('product.inc_of_tax'))</small>
+									</th>
+								@endcan
 								@if(session('business.enable_lot_number'))
 									<th>
 										@lang('lang_v1.lot_number')

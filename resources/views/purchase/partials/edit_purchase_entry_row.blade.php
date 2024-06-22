@@ -25,7 +25,9 @@
                     @lang( 'lang_v1.profit_margin' )
                 </th>
                 @if(empty($is_purchase_order))
-                    <th>@lang( 'purchase.unit_selling_price') <small>(@lang('product.inc_of_tax'))</small></th>
+                    @can('purchase.unit_selling_price')
+                        <th>@lang( 'purchase.unit_selling_price') <small>(@lang('product.inc_of_tax'))</small></th>
+                    @endcan
                     @if(session('business.enable_lot_number'))
                         <th>
                             @lang('lang_v1.lot_number')
@@ -109,7 +111,9 @@
 
                 <input type="hidden" name="purchases[{{$loop->index}}][product_unit_id]" value="{{$purchase_line->product->unit->id}}">
 
-                <input type="hidden" class="base_unit_selling_price" value="{{$purchase_line->variations->sell_price_inc_tax}}">
+                @can('purchase.unit_selling_price')
+                    <input type="hidden" class="base_unit_selling_price" value="{{$purchase_line->variations->sell_price_inc_tax}}">
+                @endcan
 
                 @if(!empty($purchase_line->product->second_unit))
                     <br><br>

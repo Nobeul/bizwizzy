@@ -571,6 +571,19 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="col-md-12">
+                            <div class="checkbox">
+                                <label>
+                                    {!! Form::checkbox(
+                                        'permissions[]',
+                                        'purchase.unit_selling_price',
+                                        in_array('purchase.unit_selling_price', $role_permissions),
+                                        ['class' => 'input-icheck'],
+                                    ) !!}
+                                    {{ __('Unit Selling Price Enable/Disable') }}
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <hr>
