@@ -643,9 +643,9 @@ class SellPosController extends Controller
                     $print_invoice = false;
                 }
 
-                if (!auth()->user()->can("print_invoice")) {
-                    $print_invoice = false;
-                }
+                // if (!auth()->user()->can("print_invoice")) {
+                //     $print_invoice = false;
+                // }
                 
                 if ($print_invoice) {
                     $receipt = $this->receiptContent($business_id, $input['location_id'], $transaction->id, null, false, true, $invoice_layout_id);
