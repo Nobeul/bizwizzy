@@ -86,6 +86,10 @@ class SellController extends Controller
         $is_service_staff_enabled = $this->transactionUtil->isModuleEnabled('service_staff');
         $is_types_service_enabled = $this->moduleUtil->isModuleEnabled('types_of_service');
 
+        $business_locations = BusinessLocation::forDropdown($business_id, false);
+        $customers = Contact::customersDropdown($business_id, false);
+        $sales_representative = User::forDropdown($business_id, false, false, true);
+
         if (request()->ajax()) {
             $payment_types = $this->transactionUtil->payment_types(null, true, $business_id);
             $with = [];
@@ -317,7 +321,11 @@ class SellController extends Controller
                             ->addSelect('transactions.is_suspend', 'transactions.res_table_id', 'transactions.res_waiter_id', 'transactions.additional_notes')
                             ->get();
 
-                return view('sale_pos.partials.suspended_sales_modal')->with(compact('sales', 'is_tables_enabled', 'is_service_staff_enabled', 'transaction_sub_type'));
+                if (! empty(request()->suspended_filter)) {
+                    return view('sale_pos.partials.suspended_sales_modal_filter')->with(compact('sales', 'is_tables_enabled', 'is_service_staff_enabled', 'transaction_sub_type', 'sales_representative'))->render();
+                }
+
+                return view('sale_pos.partials.suspended_sales_modal')->with(compact('sales', 'is_tables_enabled', 'is_service_staff_enabled', 'transaction_sub_type', 'sales_representative'));
             } else {
                 $sells->where('transactions.is_suspend', '!=', 1);
             }
@@ -584,10 +592,6 @@ class SellController extends Controller
             return $datatable->rawColumns($rawColumns)
                       ->make(true);
         }
-
-        $business_locations = BusinessLocation::forDropdown($business_id, false);
-        $customers = Contact::customersDropdown($business_id, false);
-        $sales_representative = User::forDropdown($business_id, false, false, true);
         
         //Commission agent filter
         $is_cmsn_agent_enabled = request()->session()->get('business.sales_cmsn_agnt');

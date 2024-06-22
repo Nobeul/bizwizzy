@@ -7,6 +7,20 @@
 		</div>
 		<div class="modal-body">
 			<div class="row">
+				<div class="col-md-3">
+					<div class="form-group">
+						{!! Form::label('sell_list_filter_date_range', __('report.date_range') . ':') !!}
+						{!! Form::text('sell_list_filter_date_range', null, ['placeholder' => __('lang_v1.select_a_date_range'), 'class' => 'form-control', 'readonly']); !!}
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						{!! Form::label('created_by',  __('report.user') . ':') !!}
+						{!! Form::select('created_by', $sales_representative, null, ['class' => 'form-control select2', 'style' => 'width:100%']); !!}
+					</div>
+				</div>
+			</div>
+			<div class="row" id="suspended-list-row">
 				@php
 					$c = 0;
 					$subtype = '';
@@ -64,3 +78,47 @@
 		</div>
 	</div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		//Date range as a button
+		$('#sell_list_filter_date_range').daterangepicker(
+			dateRangeSettings,
+			function (start, end) {
+				$('#sell_list_filter_date_range').val(start.format(moment_date_format) + ' ~ ' + end.format(moment_date_format));
+			}
+		);
+
+		$("#created_by").select2();
+
+		$(document).on('change', '#created_by, #sell_list_filter_date_range', function() {
+			var created_by = $('#created_by').val();
+			var start_date = '';
+			var end_date = '';
+
+			if ($('#sell_list_filter_date_range').val()) {
+				start_date = $('input#sell_list_filter_date_range').data('daterangepicker').startDate.format('YYYY-MM-DD');
+				end_date = $('input#sell_list_filter_date_range').data('daterangepicker').endDate.format('YYYY-MM-DD');
+			}
+			
+			$.ajax({
+				method: 'GET',
+				url: BASE_URL + '/sells',
+				data: {
+					suspended_filter: 1,
+					suspended: 1,
+					created_by: created_by,
+					start_date: start_date,
+					end_date: end_date
+				},
+				dataType: 'html',
+				success: function(result) {
+					if (result) {
+						$("#suspended-list-row").empty();
+						var appended = $('#suspended-list-row').append(result);
+					}
+				},
+			});
+		});
+	});
+</script>
