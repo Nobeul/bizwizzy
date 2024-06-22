@@ -399,4 +399,9 @@ class Transaction extends Model
         
         return $sales_orders;
     }
+
+    public function reprintReceiptCount()
+    {
+        return $this->hasOne(ReprintReceiptCount::class, 'invoice_id', 'id');
+    }
 }

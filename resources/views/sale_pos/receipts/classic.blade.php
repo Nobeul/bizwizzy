@@ -78,6 +78,10 @@
 			</h3>
 		@endif
 
+		@if(! empty($receipt_details->receipt_view_count))
+			<b>{{ __('Reprint invoice count:') }} {{ $receipt_details->receipt_view_count }}</b>
+		@endif
+
 		<!-- Invoice  number, Date  -->
 		<p style="width: 100% !important" class="word-wrap">
 			<span class="pull-left text-left word-wrap">
