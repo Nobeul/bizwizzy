@@ -58,6 +58,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 use App\InvoiceScheme;
+use App\ReprintReceiptCount;
 use App\SalesOrderController;
 use Razorpay\Api\Api;
 use App\TransactionPayment;
@@ -1933,6 +1934,20 @@ class SellPosController extends Controller
 
                 $is_package_slip = !empty($request->input('package_slip')) ? true : false;
                 $is_delivery_note = !empty($request->input('delivery_note')) ? true : false;
+
+                $reprint_obj = ReprintReceiptCount::where('invoice_id', $transaction->id)->first();
+                
+                if (empty($reprint_obj)) {
+                    ReprintReceiptCount::create([
+                        'invoice_id' => $transaction->id,
+                        'count' => 1,
+                    ]);
+                } else {
+                    $reprint_obj->update([
+                        'invoice_id' => $transaction->id,
+                        'count' => ++$reprint_obj->count,
+                    ]);
+                }
 
                 $invoice_layout_id = $transaction->is_direct_sale ? $transaction->location->sale_invoice_layout_id : null;
                 $receipt = $this->receiptContent($business_id, $transaction->location_id, $transaction_id, $printer_type, $is_package_slip, false, $invoice_layout_id, $is_delivery_note);

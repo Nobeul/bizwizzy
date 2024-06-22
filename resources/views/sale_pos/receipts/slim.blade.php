@@ -85,6 +85,9 @@
 				@if(!empty($receipt_details->invoice_heading))
 					<br/><span class="sub-headings">{!! $receipt_details->invoice_heading !!}</span>
 				@endif
+				@if(! empty($receipt_details->receipt_view_count))
+					<br/><br/><b>{{ __('Reprint invoice count:') }} {{ $receipt_details->receipt_view_count }}</b>
+				@endif
 			</p>
 			</div>
 			<div class="border-top textbox-info">

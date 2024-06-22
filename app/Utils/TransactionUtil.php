@@ -985,7 +985,7 @@ class TransactionUtil extends Util
     {
         $il = $invoice_layout;
 
-        $transaction = Transaction::find($transaction_id);
+        $transaction = Transaction::with('reprintReceiptCount:invoice_id,count')->find($transaction_id);
         $transaction_type = $transaction->type;
 
         $output = [
@@ -1001,7 +1001,8 @@ class TransactionUtil extends Util
             'table_qty_label' => $il->table_qty_label,
             'table_unit_price_label' => $il->table_unit_price_label,
             'table_subtotal_label' => $il->table_subtotal_label,
-            'customer_pin' => $transaction->customer_pin
+            'customer_pin' => $transaction->customer_pin,
+            'receipt_view_count' => $transaction->reprintReceiptCount->count ?? 0,
         ];
 
         //Display name
