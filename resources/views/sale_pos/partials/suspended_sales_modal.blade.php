@@ -1,5 +1,5 @@
 <!-- Edit Order tax Modal -->
-<div class="modal-dialog modal-lg" role="document">
+<div class="modal-dialog modal-lg" role="document" id="suspended-sale-modal">
 	<div class="modal-content">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -78,7 +78,6 @@
 		</div>
 	</div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
-
 <script type="text/javascript">
 	$(document).ready(function(){
 		//Date range as a button
@@ -89,7 +88,9 @@
 			}
 		);
 
-		$("#created_by").select2();
+		$("#created_by").select2({
+			dropdownParent: $("#suspended-sale-modal")
+		});
 
 		$(document).on('change', '#created_by, #sell_list_filter_date_range', function() {
 			var created_by = $('#created_by').val();
