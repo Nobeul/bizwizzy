@@ -1594,6 +1594,7 @@ class ContactController extends Controller
 
             $payments = TransactionPayment::leftjoin('transactions as t', 'transaction_payments.transaction_id', '=', 't.id')
             ->leftjoin('transaction_payments as parent_payment', 'transaction_payments.parent_id', '=', 'parent_payment.id')
+            ->leftjoin('users as u', 't.created_by', '=', 'u.id')
             ->where('transaction_payments.business_id', $business_id)
             ->whereNull('transaction_payments.parent_id')
             ->with(['child_payments', 'child_payments.transaction'])
@@ -1616,7 +1617,8 @@ class ContactController extends Controller
                     'transaction_payments.card_transaction_number',
                     'transaction_payments.bank_account_number',
                     'transaction_payments.id as DT_RowId',
-                    'parent_payment.payment_ref_no as parent_payment_ref_no'
+                    'parent_payment.payment_ref_no as parent_payment_ref_no',
+                    \DB::raw("CONCAT(COALESCE(first_name, ''), ' ', COALESCE(last_name, '')) as username")
                 )
                 ->groupBy('transaction_payments.id')
                 ->orderByDesc('transaction_payments.paid_on')
