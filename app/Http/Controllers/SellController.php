@@ -492,9 +492,18 @@ class SellController extends Controller
                     '<span class="service-type-label" data-orig-value="{{$types_of_service_name}}" data-status-name="{{$types_of_service_name}}">{{$types_of_service_name}}</span>'
                 )
                 ->addColumn('total_remaining', function ($row) {
-                    $total_remaining =  $row->final_total - $row->total_paid;
-                    $total_remaining_html = '<span class="payment_due" data-orig-value="' . $total_remaining . '">' . $this->transactionUtil->num_f($total_remaining, true) . '</span>';
-
+                    if (in_array($row->payment_status, ['due', 'partial'])) {
+                        $total_sale = $row->final_total ?? 0;
+                        $total_paid = $row->total_paid ?? 0;
+                        $total_return = $row->amount_return ?? 0;
+                        $total_return_paid = $row->return_paid ?? 0;
+                        // dd($total_sale, $total_paid, $total_return, $total_return_paid);
+                        $total_remaining =  $total_sale - $total_paid - $total_return - $total_return_paid;
+                        $total_remaining_html = '<span class="payment_due" data-orig-value="' . $total_remaining . '">' . $this->transactionUtil->num_f($total_remaining, true) . '</span>';
+                    } else {
+                        $total_remaining =  $row->final_total - $row->total_paid;
+                        $total_remaining_html = '<span class="payment_due" data-orig-value="' . $total_remaining . '">' . $this->transactionUtil->num_f($total_remaining, true) . '</span>';
+                    }
                     
                     return $total_remaining_html;
                 })
