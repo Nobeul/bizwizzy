@@ -660,6 +660,24 @@
                     <div class="col-md-12">
                         <div class="checkbox">
                             <label>
+                                {!! Form::checkbox('permissions[]', 'pos.enable_quotation', false, ['class' => 'input-icheck']) !!}
+                                {{ __('Enable Quotation') }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'pos.enable_card_payment', false, ['class' => 'input-icheck']) !!}
+                                {{ __('Enable Card Payment') }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
                                 {!! Form::checkbox('permissions[]', 'enable_cash_sale', false, ['class' => 'input-icheck']) !!}
                                 {{ __('Enable Cash Sale') }}
                             </label>
@@ -752,7 +770,14 @@
                             </label>
                         </div>
                     </div>
-
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'view.sell.payments', false, ['class' => 'input-icheck']) !!}
+                                {{ __('View Sell Payment') }}
+                            </label>
+                        </div>
+                    </div>
                     <div class="col-md-12">
                         <div class="checkbox">
                             <label>
@@ -831,6 +856,13 @@
                         <div class="checkbox">
                             <label>
                                 {!! Form::checkbox('permissions[]', 'edit_invoice_number', false, ['class' => 'input-icheck']) !!} {{ __('lang_v1.add_edit_invoice_number') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'sell.import_sales', false, ['class' => 'input-icheck']) !!} {{ __('Import Sales') }}
                             </label>
                         </div>
                     </div>

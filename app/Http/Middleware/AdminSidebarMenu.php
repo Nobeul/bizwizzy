@@ -360,7 +360,7 @@ class AdminSidebarMenu
                             );
                         }
 
-                        if (auth()->user()->can('sell.create')) {
+                        if (auth()->user()->can('sell.create') && auth()->user()->can('sell.import_sales')) {
                             $sub->url(
                                 action('ImportSalesController@index'),
                                 __('lang_v1.import_sales'),

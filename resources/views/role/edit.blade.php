@@ -825,6 +825,22 @@
                     <div class="col-md-12">
                         <div class="checkbox">
                             <label>
+                                {!! Form::checkbox('permissions[]', 'pos.enable_quotation', in_array('pos.enable_quotation', $role_permissions), ['class' => 'input-icheck']) !!}
+                                {{ __('Enable Quotation') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'pos.enable_card_payment', in_array('pos.enable_card_payment', $role_permissions), ['class' => 'input-icheck']) !!}
+                                {{ __('Enable Card Payment') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
                                 {!! Form::checkbox('permissions[]', 'enable_cash_sale', in_array('enable_cash_sale', $role_permissions), ['class' => 'input-icheck']) !!}
                                 {{ __('Enable Cash Sale') }}
                             </label>
@@ -955,6 +971,16 @@
                     <div class="col-md-12">
                         <div class="checkbox">
                             <label>
+                                {!! Form::checkbox('permissions[]', 'view.sell.payments', in_array('view.sell.payments', $role_permissions), [
+                                    'class' => 'input-icheck',
+                                ]) !!}
+                                {{ __('View Sell Payment') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
                                 {!! Form::checkbox('permissions[]', 'sell.payments', in_array('sell.payments', $role_permissions), [
                                     'class' => 'input-icheck',
                                 ]) !!}
@@ -1059,6 +1085,15 @@
                                 {!! Form::checkbox('permissions[]', 'edit_invoice_number', in_array('edit_invoice_number', $role_permissions), [
                                     'class' => 'input-icheck',
                                 ]) !!} {{ __('lang_v1.add_edit_invoice_number') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'sell.import_sales', in_array('sell.import_sales', $role_permissions), [
+                                    'class' => 'input-icheck',
+                                ]) !!} {{ __('Import Sales') }}
                             </label>
                         </div>
                     </div>

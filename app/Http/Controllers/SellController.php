@@ -418,16 +418,14 @@ class SellController extends Controller
                             }
                             $html .= '<li class="divider"></li>';
                             if (!$only_shipments) {
-
-                                if(auth()->user()->can("sell.payments") || 
-                                    auth()->user()->can("edit_sell_payment") || 
-                                    auth()->user()->can("delete_sell_payment")){
-
+                                if(auth()->user()->can("sell.payments")) {
                                     if ($row->payment_status != "paid") {
                                         $html .= '<li><a href="' . action('TransactionPaymentController@addPayment', [$row->id]) . '" class="add_payment_modal"><i class="fas fa-money-bill-alt"></i> ' . __("purchase.add_payment") . '</a></li>';
                                     }
-
+                                }
+                                if(auth()->user()->can("view.sell.payments")) {
                                     $html .= '<li><a href="' . action('TransactionPaymentController@show', [$row->id]) . '" class="view_payment_modal"><i class="fas fa-money-bill-alt"></i> ' . __("purchase.view_payments") . '</a></li>';
+
                                 }
 
                                 if (auth()->user()->can("access_sell_return") || auth()->user()->can('access_own_sell_return')) {
