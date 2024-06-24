@@ -683,6 +683,24 @@
                             </label>
                         </div>
                     </div>
+
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'pos.view_walking_customer_sale', false, ['class' => 'input-icheck']) !!}
+                                {{ __('View Walking Customer Sale') }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'pos.view_sale_other_than_walking_customer', false, ['class' => 'input-icheck']) !!}
+                                {{ __('View Sale Other Than Walking Customer') }}
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
             <hr>

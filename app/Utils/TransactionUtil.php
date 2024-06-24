@@ -5101,64 +5101,73 @@ class TransactionUtil extends Util
                     'tos.id'
                 )
                 ->where('transactions.business_id', $business_id)
-                ->where('transactions.type', $sale_type)
-                ->select(
-                    'transactions.id',
-                    'transactions.transaction_date',
-                    'transactions.type',
-                    'transactions.is_direct_sale',
-                    'transactions.invoice_no',
-                    'transactions.invoice_no as invoice_no_text',
-                    'contacts.name',
-                    'contacts.mobile',
-                    'contacts.contact_id',
-                    'transactions.customer_name',
-                    'contacts.supplier_business_name',
-                    'transactions.status',
-                    'transactions.payment_status',
-                    'transactions.final_total',
-                    'transactions.tax_amount',
-                    'transactions.discount_amount',
-                    'transactions.discount_type',
-                    'transactions.total_before_tax',
-                    'transactions.rp_redeemed',
-                    'transactions.rp_redeemed_amount',
-                    'transactions.rp_earned',
-                    'transactions.types_of_service_id',
-                    'transactions.shipping_status',
-                    'transactions.pay_term_number',
-                    'transactions.pay_term_type',
-                    'transactions.additional_notes',
-                    'transactions.staff_note',
-                    'transactions.shipping_details',
-                    'transactions.document',
-                    'transactions.shipping_custom_field_1',
-                    'transactions.shipping_custom_field_2',
-                    'transactions.shipping_custom_field_3',
-                    'transactions.shipping_custom_field_4',
-                    'transactions.shipping_custom_field_5',
-                    'transactions.custom_field_1',
-                    'transactions.custom_field_2',
-                    'transactions.custom_field_3',
-                    'transactions.custom_field_4',
-                    DB::raw('DATE_FORMAT(transactions.transaction_date, "%Y/%m/%d") as sale_date'),
-                    DB::raw("CONCAT(COALESCE(u.surname, ''),' ',COALESCE(u.first_name, ''),' ',COALESCE(u.last_name,'')) as added_by"),
-                    DB::raw('(SELECT SUM(IF(TP.is_return = 1,-1*TP.amount,TP.amount)) FROM transaction_payments AS TP WHERE
-                        TP.transaction_id=transactions.id) as total_paid'),
-                    'bl.name as business_location',
-                    DB::raw('COUNT(SR.id) as return_exists'),
-                    DB::raw('(SELECT SUM(TP2.amount) FROM transaction_payments AS TP2 WHERE
-                        TP2.transaction_id=SR.id ) as return_paid'),
-                    DB::raw('COALESCE(SR.final_total, 0) as amount_return'),
-                    'SR.id as return_transaction_id',
-                    'tos.name as types_of_service_name',
-                    'transactions.service_custom_field_1',
-                    DB::raw('COUNT( DISTINCT tsl.id) as total_items'),
-                    DB::raw("CONCAT(COALESCE(ss.surname, ''),' ',COALESCE(ss.first_name, ''),' ',COALESCE(ss.last_name,'')) as waiter"),
-                    'tables.name as table_name',
-                    DB::raw('SUM(tsl.quantity - tsl.so_quantity_invoiced) as so_qty_remaining'),
-                    'transactions.is_export'
-                );
+                ->where('transactions.type', $sale_type);
+        
+        if (! auth()->user()->can('pos.view_walking_customer_sale')) {
+            $sells->where('contacts.is_default', 0);
+        }
+
+        if (! auth()->user()->can('pos.view_sale_other_than_walking_customer')) {
+            $sells->where('contacts.is_default', 1);
+        }
+
+        $sells->select(
+            'transactions.id',
+            'transactions.transaction_date',
+            'transactions.type',
+            'transactions.is_direct_sale',
+            'transactions.invoice_no',
+            'transactions.invoice_no as invoice_no_text',
+            'contacts.name',
+            'contacts.mobile',
+            'contacts.contact_id',
+            'transactions.customer_name',
+            'contacts.supplier_business_name',
+            'transactions.status',
+            'transactions.payment_status',
+            'transactions.final_total',
+            'transactions.tax_amount',
+            'transactions.discount_amount',
+            'transactions.discount_type',
+            'transactions.total_before_tax',
+            'transactions.rp_redeemed',
+            'transactions.rp_redeemed_amount',
+            'transactions.rp_earned',
+            'transactions.types_of_service_id',
+            'transactions.shipping_status',
+            'transactions.pay_term_number',
+            'transactions.pay_term_type',
+            'transactions.additional_notes',
+            'transactions.staff_note',
+            'transactions.shipping_details',
+            'transactions.document',
+            'transactions.shipping_custom_field_1',
+            'transactions.shipping_custom_field_2',
+            'transactions.shipping_custom_field_3',
+            'transactions.shipping_custom_field_4',
+            'transactions.shipping_custom_field_5',
+            'transactions.custom_field_1',
+            'transactions.custom_field_2',
+            'transactions.custom_field_3',
+            'transactions.custom_field_4',
+            DB::raw('DATE_FORMAT(transactions.transaction_date, "%Y/%m/%d") as sale_date'),
+            DB::raw("CONCAT(COALESCE(u.surname, ''),' ',COALESCE(u.first_name, ''),' ',COALESCE(u.last_name,'')) as added_by"),
+            DB::raw('(SELECT SUM(IF(TP.is_return = 1,-1*TP.amount,TP.amount)) FROM transaction_payments AS TP WHERE
+                TP.transaction_id=transactions.id) as total_paid'),
+            'bl.name as business_location',
+            DB::raw('COUNT(SR.id) as return_exists'),
+            DB::raw('(SELECT SUM(TP2.amount) FROM transaction_payments AS TP2 WHERE
+                TP2.transaction_id=SR.id ) as return_paid'),
+            DB::raw('COALESCE(SR.final_total, 0) as amount_return'),
+            'SR.id as return_transaction_id',
+            'tos.name as types_of_service_name',
+            'transactions.service_custom_field_1',
+            DB::raw('COUNT( DISTINCT tsl.id) as total_items'),
+            DB::raw("CONCAT(COALESCE(ss.surname, ''),' ',COALESCE(ss.first_name, ''),' ',COALESCE(ss.last_name,'')) as waiter"),
+            'tables.name as table_name',
+            DB::raw('SUM(tsl.quantity - tsl.so_quantity_invoiced) as so_qty_remaining'),
+            'transactions.is_export'
+        );
 
         if ($sale_type == 'sell') {
             $sells->where('transactions.status', 'final');

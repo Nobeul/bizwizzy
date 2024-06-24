@@ -910,6 +910,14 @@ class ContactController extends Controller
                 });
             }
 
+            if (! auth()->user()->can('pos.view_walking_customer_sale')) {
+                $contacts->where('contacts.is_default', 0);
+            }
+    
+            if (! auth()->user()->can('pos.view_sale_other_than_walking_customer')) {
+                $contacts->where('contacts.is_default', 1);
+            }
+
             $contacts->select(
                 'contacts.id',
                 DB::raw("IF(contacts.contact_id IS NULL OR contacts.contact_id='', contacts.name, CONCAT(contacts.name, ' (', contacts.contact_id, ')')) AS text"),
