@@ -58,7 +58,7 @@
             @endif
         @endif
     </td>
-    <td>{{ optional($payment)->username }}</td>
+    <td @if($count_child_payments > 0) class="bg-gray" @endif>{{ optional($payment)->username }}</td>
     <td @if($count_child_payments > 0) class="bg-gray" @endif>
         <button type="button" class="btn btn-primary btn-xs btn-modal" data-href="{{action('TransactionPaymentController@viewPayment', [$payment->id])}}" data-container=".view_modal"><i class="fas fa-eye"></i>{{__('messages.view')}}</button>
 
