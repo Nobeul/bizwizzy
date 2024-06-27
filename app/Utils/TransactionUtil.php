@@ -3903,7 +3903,8 @@ class TransactionUtil extends Util
             'purchase.id'
         )
         ->where('purchase.type', '!=', 'purchase_order')
-        ->where('purchase.business_id', $business_id);
+        ->where('purchase.business_id', $business_id)
+        ->where('purchase.is_suspend', '!=', 1);
 
         $price_query_part = "(purchase_lines.purchase_price + 
                             COALESCE(purchase_lines.item_tax, 0))";
@@ -4722,7 +4723,8 @@ class TransactionUtil extends Util
             ->where('sale.status', 'final')
             ->join('products as P', 'transaction_sell_lines.product_id', '=', 'P.id')
             ->where('sale.business_id', $business_id)
-            ->where('transaction_sell_lines.children_type', '!=', 'combo');
+            ->where('transaction_sell_lines.children_type', '!=', 'combo')
+            ->where('sale.is_suspend', '!=', 1);
         //If type combo: find childrens, sale price parent - get PP of childrens
         // $query->select(DB::raw('SUM(IF (TSPL.id IS NULL AND P.type="combo", ( 
         //     SELECT Sum((tspl2.quantity - tspl2.qty_returned) * (tsl.unit_price_inc_tax - pl2.purchase_price_inc_tax)) AS total

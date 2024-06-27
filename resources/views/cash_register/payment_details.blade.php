@@ -188,7 +188,7 @@
       </tr>
     </table>
     @php
-      $total_amount = $register_details->cash_in_hand + $register_details->total_cash + $register_details->total_cheque + $register_details->total_card + $register_details->total_bank_transfer + $register_details->total_advance + $register_details->total_other_expense;
+      $total_amount = $register_details->cash_in_hand + $register_details->total_cash + $register_details->total_cheque + $register_details->total_card + $register_details->total_bank_transfer + $register_details->total_advance + $register_details->total_other + $register_details->total_other_expense;
 
       if (array_key_exists('custom_pay_1', $payment_types)) {
         $total_amount += $register_details->total_custom_pay_1;

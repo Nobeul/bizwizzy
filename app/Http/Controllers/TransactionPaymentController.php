@@ -415,15 +415,29 @@ class TransactionPaymentController extends Controller
         if (request()->ajax()) {
             $business_id = request()->session()->get('user.business_id');
 
-            $transaction = Transaction::where('business_id', $business_id)
-                                        ->with(['contact', 'location'])
+            $transaction = Transaction::with(['contact', 'location'])
+                                        ->leftJoin(
+                                            'transactions AS SR',
+                                            'transactions.id',
+                                            '=',
+                                            'SR.return_parent_id'
+                                        )
+                                        ->where('transactions.business_id', $business_id)
+                                        // ->where('transactions.id', $transaction_id)
+                                        ->select(
+                                            'transactions.*',
+                                            DB::raw('COALESCE((SELECT SUM(IF(TP.is_return = 1,-1*TP.amount,TP.amount)) FROM transaction_payments AS TP WHERE TP.transaction_id=transactions.id), 0) as total_paid'),
+                                            DB::raw('COALESCE((SELECT SUM(TP2.amount) FROM transaction_payments AS TP2 WHERE
+                                                TP2.transaction_id=SR.id ), 0) as return_paid'),
+                                            DB::raw('COALESCE(SR.final_total, 0) as amount_return')
+                                        )
                                         ->findOrFail($transaction_id);
             if ($transaction->payment_status != 'paid') {
                 $show_advance = in_array($transaction->type, ['sell', 'purchase']) ? true : false;
                 $payment_types = $this->transactionUtil->payment_types($transaction->location, $show_advance);
 
-                $paid_amount = $this->transactionUtil->getTotalPaid($transaction_id);
-                $amount = $transaction->final_total - $paid_amount;
+                // $paid_amount = $this->transactionUtil->getTotalPaid($transaction_id);
+                $amount = $transaction->final_total - $transaction->total_paid - $transaction->amount_return - $transaction->return_paid;
                 if ($amount < 0) {
                     $amount = 0;
                 }

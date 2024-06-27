@@ -86,7 +86,7 @@
         </div>
         <div class="col-md-4">
           <div class="form-group">
-            {!! Form::label("amount" , __('sale.amount') . ':*') !!}
+            {!! Form::label("amount" , __('sale.amount') . ':*ssss') !!}
             <div class="input-group">
               <span class="input-group-addon">
                 <i class="fas fa-money-bill-alt"></i>

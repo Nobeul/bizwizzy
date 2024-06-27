@@ -137,26 +137,39 @@ class SellReturnController extends Controller
             return Datatables::of($sells)
                 ->addColumn(
                     'action',
-                    '<div class="btn-group">
-                    <button type="button" class="btn btn-info dropdown-toggle btn-xs" 
-                        data-toggle="dropdown" aria-expanded="false">' .
-                        __("messages.actions") .
-                        '<span class="caret"></span><span class="sr-only">Toggle Dropdown
-                        </span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                        <li><a href="#" class="btn-modal" data-container=".view_modal" data-href="{{action(\'SellReturnController@show\', [$parent_sale_id])}}"><i class="fas fa-eye" aria-hidden="true"></i> @lang("messages.view")</a></li>
-                        <li><a href="{{action(\'SellReturnController@add\', [$parent_sale_id])}}" ><i class="fa fa-edit" aria-hidden="true"></i> @lang("messages.edit")</a></li>
-                        <li><a href="{{action(\'SellReturnController@destroy\', [$id])}}" class="delete_sell_return" ><i class="fa fa-trash" aria-hidden="true"></i> @lang("messages.delete")</a></li>
-                        <li><a href="#" class="print-invoice" data-href="{{action(\'SellReturnController@printInvoice\', [$id])}}"><i class="fa fa-print" aria-hidden="true"></i> @lang("messages.print")</a></li>
+                    function ($row) {
+                        $html = '<div class="btn-group">
+                                    <button type="button" class="btn btn-info dropdown-toggle btn-xs" 
+                                        data-toggle="dropdown" aria-expanded="false">' .
+                                        __("messages.actions") .
+                                        '<span class="caret"></span><span class="sr-only">Toggle Dropdown
+                                        </span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                        <li><a href="#" class="btn-modal" data-container=".view_modal" data-href="' . action('SellReturnController@show', [$row->parent_sale_id]) . '"><i class="fas fa-eye" aria-hidden="true"></i> ' . __("messages.view") . '</a></li>';
 
-                    @if($payment_status != "paid")
-                        <li><a href="{{action(\'TransactionPaymentController@addPayment\', [$id])}}" class="add_payment_modal"><i class="fas fa-money-bill-alt"></i> @lang("purchase.add_payment")</a></li>
-                    @endif
+                        if (auth()->user()->can("direct_sell.update")) {
+                            $html .= '<li><a href="' . action('SellReturnController@add', [$row->parent_sale_id]) . '" ><i class="fa fa-edit" aria-hidden="true"></i> ' . __("messages.edit").'</a></li>';
+                        }
 
-                    <li><a href="{{action(\'TransactionPaymentController@show\', [$id])}}" class="view_payment_modal"><i class="fas fa-money-bill-alt"></i> @lang("purchase.view_payments")</a></li>
-                    </ul>
-                    </div>'
+                        if (auth()->user()->can("direct_sell.delete")) {
+                            $html .= '<li><a href="' . action('SellReturnController@destroy', [$row->id]) . '" class="delete_sell_return" ><i class="fa fa-trash" aria-hidden="true"></i> ' . __("messages.delete") . '</a></li>';
+                        }
+
+                        $html .= '<li><a href="#" class="print-invoice" data-href="' . action('SellReturnController@printInvoice', [$row->id]) . '"><i class="fa fa-print" aria-hidden="true"></i> ' . __("messages.print") . '</a></li>';
+
+                        if ($row->payment_status != "paid" && auth()->user()->can('sell.payments')) {
+                            $html .= '<li><a href="' . action('TransactionPaymentController@addPayment', [$row->id]) . '" class="add_payment_modal"><i class="fas fa-money-bill-alt"></i> ' . __("purchase.add_payment") . '</a></li>';
+                        }
+
+                        if (auth()->user()->can('view.sell.payments')) {
+                            $html .= '<li><a href="' . action('TransactionPaymentController@show', [$row->id]) . '" class="view_payment_modal"><i class="fas fa-money-bill-alt"></i> ' . __("purchase.view_payments") . '</a></li>';
+                        }
+
+                        $html .= '</ul></div>';
+
+                        return $html;
+                    }
                 )
                 ->removeColumn('id')
                 ->editColumn(
