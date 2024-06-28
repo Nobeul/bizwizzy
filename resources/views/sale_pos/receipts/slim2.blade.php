@@ -78,7 +78,7 @@
 					<b>{{ $receipt_details->tax_label2 }}</b> {{ $receipt_details->tax_info2 }}
 				@endif	
 				@if(! empty($receipt_details->receipt_view_count))
-					<br/><br/><b>{{ __('Reprint invoice count:') }} {{ $receipt_details->receipt_view_count }}</b>
+					<br/><br/><b>{{ __('REPRINT INVOICE COUNT:') }} {{ $receipt_details->receipt_view_count }}</b>
 				@endif		
 			</p>
 			</div>
