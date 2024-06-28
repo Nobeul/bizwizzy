@@ -342,18 +342,18 @@
 				</div>
 			@endif
 			{{-- <div class="bb-lg mt-15 mb-10"></div> --}}
-			<hr>
             <table style="padding-top: 5px !important" class="border-bottom width-100 table-f-12 mb-10">
                 <tbody>
 
 					@php
 						$totalTax = 0;
 					@endphp
-
-					<th>{{ __('Uom') }}</th>
-					<th>{{ __('Qty') }}</th>
-					<th>{{ __('Price') }}</th>
-					<th>{{ __('Amount') }}</th>
+					<tr class="bb-lg">
+						<th>{{ __('Uom') }}</th>
+						<th>{{ __('Qty') }}</th>
+						<th>{{ __('Price') }}</th>
+						<th>{{ __('Amount') }}</th>
+					</tr>
 
                 	@forelse($receipt_details->lines as $line)
 
@@ -482,7 +482,7 @@
 					<p class="left text-left">
 						{!! $receipt_details->total_quantity_label !!}
 					</p>
-					<p class="width-50 text-right">
+					<p class="width-50">
 						{{$receipt_details->total_quantity}}
 					</p>
 				</div>
@@ -492,7 +492,7 @@
 					<p class="left text-left">
 						{!! $receipt_details->total_items_label !!}
 					</p>
-					<p class="width-50 text-right">
+					<p class="width-50">
 						{{$receipt_details->total_items}}
 					</p>
 				</div>
@@ -502,7 +502,7 @@
                 <p class="left text-left">
                 	<strong>{!! $receipt_details->subtotal_label !!}</strong>
                 </p>
-                <p class="width-50 text-right">
+                <p class="width-50">
                 	<strong>KSh {{number_format( pregReplaceFloat($receipt_details->total) - round($receipt_details->vat, 2), 2)}}</strong>
                 </p>
             </div>
@@ -512,7 +512,7 @@
 					<p class="left text-left">
 						<strong>{{ __('VAT') }}:</strong>
 					</p>
-					<p class="width-50 text-right">
+					<p class="width-50">
 						<strong>KSh {{number_format(round($receipt_details->vat, 2), 2)}}</strong>
 					</p>
 				</div>
@@ -524,7 +524,7 @@
 					<p class="left text-left">
 						{!! $receipt_details->shipping_charges_label !!}
 					</p>
-					<p class="width-50 text-right">
+					<p class="width-50">
 						{{$receipt_details->shipping_charges}}
 					</p>
 				</div>
@@ -535,7 +535,7 @@
 					<p class="left text-left">
 						{!! $receipt_details->packing_charge_label !!}
 					</p>
-					<p class="width-50 text-right">
+					<p class="width-50">
 						{{$receipt_details->packing_charge}}
 					</p>
 				</div>
@@ -548,7 +548,7 @@
 						{!! $receipt_details->discount_label !!}
 					</p>
 
-					<p class="width-50 text-right">
+					<p class="width-50">
 						(-) {{$receipt_details->discount}}
 					</p>
 				</div>
@@ -556,11 +556,11 @@
 			
 			@if( !empty($receipt_details->total_line_discount) )
 				<div class="flex-box">
-					<p class="width-50 text-right">
+					<p class="width-50">
 						{!! $receipt_details->line_discount_label !!}
 					</p>
 
-					<p class="width-50 text-right">
+					<p class="width-50">
 						(-) {{$receipt_details->total_line_discount}}
 					</p>
 				</div>
@@ -569,11 +569,11 @@
 			@if( !empty($receipt_details->additional_expenses) )
 				@foreach($receipt_details->additional_expenses as $key => $val)
 					<div class="flex-box">
-						<p class="width-50 text-right">
+						<p class="width-50">
 							{{$key}}:
 						</p>
 
-						<p class="width-50 text-right">
+						<p class="width-50">
 							(+) {{$val}}
 						</p>
 					</div>
@@ -586,7 +586,7 @@
 						{!! $receipt_details->reward_point_label !!}
 					</p>
 
-					<p class="width-50 text-right">
+					<p class="width-50">
 						(-) {{$receipt_details->reward_point_amount}}
 					</p>
 				</div>
@@ -597,7 +597,7 @@
 					<p class="width-50 text-left">
 						{!! $receipt_details->tax_label !!}
 					</p>
-					<p class="width-50 text-right">
+					<p class="width-50">
 						(+) {{$receipt_details->tax}}
 					</p>
 				</div>
@@ -608,7 +608,7 @@
 					<p class="width-50 text-left">
 						{!! $receipt_details->round_off_label !!} 
 					</p>
-					<p class="width-50 text-right">
+					<p class="width-50">
 						{{$receipt_details->round_off}}
 					</p>
 				</div>
@@ -618,7 +618,7 @@
 				<p class="width-50 text-left">
 					<strong>{!! $receipt_details->total_label !!}</strong>
 				</p>
-				<p class="width-50 text-right">
+				<p class="width-50">
 					<strong>{{$receipt_details->total}}</strong>
 				</p>
 			</div>
@@ -633,7 +633,7 @@
 				@foreach($receipt_details->payments as $payment)
 					<div class="flex-box">
 						<p class="width-50 text-left">{{$payment['method']}} ({{$payment['date']}}) </p>
-						<p class="width-50 text-right">{{$payment['amount']}}</p>
+						<p class="width-50">{{$payment['amount']}}</p>
 					</div>
 				@endforeach
 			@endif
@@ -643,7 +643,7 @@
 						<p class="width-50 text-left">
 							{!! $receipt_details->total_paid_label !!}
 						</p>
-						<p class="width-50 text-right">
+						<p class="width-50">
 							{{$receipt_details->total_paid}}
 						</p>
 					</div>
@@ -655,7 +655,7 @@
 						<p class="width-50 text-left">
 							{!! $receipt_details->total_due_label !!}
 						</p>
-						<p class="width-50 text-right">
+						<p class="width-50">
 							{{$receipt_details->total_due}}
 						</p>
 					</div>
@@ -666,7 +666,7 @@
 						<p class="width-50 text-left">
 							{!! $receipt_details->all_bal_label !!}
 						</p>
-						<p class="width-50 text-right">
+						<p class="width-50">
 							{{$receipt_details->all_due}}
 						</p>
 					</div>
