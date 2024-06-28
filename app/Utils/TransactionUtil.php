@@ -1308,7 +1308,9 @@ class TransactionUtil extends Util
 
             $lines = $transaction->sell_lines()->whereNull('parent_sell_line_id')->with($sell_line_relations)
                     ->leftJoin('tax_rates', 'tax_rates.id', '=', 'transaction_sell_lines.tax_id')
+                    ->leftJoin('products', 'products.id', '=', 'transaction_sell_lines.product_id')
                     ->select('transaction_sell_lines.*', 'tax_rates.amount as tax_rate')
+                    ->orderBy('products.name', 'ASC')
                     ->get();
 
             foreach ($lines as $key => $value) {

@@ -1617,9 +1617,11 @@ class ProductUtil extends Util
             //Search with like condition
             if($search_type == 'like'){
                 $query->where(function ($query) use ($search_term, $search_fields) {
-
                     if (in_array('name', $search_fields)) {
-                        $query->where('products.name', 'like', '%' . $search_term .'%');
+                        $searchs = explode(' ', $search_term);
+                        foreach ($searchs as $key) {
+                            $query->where('products.name', 'like', '%' . $key .'%');
+                        }
                     }
                     
                     if (in_array('sku', $search_fields)) {
@@ -1646,6 +1648,7 @@ class ProductUtil extends Util
                     if (in_array('product_custom_field4', $search_fields)) {
                         $query->orWhere('product_custom_field4', 'like', '%' . $search_term .'%');
                     }
+
                 });
             }
 
