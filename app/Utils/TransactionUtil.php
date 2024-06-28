@@ -5127,6 +5127,7 @@ class TransactionUtil extends Util
             'contacts.contact_id',
             'transactions.customer_name',
             'contacts.supplier_business_name',
+            'contacts.customer_group_id as customer_group_id',
             'transactions.status',
             'transactions.payment_status',
             'transactions.final_total',

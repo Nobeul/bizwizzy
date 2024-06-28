@@ -15,6 +15,12 @@
     </div>
 </div>
 @endif
+<div class="col-md-3">
+    <div class="form-group">
+        <label for="customer_group_id">@lang('lang_v1.customer_group'):</label>
+        {!! Form::select('customer_group_id', $customer_groups, null, ['class' => 'form-control', 'id' => 'customer_group_id']); !!}
+    </div>
+</div>
 @if(empty($only) || in_array('sell_list_filter_payment_status', $only))
 <div class="col-md-3">
     <div class="form-group">

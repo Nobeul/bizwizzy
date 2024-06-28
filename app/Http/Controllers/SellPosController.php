@@ -144,7 +144,10 @@ class SellPosController extends Controller
 
         $shipping_statuses = $this->transactionUtil->shipping_statuses();
 
-        return view('sale_pos.index')->with(compact('business_locations', 'customers', 'sales_representative', 'is_cmsn_agent_enabled', 'commission_agents', 'service_staffs', 'is_tables_enabled', 'is_service_staff_enabled', 'is_types_service_enabled', 'shipping_statuses'));
+        $customer_groups = [];
+        $customer_groups = CustomerGroup::forDropdown($business_id);
+
+        return view('sale_pos.index')->with(compact('business_locations', 'customers', 'sales_representative', 'is_cmsn_agent_enabled', 'commission_agents', 'service_staffs', 'is_tables_enabled', 'is_service_staff_enabled', 'is_types_service_enabled', 'shipping_statuses', 'customer_groups'));
     }
 
     /**

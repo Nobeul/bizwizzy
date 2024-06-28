@@ -256,7 +256,7 @@
 							{{$line['quantity']}} {{$line['units']}}
 						</td>
 						<td class="text-right">
-							{{$line['unit_price_exc_tax']}}
+							{{$line['unit_price_inc_tax']}}
 						</td>
 						<td class="text-right">
 							{{$line['line_total']}}

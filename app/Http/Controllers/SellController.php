@@ -90,6 +90,9 @@ class SellController extends Controller
         $customers = Contact::customersDropdown($business_id, false);
         $sales_representative = User::forDropdown($business_id, false, false, true);
 
+        $customer_groups = [];
+        $customer_groups = CustomerGroup::forDropdown($business_id);
+
         if (request()->ajax()) {
             $payment_types = $this->transactionUtil->payment_types(null, true, $business_id);
             $with = [];
@@ -133,6 +136,10 @@ class SellController extends Controller
                 if (auth()->user()->hasAnyPermission(['access_pending_shipments_only'])) {
                     $sells->where('transactions.shipping_status', '!=', 'delivered');
                 }
+            }
+
+            if (! empty(request()->customer_group_id)) {
+                $sells->where('contacts.customer_group_id', request()->customer_group_id);
             }
 
             if (!$is_admin && !$only_shipments && $sale_type != 'sales_order') {
@@ -623,7 +630,7 @@ class SellController extends Controller
         }
 
         return view('sell.index')
-        ->with(compact('business_locations', 'customers', 'is_woocommerce', 'sales_representative', 'is_cmsn_agent_enabled', 'commission_agents', 'service_staffs', 'is_tables_enabled', 'is_service_staff_enabled', 'is_types_service_enabled', 'shipping_statuses', 'sources'));
+        ->with(compact('business_locations', 'customers', 'is_woocommerce', 'sales_representative', 'is_cmsn_agent_enabled', 'commission_agents', 'service_staffs', 'is_tables_enabled', 'is_service_staff_enabled', 'is_types_service_enabled', 'shipping_statuses', 'sources', 'customer_groups'));
     }
 
     /**
