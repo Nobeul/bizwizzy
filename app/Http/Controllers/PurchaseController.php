@@ -957,7 +957,10 @@ class PurchaseController extends Controller
                 'variations.product_id'
             )
                 ->where(function ($query) use ($term) {
-                    $query->where('products.name', 'like', '%' . $term .'%');
+                    $searches = explode(' ', $term);
+                    foreach ($searches as $key) {
+                        $query->where('products.name', 'like', '%' . $key .'%');
+                    }
                     $query->orWhere('sku', 'like', '%' . $term .'%');
                     $query->orWhere('sub_sku', 'like', '%' . $term .'%');
                 })
