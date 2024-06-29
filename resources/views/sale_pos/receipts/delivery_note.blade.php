@@ -161,39 +161,44 @@
 </div>
  -->
 
-<div class="row color-555">
+<div class="row">
 	<div class="col-xs-12">
 		<br/>
-		<table class="table table-bordered table-no-top-cell-border">
+		<table class="table table-no-top-cell-border" style="border-bottom: 1px solid rgb(20, 14, 14);">
 			<thead>
-				<tr style="background-color: #357ca5 !important; color: white !important; font-size: 20px !important" class="table-no-side-cell-border table-no-top-cell-border text-center">
-					<td style="background-color: #357ca5 !important; color: white !important; width: 5% !important">#</td>
+				<tr style="border-bottom: 1px solid rgb(20, 14, 14);" class="table-no-side-cell-border table-no-top-cell-border">
+					{{-- <td style="background-color: #357ca5 !important; color: white !important; width: 5% !important">#</td> --}}
 					
-					<td style="background-color: #357ca5 !important; color: white !important; width: 65% !important">
-						{{$receipt_details->table_product_label}}
+					<td style="">
+						{{ __('Uom') }}
 					</td>
 					
-					<td style="background-color: #357ca5 !important; color: white !important; width: 30% !important;">
-						{{$receipt_details->table_qty_label}}
+					<td style="">
+						{{ __('Qty') }}
 					</td>
 				</tr>
 			</thead>
 			<tbody>
 				@foreach($receipt_details->lines as $line)
-					<tr>
-						<td class="text-center">
+					<tr colspan="2">
+						{{-- <td class="text-center">
 							{{$loop->iteration}}
+						</td> --}}
+						<td>
+							{{$line['name']}} {{$line['product_variation']}} {{$line['variation']}} 
+							@if(!empty($line['sub_sku'])), {{$line['sub_sku']}} @endif @if(!empty($line['brand'])), {{$line['brand']}} @endif
+							@if(!empty($line['product_custom_fields'])), {{$line['product_custom_fields']}} @endif
+							@if(!empty($line['sell_line_note']))({{$line['sell_line_note']}}) @endif
+							@if(!empty($line['lot_number']))<br> {{$line['lot_number_label']}}:  {{$line['lot_number']}} @endif 
+							@if(!empty($line['product_expiry'])), {{$line['product_expiry_label']}}:  {{$line['product_expiry']}} @endif
 						</td>
-						<td style="word-break: break-all;">
-                            {{$line['name']}} {{$line['product_variation']}} {{$line['variation']}} 
-                            @if(!empty($line['sub_sku'])), {{$line['sub_sku']}} @endif @if(!empty($line['brand'])), {{$line['brand']}} @endif
-                            @if(!empty($line['product_custom_fields'])), {{$line['product_custom_fields']}} @endif
-                            @if(!empty($line['sell_line_note']))({{$line['sell_line_note']}}) @endif
-                            @if(!empty($line['lot_number']))<br> {{$line['lot_number_label']}}:  {{$line['lot_number']}} @endif 
-                            @if(!empty($line['product_expiry'])), {{$line['product_expiry_label']}}:  {{$line['product_expiry']}} @endif 
-                        </td>
-						<td class="text-right">
-							{{$line['quantity']}} {{$line['units']}}
+					</tr>
+					<tr style="border-bottom: 1px solid rgb(20, 14, 14);">
+						<td>
+							{{$line['units']}}
+						</td>
+						<td>
+							{{$line['quantity']}}
 						</td>
 					</tr>
 					@if(!empty($line['modifiers']))

@@ -296,6 +296,17 @@ class Transaction extends Model
             if ($now->gt($due_date)) {
                 $payment_status = $payment_status == 'due' ? 'overdue' : 'partial-overdue';
             }
+            if ($payment_status == 'partial') {
+                $total_sale = $transaction->final_total ?? 0;
+                $total_paid = $transaction->total_paid ?? 0;
+                $total_return = $transaction->amount_return ?? 0;
+                $total_return_paid = $transaction->return_paid ?? 0;
+                $total_remaining =  $total_sale - $total_paid - $total_return - $total_return_paid;
+
+                if ($total_remaining == 0) {
+                    $payment_status = 'paid';
+                }
+            }
         }
 
         return $payment_status;

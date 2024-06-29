@@ -250,7 +250,7 @@ class HomeController extends Controller
             $output['total_sell'] = $total_sell_inc_tax;
             $output['total_sell_return'] = $total_sell_return_inc_tax;
 
-            $output['invoice_due'] = $sell_details['invoice_due'] - $total_ledger_discount['total_sell_discount'];
+            $output['invoice_due'] = $sell_details['invoice_due'] - $total_ledger_discount['total_sell_discount'] - $total_sell_return_inc_tax;
             $output['total_expense'] = $transaction_totals['total_expense'];
 
             //NET = TOTAL SALES - EXPENSE

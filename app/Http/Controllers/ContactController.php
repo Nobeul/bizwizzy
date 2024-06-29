@@ -691,9 +691,11 @@ class ContactController extends Controller
            ->with(['causer', 'subject'])
            ->latest()
            ->get();
-        
+
+        $customer_groups = [];
+        $customer_groups = CustomerGroup::forDropdown($business_id);
         return view('contact.show')
-             ->with(compact('contact', 'reward_enabled', 'contact_dropdown', 'business_locations', 'view_type', 'contact_view_tabs', 'activities'));
+             ->with(compact('contact', 'reward_enabled', 'contact_dropdown', 'business_locations', 'view_type', 'contact_view_tabs', 'activities', 'customer_groups'));
     }
 
     /**
