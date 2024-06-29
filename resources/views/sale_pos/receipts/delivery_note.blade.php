@@ -169,13 +169,13 @@
 				<tr style="border-bottom: 1px solid rgb(20, 14, 14);" class="table-no-side-cell-border table-no-top-cell-border">
 					{{-- <td style="background-color: #357ca5 !important; color: white !important; width: 5% !important">#</td> --}}
 					
-					<td style="">
+					<th style="">
 						{{ __('Uom') }}
-					</td>
+					</th>
 					
-					<td style="">
+					<th style="">
 						{{ __('Qty') }}
-					</td>
+					</th>
 				</tr>
 			</thead>
 			<tbody>
