@@ -635,8 +635,13 @@ $(document).ready(function() {
     $('button#pos-finalize').click(function() {
         let customer_name = $('#customer_name').val();
 
-        if (customer_name.length <= 0 || $('.error').length > 0) {
+        if (customer_name.length <= 0) {
             toastr.error('Please enter customer name');
+            return false;
+        }
+
+        if ($('.error').length > 0) {
+            toastr.error('Please provide valid inputs');
             return false;
         }
             
