@@ -1454,14 +1454,14 @@ class SellPosController extends Controller
                     $msg = trans("sale.draft_added");
                 } elseif ($input['status'] == 'draft' && $input['is_quotation'] == 1) {
                     $msg = trans("lang_v1.quotation_updated");
-                    if (!$is_direct_sale) {
+                    if (!$is_direct_sale && $input['is_suspend'] != 1) {
                         $receipt = $this->receiptContent($business_id, $input['location_id'], $transaction->id, null, false, true, $invoice_layout_id);
                     } else {
                         $receipt = '';
                     }
                 } elseif ($input['status'] == 'final') {
                     $msg = trans("sale.pos_sale_updated");
-                    if (!$is_direct_sale) {
+                    if (!$is_direct_sale && $input['is_suspend'] != 1) {
                         $receipt = $this->receiptContent($business_id, $input['location_id'], $transaction->id, null, false, true, $invoice_layout_id);
                     } else {
                        $receipt = '';

@@ -71,7 +71,8 @@ class TransactionUtil extends Util
             'ref_no' => '',
             'source' => !empty($input['source']) ? $input['source'] : null,
             'total_before_tax' => $invoice_total['total_before_tax'],
-            'transaction_date' => $input['transaction_date'],
+            // 'transaction_date' => $input['transaction_date'],
+            'transaction_date' => \Carbon::now()->toDateTimeString(),
             'tax_id' => !empty($input['tax_rate_id']) ? $input['tax_rate_id'] : null,
             'discount_type' => !empty($input['discount_type']) ? $input['discount_type'] : null,
             'discount_amount' => $uf_data ? $this->num_uf($input['discount_amount']) : $input['discount_amount'],
@@ -5481,7 +5482,8 @@ class TransactionUtil extends Util
         $query = Transaction::where('transactions.contact_id', $contact_id)
                         ->where('transactions.business_id', $business_id)
                         ->where('transactions.status', '!=', 'draft')
-                        ->whereIn('transactions.type', $transaction_type_keys);
+                        ->whereIn('transactions.type', $transaction_type_keys)
+                        ->where('transactions.is_suspend', '!=', 1);
 
         if (!empty($start)  && !empty($end)) {
             $query->whereDate(
@@ -5518,7 +5520,8 @@ class TransactionUtil extends Util
             't.id'
         )
             ->leftJoin('business_locations as bl', 't.location_id', '=', 'bl.id')
-            ->where('transaction_payments.payment_for', $contact_id);
+            ->where('transaction_payments.payment_for', $contact_id)
+            ->where('t.is_suspend', '!=', 1);
             //->whereNotNull('transaction_payments.transaction_id');
             //->whereNull('transaction_payments.parent_id');
 
