@@ -884,20 +884,6 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-md-12">
-                        <div class="checkbox">
-                            <label>
-                                {!! Form::checkbox('permissions[]', 'sell.packing_slip', false, ['class' => 'input-icheck']) !!} {{ __('Packing Sale') }}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="checkbox">
-                            <label>
-                                {!! Form::checkbox('permissions[]', 'sell.delivery_note', false, ['class' => 'input-icheck']) !!} {{ __('Delivery Note') }}
-                            </label>
-                        </div>
-                    </div>
 
                 </div>
             </div>

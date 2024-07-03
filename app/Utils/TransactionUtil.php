@@ -264,7 +264,6 @@ class TransactionUtil extends Util
             'additional_expense_key_4' => !empty($input['additional_expense_key_4']) ? $input['additional_expense_key_4'] : null,
             'customer_pin' => !empty($input['customer_pin']) ? $input['customer_pin'] : null,
             'customer_name' => ! empty($input['customer_name']) ? $input['customer_name'] : null,
-            'created_by' => auth()->user()->id,
         ];
 
         if (!empty($input['transaction_date'])) {
