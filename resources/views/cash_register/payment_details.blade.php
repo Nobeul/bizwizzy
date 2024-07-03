@@ -299,7 +299,7 @@
           <b><span class="display_currency" data-currency_symbol="true">{{ $total_amount - $sell_return - $register_details->total_expense }}</span></b>
         </td>
       </tr>
-      <tr class="success">
+      {{-- <tr class="success">
         <th>
           @lang('lang_v1.credit_sales'):
         </th>
@@ -314,9 +314,9 @@
         <td>
           <b><span class="display_currency" data-currency_symbol="true">{{ $details['transaction_details']->total_sales - $sell_return }}</span></b>
         </td>
-      </tr>
+      </tr> --}}
     </table>
   </div>
 </div>
 
-@include('cash_register.register_product_details')
+{{-- @include('cash_register.register_product_details') --}}

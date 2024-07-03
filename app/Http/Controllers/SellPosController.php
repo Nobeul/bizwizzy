@@ -313,9 +313,9 @@ class SellPosController extends Controller
      */
     public function store(Request $request)
     {
-        // if (!auth()->user()->can('sell.create') && !auth()->user()->can('direct_sell.access') && !auth()->user()->can('so.create') ) {
-        //     abort(403, 'Unauthorized action.');
-        // }
+        if (!auth()->user()->can('sell.create') && !auth()->user()->can('direct_sell.access') && !auth()->user()->can('so.create') ) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $is_direct_sale = false;
         if (!empty($request->input('is_direct_sale'))) {
@@ -915,9 +915,10 @@ class SellPosController extends Controller
                             'units.id as unit_id',
                             'transaction_sell_lines.sub_unit_id',
                             'transaction_sell_lines.price_group_id as price_group_id',
+                            'vld.qty_available as qty_available'
 
                             //qty_available not added when negative to avoid max quanity getting decreased in edit and showing error in max quantity validation
-                            DB::raw("IF(vld.qty_available > 0, vld.qty_available + transaction_sell_lines.quantity, transaction_sell_lines.quantity) AS qty_available")
+                            // DB::raw("IF(vld.qty_available > 0, vld.qty_available + transaction_sell_lines.quantity, transaction_sell_lines.quantity) AS qty_available")
                         )
                         ->get();
         if (!empty($sell_details)) {
@@ -1119,9 +1120,9 @@ class SellPosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!auth()->user()->can('sell.update') && !auth()->user()->can('direct_sell.access') && !auth()->user()->can('so.update')) {
-            abort(403, 'Unauthorized action.');
-        }
+        // if (!auth()->user()->can('sell.update') && !auth()->user()->can('direct_sell.access') && !auth()->user()->can('so.update')) {
+        //     abort(403, 'Unauthorized action.');
+        // }
         
         try {
             $input = $request->except('_token');
@@ -1453,17 +1454,17 @@ class SellPosController extends Controller
                     $msg = trans("sale.draft_added");
                 } elseif ($input['status'] == 'draft' && $input['is_quotation'] == 1) {
                     $msg = trans("lang_v1.quotation_updated");
-                    if (!$is_direct_sale && $can_print_invoice) {
+                    if (!$is_direct_sale) {
                         $receipt = $this->receiptContent($business_id, $input['location_id'], $transaction->id, null, false, true, $invoice_layout_id);
                     } else {
                         $receipt = '';
                     }
                 } elseif ($input['status'] == 'final') {
                     $msg = trans("sale.pos_sale_updated");
-                    if (!$is_direct_sale && $can_print_invoice) {
+                    if (!$is_direct_sale) {
                         $receipt = $this->receiptContent($business_id, $input['location_id'], $transaction->id, null, false, true, $invoice_layout_id);
                     } else {
-                        $receipt = '';
+                       $receipt = '';
                     }
                 }
 

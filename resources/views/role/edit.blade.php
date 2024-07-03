@@ -1113,6 +1113,24 @@
                             </label>
                         </div>
                     </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'sell.packing_slip', in_array('sell.packing_slip', $role_permissions), [
+                                    'class' => 'input-icheck',
+                                ]) !!} {{ __('Packing Slip') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                {!! Form::checkbox('permissions[]', 'sell.delivery_note', in_array('sell.delivery_note', $role_permissions), [
+                                    'class' => 'input-icheck',
+                                ]) !!} {{ __('Delivery Note') }}
+                            </label>
+                        </div>
+                    </div>
 
                 </div>
             </div>
