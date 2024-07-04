@@ -5520,8 +5520,7 @@ class TransactionUtil extends Util
             't.id'
         )
             ->leftJoin('business_locations as bl', 't.location_id', '=', 'bl.id')
-            ->where('transaction_payments.payment_for', $contact_id)
-            ->where('t.is_suspend', '!=', 1);
+            ->where('transaction_payments.payment_for', $contact_id);
             //->whereNotNull('transaction_payments.transaction_id');
             //->whereNull('transaction_payments.parent_id');
 
