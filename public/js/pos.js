@@ -297,7 +297,17 @@ $(document).ready(function() {
         });
 
         var error_msg_td = $(this).closest('tr').find('.pos_quantity').closest('td');
-        if (__read_number($(this)) <= 0) {
+        
+        entered_qty = entered_qty.toString();
+        
+        if (entered_qty.indexOf('.') > 0) {
+            var parts = entered_qty.split('.');
+            parts[1] = parts[1].substring(0, 2);
+            entered_qty = parseFloat(parts[0] + '.' + parts[1]);
+            $(this).val(entered_qty);
+        }
+
+        if (entered_qty <= 0) {
             error_msg_td.find('label.error').remove();
             error_msg_td.append( '<label class="error">Invalid quantity</label>');
             disable_pos_form_actions();
