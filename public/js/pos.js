@@ -307,7 +307,8 @@ $(document).ready(function() {
             $(this).val(entered_qty);
         }
 
-        if (entered_qty <= 0) {
+        if (entered_qty <= 0 || entered_qty.toString().indexOf('e') > 0) {
+            $(this).val(0);
             error_msg_td.find('label.error').remove();
             error_msg_td.append( '<label class="error">Invalid quantity</label>');
             disable_pos_form_actions();
