@@ -116,6 +116,18 @@
 					&nbsp; {{$receipt_details->invoice_date}}
 				</p>
 			</div>
+			<div class="textbox-info">
+				<p class="f-left"><strong>{!! __('CU Serial No') !!}{{ __(':') }} </strong></p>
+				<p class="">
+					&nbsp; {{$receipt_details->cu_serial_number}}
+				</p>
+			</div>
+			<div class="textbox-info">
+				<p class="f-left"><strong>{!! __('CU Invoice No') !!}{{ __(':') }} </strong></p>
+				<p class="">
+					&nbsp; {{$receipt_details->cu_invoice_number}}
+				</p>
+			</div>
 			@if(!empty($receipt_details->due_date_label))
 				<div class="textbox-info">
 					<p class="f-left"><strong>{{$receipt_details->due_date_label}}{{ __(':') }} </strong></p>
@@ -696,6 +708,9 @@
 	            </p>
             @endif
 
+			@if (! empty($receipt_details->verify_url))
+				<img class="center-block mt-5" src="data:image/png;base64,{{DNS2D::getBarcodePNG($receipt_details->verify_url, 'QRCODE')}}">
+			@endif
             {{-- Barcode --}}
 			@if($receipt_details->show_barcode)
 				<br/>

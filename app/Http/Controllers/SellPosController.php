@@ -58,11 +58,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 use App\InvoiceScheme;
+use App\KraTransaction;
 use App\ReprintReceiptCount;
 use App\SalesOrderController;
 use Razorpay\Api\Api;
 use App\TransactionPayment;
 use App\Vehicle;
+use Illuminate\Support\Carbon;
 use Stripe\Charge;
 use Stripe\Stripe;
 
@@ -618,6 +620,10 @@ class SellPosController extends Controller
                     if ($business->pinnacle_api_key) {
                         event(new PinnacleSmsEvent($business->sms_settings['pinnacle_username'], $business->sms_settings['pinnacle_password'], $business->pinnacle_api_key, $business->sms_settings['pinnacle_senderid'], $message, $contact->mobile));
                     }
+
+                    $sale_type = 'invoice';
+                } else {
+                    $sale_type = 'cash';
                 }
 
                 if ($request->input('is_save_and_print') == 1) {
@@ -651,7 +657,7 @@ class SellPosController extends Controller
                 // }
                 
                 if ($print_invoice) {
-                    $receipt = $this->receiptContent($business_id, $input['location_id'], $transaction->id, null, false, true, $invoice_layout_id);
+                    $receipt = $this->receiptContent($business_id, $input['location_id'], $transaction->id, null, false, true, $invoice_layout_id, false, $sale_type);
                 }
 
                 $output = ['success' => 1, 'msg' => $msg, 'receipt' => $receipt ];
@@ -715,6 +721,41 @@ class SellPosController extends Controller
         }
     }
 
+    public function sendInvoiceData($data, $salestype) {
+        if ($salestype == "cash" || $salestype == "invoice") {
+            // $url = "http://197.232.146.218:8084/api/sign?invoice+1";
+            $url = "http://192.168.1.99:8089/api/sign?invoice+1";
+        } else if($salestype == "sell_return") {
+            $url = "http://197.232.146.218:8084/api/sign?invoice+2";
+        }
+     
+        // Initialize cURL session
+        $ch = curl_init($url);
+    
+        // Set cURL options
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Authorization: Basic ZxZoaZMUQbUJDljA7kTExQ==2023'
+        ));
+    
+        $response = curl_exec($ch); 
+        
+        if ($response === false) {
+            $error = curl_error($ch);
+            \Log::info('KRA error: ');
+            \Log::info($error);
+        } else {
+            $response = json_decode($response, true);
+        }
+
+        curl_close($ch);
+        
+        return $response;
+    }
+
     /**
      * Returns the content for the receipt
      *
@@ -733,7 +774,9 @@ class SellPosController extends Controller
         $is_package_slip = false,
         $from_pos_screen = true,
         $invoice_layout_id = null,
-        $is_delivery_note = false
+        $is_delivery_note = false,
+        $sale_type = null,
+        $is_reprint = false
     ) { 
         $output = ['is_enabled' => false,
                     'print_type' => 'browser',
@@ -767,6 +810,59 @@ class SellPosController extends Controller
             'decimal_separator' => $business_details->decimal_separator,
         ];
         $receipt_details->currency = $currency_details;
+        $receipt_details->cu_serial_number = '';
+        $receipt_details->cu_invoice_number = '';
+        $receipt_details->verify_url = '';
+
+        if (! empty($sale_type)) {
+            $kra_payload = [ 
+                "invoice_date" => Carbon::now()->format('d/m/Y'), 
+                "invoice_number" => $receipt_details->invoice_no, 
+                "invoice_pin" => "P051201909L", 
+                "customer_pin" => "", 
+                "customer_exid" => "12345", 
+                "grand_total" => number_format($receipt_details->total_unformatted, 2), 
+                "net_subtotal" => number_format($receipt_details->subtotal_unformatted, 2), 
+                "tax_total" => number_format($receipt_details->vat, 2), 
+                "net_discount_total" => number_format($receipt_details->discount, 2), 
+                "sel_currency" => "KSH", 
+                "rel_doc_number" => "",
+            ];
+
+            foreach ($receipt_details->lines as $product) {
+                $hscode = $product['tax'] == 0 ? "0022.12.00" : "";
+                $total = (float)$product['quantity'] * (float)$product['unit_price_inc_tax'];
+                $kra_payload["items_list"][] = $hscode . $product['name'] . " " . $product['quantity'] . " " . $product['unit_price_inc_tax']  . " " . number_format($total, 2);
+            }
+
+         
+            $response = $this->sendInvoiceData($kra_payload, $sale_type);
+
+            if ($response) {
+                $receipt_details->cu_serial_number = $response['cu_serial_number'];
+                $receipt_details->cu_invoice_number = $response['cu_invoice_number'];
+                $receipt_details->verify_url = $response['verify_url'];
+            }
+
+            $kra_obj = KraTransaction::create([
+                'transaction_id' => $transaction_id,
+                'invoice_number' => $receipt_details->invoice_no,
+                'cu_serial_number' => $receipt_details->cu_serial_number,
+                'cu_invoice_number' => $receipt_details->cu_invoice_number,
+                'verify_url' => $receipt_details->verify_url,
+                'request' => $kra_payload,
+                'response' => $response,
+            ]);
+        }
+
+        if ($is_reprint) {
+            $kra_obj = KraTransaction::where('transaction_id', $transaction_id)->first();
+            if (! empty($kra_obj)) {
+                $receipt_details->cu_serial_number = $kra_obj->cu_serial_number;
+                $receipt_details->cu_invoice_number = $kra_obj->cu_invoice_number;
+                $receipt_details->verify_url = $kra_obj->verify_url;
+            }
+        }
         
         if ($is_package_slip) {
             $output['html_content'] = view('sale_pos.receipts.packing_slip', compact('receipt_details'))->render();
@@ -1335,6 +1431,7 @@ class SellPosController extends Controller
 
                 //Update update lines
                 $is_credit_sale = isset($input['is_credit_sale']) && $input['is_credit_sale'] == 1 ? true : false;
+                $sell_type = $is_credit_sale ? 'invoice' : 'cash';
 
                 $new_sales_order_ids = $transaction->sales_order_ids ?? [];
                 $sales_order_ids =array_unique(array_merge($sales_order_ids, $new_sales_order_ids));
@@ -1455,14 +1552,14 @@ class SellPosController extends Controller
                 } elseif ($input['status'] == 'draft' && $input['is_quotation'] == 1) {
                     $msg = trans("lang_v1.quotation_updated");
                     if (!$is_direct_sale && $input['is_suspend'] != 1) {
-                        $receipt = $this->receiptContent($business_id, $input['location_id'], $transaction->id, null, false, true, $invoice_layout_id);
+                        $receipt = $this->receiptContent($business_id, $input['location_id'], $transaction->id, null, false, true, $invoice_layout_id, false, $sell_type);
                     } else {
                         $receipt = '';
                     }
                 } elseif ($input['status'] == 'final') {
                     $msg = trans("sale.pos_sale_updated");
                     if (!$is_direct_sale && $input['is_suspend'] != 1) {
-                        $receipt = $this->receiptContent($business_id, $input['location_id'], $transaction->id, null, false, true, $invoice_layout_id);
+                        $receipt = $this->receiptContent($business_id, $input['location_id'], $transaction->id, null, false, true, $invoice_layout_id, false, $sell_type);
                     } else {
                        $receipt = '';
                     }
@@ -1954,7 +2051,7 @@ class SellPosController extends Controller
                 }
 
                 $invoice_layout_id = $transaction->is_direct_sale ? $transaction->location->sale_invoice_layout_id : null;
-                $receipt = $this->receiptContent($business_id, $transaction->location_id, $transaction_id, $printer_type, $is_package_slip, false, $invoice_layout_id, $is_delivery_note);
+                $receipt = $this->receiptContent($business_id, $transaction->location_id, $transaction_id, $printer_type, $is_package_slip, false, $invoice_layout_id, $is_delivery_note, null, true);
 
                 if (!empty($receipt)) {
                     $output = ['success' => 1, 'receipt' => $receipt];
