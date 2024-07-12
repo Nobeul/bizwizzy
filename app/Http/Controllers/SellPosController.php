@@ -839,9 +839,9 @@ class SellPosController extends Controller
             $response = $this->sendInvoiceData($kra_payload, $sale_type);
 
             if ($response) {
-                $receipt_details->cu_serial_number = $response['cu_serial_number'];
-                $receipt_details->cu_invoice_number = $response['cu_invoice_number'];
-                $receipt_details->verify_url = $response['verify_url'];
+                $receipt_details->cu_serial_number = $response['cu_serial_number'] ?? null;
+                $receipt_details->cu_invoice_number = $response['cu_invoice_number'] ?? null;
+                $receipt_details->verify_url = $response['verify_url'] ?? null;
             }
 
             $kra_obj = KraTransaction::create([
