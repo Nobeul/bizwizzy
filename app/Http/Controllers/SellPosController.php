@@ -824,7 +824,7 @@ class SellPosController extends Controller
                 "customer_exid" => "12345", 
                 "grand_total" => $this->kra_number_format($receipt_details->total_unformatted), 
                 "net_subtotal" => $this->kra_number_format($receipt_details->subtotal_unformatted), 
-                "tax_total" => $this->kra_number_format($receipt_details->vat), 
+                "tax_total" => $this->kra_number_format((string)$receipt_details->vat), 
                 "net_discount_total" => $this->kra_number_format($receipt_details->discount), 
                 "sel_currency" => "KSH", 
                 "rel_doc_number" => "",
@@ -832,10 +832,9 @@ class SellPosController extends Controller
 
             foreach ($receipt_details->lines as $product) {
                 $hscode = $product['tax'] == 0 ? "0022.12.00" : "";
-                $total = (float)$product['quantity'] * (float)$product['unit_price_inc_tax'];
+                $total = (float)$this->kra_number_format($product['quantity']) * (float)$this->kra_number_format($product['unit_price_inc_tax']);
                 $kra_payload["items_list"][] = $hscode . $product['name'] . " " . $this->kra_number_format($product['quantity']) . " " . $this->kra_number_format($product['unit_price_inc_tax'])  . " " . $this->kra_number_format((string)$total);
             }
-
          
             $response = $this->sendInvoiceData($kra_payload, $sale_type);
 
