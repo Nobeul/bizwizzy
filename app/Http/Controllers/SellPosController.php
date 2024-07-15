@@ -724,7 +724,8 @@ class SellPosController extends Controller
     public function sendInvoiceData($data, $salestype) {
         if ($salestype == "cash" || $salestype == "invoice") {
             // $url = "http://197.232.146.218:8084/api/sign?invoice+1";
-            $url = "http://192.168.1.99:8089/api/sign?invoice+1";
+            // Authorization: Basic ZxZoaZMUQbUJDljA7kTExQ==2023
+            $url = "http://41.57.106.74:8089/api/sign?invoice+1";
         } else if($salestype == "sell_return") {
             $url = "http://197.232.146.218:8084/api/sign?invoice+2";
         }
@@ -738,7 +739,7 @@ class SellPosController extends Controller
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
-            'Authorization: Basic ZxZoaZMUQbUJDljA7kTExQ==2023'
+            'Authorization: Basic ZxZoaZMUQbUJDljA7kTExQ=='
         ));
     
         $response = curl_exec($ch); 
@@ -821,10 +822,10 @@ class SellPosController extends Controller
                 "invoice_pin" => "P051201909L", 
                 "customer_pin" => "", 
                 "customer_exid" => "12345", 
-                "grand_total" => number_format($receipt_details->total_unformatted, 2), 
-                "net_subtotal" => number_format($receipt_details->subtotal_unformatted, 2), 
-                "tax_total" => number_format($receipt_details->vat, 2), 
-                "net_discount_total" => number_format($receipt_details->discount, 2), 
+                "grand_total" => $this->kra_number_format($receipt_details->total_unformatted), 
+                "net_subtotal" => $this->kra_number_format($receipt_details->subtotal_unformatted), 
+                "tax_total" => $this->kra_number_format($receipt_details->vat), 
+                "net_discount_total" => $this->kra_number_format($receipt_details->discount), 
                 "sel_currency" => "KSH", 
                 "rel_doc_number" => "",
             ];
@@ -832,7 +833,7 @@ class SellPosController extends Controller
             foreach ($receipt_details->lines as $product) {
                 $hscode = $product['tax'] == 0 ? "0022.12.00" : "";
                 $total = (float)$product['quantity'] * (float)$product['unit_price_inc_tax'];
-                $kra_payload["items_list"][] = $hscode . $product['name'] . " " . $product['quantity'] . " " . $product['unit_price_inc_tax']  . " " . number_format($total, 2);
+                $kra_payload["items_list"][] = $hscode . $product['name'] . " " . $this->kra_number_format($product['quantity']) . " " . $this->kra_number_format($product['unit_price_inc_tax'])  . " " . $this->kra_number_format((string)$total);
             }
 
          
@@ -889,6 +890,16 @@ class SellPosController extends Controller
         }
         
         return $output;
+    }
+
+    public function kra_number_format($number = 0)
+    {
+        if (! $number || gettype($number) == 'string') {
+            $number = str_replace(',', '', $number);
+            $number = number_format((float) $number, 2, '.', '');
+        }
+
+        return $number;
     }
 
     /**
