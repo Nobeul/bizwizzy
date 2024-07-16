@@ -1295,6 +1295,23 @@ class SellPosController extends Controller
                 $user_id = $request->session()->get('user.id');
                 $commsn_agnt_setting = $request->session()->get('business.sales_cmsn_agnt');
 
+                $transaction = Transaction::leftJoin('users', 'transactions.processed_by', '=', 'users.id')
+                    ->where('transactions.id', $id)
+                    ->where('transactions.business_id', $business_id)
+                    ->select(
+                        'transactions.id',
+                        'transactions.processed_by',
+                        DB::raw("CONCAT(COALESCE(users.surname, ''),' ',COALESCE(users.first_name, ''),' ',COALESCE(users.last_name,'')) as added_by")
+                        )
+                    ->first();
+
+                if (! empty($transaction->processed_by)) {
+                    $output = ['success' => 0,
+                            'msg' => __('This suspended sale has already been processed by ' . $transaction->added_by)
+                        ];
+                    return $output;
+                }
+
                 $discount = ['discount_type' => $input['discount_type'],
                                 'discount_amount' => $input['discount_amount']
                             ];
