@@ -229,7 +229,7 @@ class TransactionUtil extends Util
             'pay_term_number' => $pay_term_number,
             'pay_term_type' => $pay_term_type,
             'is_suspend' => !empty($input['is_suspend']) ? 1 : 0,
-            'processed_by' => $user_id,
+            'processed_by' => empty($input['is_suspend']) ? $user_id : null,
             'is_recurring' => !empty($input['is_recurring']) ? $input['is_recurring'] : 0,
             'recur_interval' => !empty($input['recur_interval']) ? $input['recur_interval'] : 1,
             'recur_interval_type' => !empty($input['recur_interval_type']) ? $input['recur_interval_type'] : null,
