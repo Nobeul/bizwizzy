@@ -463,7 +463,7 @@ class SellController extends Controller
                 ->removeColumn('id')
                 ->editColumn(
                     'final_total',
-                    '<span class="final-total" data-orig-value="{{$final_total}}">@format_currency($final_total)</span>'
+                    '<span class="final-total" data-orig-value="{{$total_before_tax}}">@format_currency($total_before_tax)</span>'
                 )
                 ->editColumn(
                     'tax_amount',
@@ -503,7 +503,7 @@ class SellController extends Controller
                 )
                 ->addColumn('total_remaining', function ($row) {
                     if (in_array($row->payment_status, ['due', 'partial'])) {
-                        $total_sale = $row->final_total ?? 0;
+                        $total_sale = $row->total_before_tax ?? 0;
                         $total_paid = $row->total_paid ?? 0;
                         $total_return = $row->amount_return ?? 0;
                         $total_return_paid = $row->return_paid ?? 0;
@@ -511,7 +511,7 @@ class SellController extends Controller
                         $total_remaining =  $total_sale - $total_paid - $total_return - $total_return_paid;
                         $total_remaining_html = '<span class="payment_due" data-orig-value="' . $total_remaining . '">' . $this->transactionUtil->num_f($total_remaining, true) . '</span>';
                     } else {
-                        $total_remaining =  $row->final_total - $row->total_paid;
+                        $total_remaining =  $row->total_before_tax - $row->total_paid;
                         $total_remaining_html = '<span class="payment_due" data-orig-value="' . $total_remaining . '">' . $this->transactionUtil->num_f($total_remaining, true) . '</span>';
                     }
                     

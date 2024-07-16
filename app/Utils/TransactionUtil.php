@@ -5280,7 +5280,7 @@ class TransactionUtil extends Util
                 'payment_status' => !in_array($transaction->type, ['ledger_discount']) ?  __('lang_v1.' . $transaction->payment_status) : '',
                 'total' => '',
                 'payment_method' => '',
-                'debit' => in_array($transaction->type, ['sell', 'purchase_return']) || ($transaction->sub_type == 'purchase_discount') ? $transaction->final_total : 0,
+                'debit' => in_array($transaction->type, ['sell', 'purchase_return']) || ($transaction->sub_type == 'purchase_discount') ? $transaction->total_before_tax : 0,
                 'credit' => in_array($transaction->type, ['purchase', 'sell_return']) || ($transaction->sub_type == 'sell_discount') ? $transaction->final_total : 0,
                 'others' => $transaction->additional_notes,
                 'transaction_id' => $transaction->id,
