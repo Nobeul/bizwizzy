@@ -13,6 +13,9 @@
             <th>{{ __('Model') }}</th> 
             <th>{{ __('State') }}</th> 
             <th>{{ __('Status') }}</th> 
+            <th>{{ __('KRA PIN No') }}</th> 
+            <th>{{ __('Ownership') }}</th> 
+            <th>{{ __('ID No') }}</th> 
             <th>{{ __('Created At') }}</th>
         </tr>
     </thead>

@@ -87,6 +87,29 @@
         <div class="row">
           <div class="col-sm-4">
             <div class="form-group">
+              {!! Form::label('kra_pin_no', __('KRA PIN No') . ':*') !!}
+              {!! Form::text('kra_pin_no', optional($vehicle)->kra_pin_no, ['class' => 'form-control', 'required', 'placeholder' => __('KRA PIN No') ]); !!}
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="form-group">
+              {!! Form::label('ownership', __('Ownership') . ':*') !!}
+              {!! Form::text('ownership', optional($vehicle)->ownership, ['class' => 'form-control', 'required', 'placeholder' => __('Ownership') ]); !!}
+            </div>
+          </div>
+
+          <div class="col-sm-4">
+            <div class="form-group">
+              {!! Form::label('id_no', __('ID No') . ':*') !!}
+              {!! Form::text('id_no', optional($vehicle)->id_no, ['class' => 'form-control', 'required', 'placeholder' => __('ID No') ]); !!}
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
               {!! Form::label('Trim', __('Trim') . ':*') !!}
               {!! Form::textarea('trim', $vehicle->trim, ['class' => 'form-control', 'style' => 'resize: none', 'required', 'placeholder' => __('Trim') ]); !!}
             </div>

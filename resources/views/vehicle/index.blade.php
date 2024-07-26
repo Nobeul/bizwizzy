@@ -162,6 +162,9 @@
                         { data: 'model', name: 'model', searchable: true },
                         { data: 'state', name: 'state', searchable: true },
                         { data: 'status', name: 'status', searchable: true },
+                        { data: 'kra_pin_no', name: 'kra_pin_no', searchable: false },
+                        { data: 'ownership', name: 'ownership', searchable: false },
+                        { data: 'id_no', name: 'id_no', searchable: false },
                         { data: 'created_at', name: 'created_at', searchable: false }
                     ],
                     fnDrawCallback: function(oSettings) {

@@ -254,6 +254,9 @@ class VehicleController extends Controller
             'trim' => 'required',
             'state' => 'required',
             'model' => 'required',
+            'kra_pin_no' => 'required',
+            'ownership' => 'required',
+            'id_no' => 'required',
             'photo' => 'nullable|file|max:2024|mimes:jpg,jpeg,bmp,png,webp'
         ]);
 
@@ -277,6 +280,9 @@ class VehicleController extends Controller
             $obj->trim = $request->trim;
             $obj->state = $request->state;
             $obj->model = $request->model;
+            $obj->kra_pin_no = $request->kra_pin_no;
+            $obj->ownership = $request->ownership;
+            $obj->id_no = $request->id_no;
             
             if (! empty($request->photo)) {
                 $image = $this->productUtil->uploadFile($request, 'photo', config('constants.product_img_path'), 'image');
@@ -362,6 +368,9 @@ class VehicleController extends Controller
             'trim' => 'required',
             'state' => 'required',
             'model' => 'required',
+            'kra_pin_no' => 'required',
+            'ownership' => 'required',
+            'id_no' => 'required',
             'photo' => 'nullable|file|max:2024|mimes:jpg,jpeg,bmp,png,webp'
         ]);
 
@@ -385,6 +394,9 @@ class VehicleController extends Controller
             $obj->trim = $request->trim;
             $obj->state = $request->state;
             $obj->model = $request->model;
+            $obj->kra_pin_no = $request->kra_pin_no;
+            $obj->ownership = $request->ownership;
+            $obj->id_no = $request->id_no;
             
             if (! empty($request->photo)) {
                 if ($obj->photo) {
