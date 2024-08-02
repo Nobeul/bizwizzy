@@ -203,7 +203,7 @@
 		<table class="table table-bordered table-no-top-cell-border">
 			<thead>
 				<tr style="background-color: #357ca5 !important; color: white !important; font-size: 20px !important" class="table-no-side-cell-border table-no-top-cell-border text-center">
-					<td style="background-color: #357ca5 !important; color: white !important; width: 5% !important">No</td>
+					{{--<td style="background-color: #357ca5 !important; color: white !important; width: 5% !important">No</td>--}}
 					
 					@php
 						$p_width = 35;
@@ -234,34 +234,36 @@
 			</thead>
 			<tbody>
 				@foreach($receipt_details->lines as $line)
-					<tr>
-						<td class="text-center">
-							{{$loop->iteration}}
-						</td>
-						<td>
-                            {{$line['name']}} {{$line['variation']}} 
-                            @if(!empty($line['sub_sku'])), {{$line['sub_sku']}} @endif @if(!empty($line['brand'])), {{$line['brand']}} @endif
-                            @if(!empty($line['sell_line_note']))({{$line['sell_line_note']}}) @endif 
-                        </td>
-
-						@if($receipt_details->show_cat_code == 1)
-	                        <td>
-	                        	@if(!empty($line['cat_code']))
-	                        		{{$line['cat_code']}}
-	                        	@endif
-	                        </td>
-	                    @endif
-
-						<td class="text-right">
-							{{$line['quantity']}} {{$line['units']}}
-						</td>
-						<td class="text-right">
-							{{$line['unit_price_inc_tax']}}
-						</td>
-						<td class="text-right">
-							{{$line['line_total']}}
-						</td>
-					</tr>
+				    @if($line['quantity'] > 0)
+    					<tr>
+    						{{--<td class="text-center">
+    							{{$loop->iteration}}
+    						</td>--}}
+    						<td>
+                                {{$line['name']}} {{$line['variation']}} 
+                                @if(!empty($line['sub_sku'])), {{$line['sub_sku']}} @endif @if(!empty($line['brand'])), {{$line['brand']}} @endif
+                                @if(!empty($line['sell_line_note']))({{$line['sell_line_note']}}) @endif 
+                            </td>
+    
+    						@if($receipt_details->show_cat_code == 1)
+    	                        <td>
+    	                        	@if(!empty($line['cat_code']))
+    	                        		{{$line['cat_code']}}
+    	                        	@endif
+    	                        </td>
+    	                    @endif
+    
+    						<td class="text-right">
+    							{{$line['quantity']}} {{$line['units']}}
+    						</td>
+    						<td class="text-right">
+    							{{$line['unit_price_inc_tax']}}
+    						</td>
+    						<td class="text-right">
+    							{{$line['line_total']}}
+    						</td>
+    					</tr>
+					@endif
 				@endforeach
 
 				@php
@@ -270,8 +272,8 @@
 
 				@for ($i = $lines; $i < 7; $i++)
     				<tr>
-    					<td>&nbsp;</td>
-    					<td>&nbsp;</td>
+    					{{--<td>&nbsp;</td>
+    					<td>&nbsp;</td>--}}
     					<td>&nbsp;</td>
     					<td>&nbsp;</td>
     					<td>&nbsp;</td>

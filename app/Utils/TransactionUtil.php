@@ -1522,22 +1522,22 @@ class TransactionUtil extends Util
         //Total
         if ($transaction_type == 'sell_return') {
             $output['total_label'] = $invoice_layout->cn_amount_label . ':';
-            $output['total'] = $this->num_f($transaction->final_total, $show_currency, $business_details);
+            $output['total'] = $this->num_f($transaction->total_before_tax, $show_currency, $business_details);
         } else {
             $output['total_label'] = $invoice_layout->total_label . ':';
-            $output['total'] = $this->num_f($transaction->final_total, $show_currency, $business_details);
+            $output['total'] = $this->num_f($transaction->total_before_tax, $show_currency, $business_details);
         }
         if (!empty($il->common_settings['show_total_in_words'])) {
             $word_format = isset($il->common_settings['num_to_word_format']) ? $il->common_settings['num_to_word_format'] : 'international';
-            $output['total_in_words'] = $this->numToWord($transaction->final_total, null, $word_format);
+            $output['total_in_words'] = $this->numToWord($transaction->total_before_tax, null, $word_format);
         }
 
-        $output['total_unformatted'] = $transaction->final_total;
+        $output['total_unformatted'] = $transaction->total_before_tax;
         
         //Paid & Amount due, only if final
         if ($transaction_type == 'sell' && $transaction->status == 'final') {
             $paid_amount = $this->getTotalPaid($transaction->id);
-            $due = $transaction->final_total - $paid_amount;
+            $due = $transaction->total_before_tax - $paid_amount;
 
             $output['total_paid'] = ($paid_amount == 0) ? 0 : $this->num_f($paid_amount, $show_currency, $business_details);
             $output['total_paid_label'] = $il->paid_label;

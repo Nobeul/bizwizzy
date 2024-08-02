@@ -434,7 +434,7 @@ class TransactionPaymentController extends Controller
                                         ->findOrFail($transaction_id);
             if ($transaction->payment_status != 'paid') {
                 $show_advance = in_array($transaction->type, ['sell', 'purchase']) ? true : false;
-                $payment_types = $this->transactionUtil->payment_types($transaction->location, $show_advance);
+                $payment_types = $this->transactionUtil->payment_types($transaction->location, $show_advance, $business_id);
 
                 // $paid_amount = $this->transactionUtil->getTotalPaid($transaction_id);
                 $amount = $transaction->final_total - $transaction->total_paid - $transaction->amount_return - $transaction->return_paid;
@@ -453,7 +453,7 @@ class TransactionPaymentController extends Controller
                 $accounts = $this->moduleUtil->accountsDropdown($business_id, true, false, true);
 
                 $view = view('transaction_payment.payment_row')
-                ->with(compact('transaction', 'payment_types', 'payment_line', 'amount_formated', 'accounts'))->render();
+                ->with(compact('transaction', 'payment_types', 'payment_line', 'amount_formated', 'accounts', 'business_id'))->render();
 
                 $output = [ 'status' => 'due',
                                     'view' => $view];

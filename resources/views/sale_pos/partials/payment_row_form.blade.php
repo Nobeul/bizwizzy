@@ -31,7 +31,7 @@
 		</div>
 	</div>
 	@endif
-	<div class="{{$col_class}}" id="payment-type-row">
+	<div class="{{$col_class}} payment-type-row">
 		<div class="form-group">
 			{!! Form::label("method_$row_index" , __('lang_v1.payment_method') . ':*') !!}
 			<div class="input-group">

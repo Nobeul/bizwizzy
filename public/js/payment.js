@@ -128,6 +128,30 @@ $(document).ready(function() {
             },
         });
     });
+
+    $(document).on('click', '.get-mpesa-payment', function () {
+        let business_id = $('#pos-business-id').val();
+        let payment_amount = $('#amount').val();
+        swal({
+            title: 'Waiting',
+            icon: 'warning',
+            buttons: true,
+            dangerMode: true,
+        }).then(confirm => {
+            if (confirm) {
+                generateMpesaRequest(business_id, payment_amount);
+            }
+        });
+    });
+
+    $(document).on('change', '#amount', function() {
+        var payment_type = $('#transaction_payment_add_form .payment_types_dropdown').val();
+        if (payment_type && payment_type == 'mpesa') {
+            var amount = parseFloat($(this).val());
+            $('.get-mpesa-payment').attr('data-amount', amount.toFixed(2));
+            $('.mpesa-button-amount').text(amount.toFixed(2));
+        }
+    });
 });
 
 $(document).on('change', '#transaction_payment_add_form .payment_types_dropdown', function(e) {
@@ -148,6 +172,81 @@ function set_default_payment_account() {
         $('#transaction_payment_add_form #account_id').val(default_account);
         $('#transaction_payment_add_form #account_id').change();
     }
+    
+    if (payment_type && payment_type == 'mpesa') {
+        var business_id = $('#pos-business-id').val();
+        var payment_amount = $('#amount').val();
+        var mpesaButton = `<div class="col-md-4 get-mpesa-paymet-div" style="margin-top: 25px;">
+                                <a class="btn btn-warning get-mpesa-payment" data-amount="${payment_amount}" data-businessId="${business_id}">Get <span class="mpesa-button-amount">${payment_amount}</span> using mpesa</a>
+                            </div>`;
+        $('.amount-row').after(mpesaButton);                  
+    } else {
+        if ($('.get-mpesa-paymet-div').length > 0) {
+            $('.get-mpesa-paymet-div').remove();
+        }
+    }
+}
+
+function generateMpesaRequest(business_id, amount, passed_by = null)
+{
+    $.ajax({
+        method: 'GET',
+        url: base_path + '/mpesa-check-payments' + '?business_id=' + business_id + '&amount=' + amount + '&passed_by=' + passed_by,
+        dataType: 'json',
+        success: function(element) {
+            if (element.data && element.data != null && element.data != 'undefined') {
+                    showPaymentMessage(business_id, amount, element.data);
+            } else {
+                swal('Mpesa did not grab any payment yet.');
+            }
+            
+        },
+    });
+}
+
+function showPaymentMessage(business_id, amount, element)
+{
+    let name = element.first_name;
+    if (element.middle_name != null) {
+        name += ' ' + element.middle_name;
+    }
+    if (element.last_name != null) {
+        name += ' ' + element.last_name;
+    }
+    let message = `${name} made a payment of ${element.transaction_amount} KSh and transaction id = ${element.transaction_id}`;
+    swal({
+        title: LANG.sure,
+        text: message,
+        icon: "warning",
+        buttons: {
+            cancel: "Cancel",
+            confirm: "Confirm"
+        },
+        dangerMode: true,
+    }).then((confirmed) => {
+        if (confirmed) {
+            captureMpesaPaymentForCashier(business_id, amount, element);
+        } else {
+            generateMpesaRequest(business_id, amount, element.id);
+        }
+    });
+}
+
+function captureMpesaPaymentForCashier(business_id, amount, element)
+{
+    $.ajax({
+        method: 'POST',
+        url: base_path + '/mpesa-capture',
+        dataType: 'json',
+        data: {
+            business_id : business_id,
+            amount : amount,
+            transaction_id: element.id
+        },
+        success: function(element) {
+            swal('Payment captured successfully');
+        },
+    });
 }
 
 $(document).on('change', '.payment_types_dropdown', function(e) {

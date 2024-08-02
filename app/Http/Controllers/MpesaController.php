@@ -340,10 +340,10 @@ class MpesaController extends Controller
             $pendingTransaction = MpesaTransaction::where([
                     'status' => 'pending',
                     'business_short_code' => $mpesaSetting->mpesa_shortcode,
-                    'transaction_amount' => $amount
-                ])->whereDate('created_at', '<', Carbon::now());
+                    'transaction_amount' => $amount,
+                ]);
     
-            if (! empty(request()->passed_by)) {
+            if (! empty(request()->passed_by) && request()->passed_by != 'null') {
                 $pendingTransaction->where('id', '>', request()->passed_by);
             }
     

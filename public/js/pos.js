@@ -987,6 +987,7 @@ $(document).ready(function() {
         var payment_amount_id = $(this).attr('id');
         payment_amount_row_id = payment_amount_id.replace('amount_', '');
         if (payment_amount_row_id == 0) {
+            $('.get-mpesa-payment').attr('data-amount', amount.toFixed(2));
             $('.mpesa-button-amount').text(amount.toFixed(2));
         }
     });
@@ -2660,9 +2661,9 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
             var business_id = $('#pos-business-id').val();
             var payment_amount = payment_row.find('.payment-amount').val();
             var mpesaButton = `<div class="col-md-4 get-mpesa-paymet-div" style="margin-top: 25px;">
-                                    <a class="btn btn-warning" id="get-mpesa-payment" data-amount="${payment_amount}" data-businessId="${business_id}">Get <span class="mpesa-button-amount">${payment_amount}</span> using mpesa</a>
+                                    <a class="btn btn-warning mpesa_payment_button_${row_index} get-mpesa-payment" data-amount="${payment_amount}" data-businessId="${business_id}">Get <span class="mpesa-button-amount">${payment_amount}</span> using mpesa</a>
                                 </div>`;
-            $("#payment-type-row").after(mpesaButton);                  
+            payment_row.find(".payment-type-row").after(mpesaButton);                 
         }
     }
 
@@ -2686,7 +2687,14 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
 
     function showPaymentMessage(business_id, amount, element)
     {
-        let message = `${element.first_name} ${element.middle_name} ${element.last_name} made payment of ${element.transaction_amount} KSh`;
+        let name = element.first_name;
+        if (element.middle_name != null) {
+            name += ' ' + element.middle_name;
+        }
+        if (element.last_name != null) {
+            name += ' ' + element.last_name;
+        }
+        let message = `${name} made a payment of ${element.transaction_amount} KSh and transaction id = ${element.transaction_id}`;
         swal({
             title: LANG.sure,
             text: message,
@@ -2722,9 +2730,9 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
         });
     }
     
-    $("#get-mpesa-payment").on('click', function () {
+    $(".get-mpesa-payment").on('click', function () {
         let business_id = $('#pos-business-id').val();
-        let payment_amount = $(this).data('amount');
+        let payment_amount = $(this).closest('.payment_row').find('.payment-amount').val();
 
         swal({
             title: 'Waiting',

@@ -726,6 +726,7 @@ class SellPosController extends Controller
             // $url = "http://197.232.146.218:8084/api/sign?invoice+1";
             // Authorization: Basic ZxZoaZMUQbUJDljA7kTExQ==2023
             $url = "http://41.57.106.74:8089/api/sign?invoice+1";
+            // $url = "http://192.168.1.100:8089/api/sign?invoice+1";
         } else if($salestype == "sell_return") {
             $url = "http://197.232.146.218:8084/api/sign?invoice+2";
         }
@@ -737,6 +738,7 @@ class SellPosController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
             'Authorization: Basic ZxZoaZMUQbUJDljA7kTExQ=='
@@ -958,7 +960,7 @@ class SellPosController extends Controller
 
         $location_id = $transaction->location_id;
         $business_location = BusinessLocation::find($location_id);
-        $payment_types = $this->productUtil->payment_types($business_location, true);
+        $payment_types = $this->productUtil->payment_types($business_location, true, $business_id);
         $location_printer_type = $business_location->receipt_printer_type;
         $sell_details = TransactionSellLine::
                         join(
@@ -1961,7 +1963,7 @@ class SellPosController extends Controller
         $row_index = $request->input('row_index');
         $location_id = $request->input('location_id');
         $removable = true;
-        $payment_types = $this->productUtil->payment_types($location_id, true);
+        $payment_types = $this->productUtil->payment_types($location_id, true, $business_id);
 
         $payment_line = $this->dummyPaymentLine;
 

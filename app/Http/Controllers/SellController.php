@@ -442,12 +442,12 @@ class SellController extends Controller
                                     $html .= '<li><a href="' . action('SellReturnController@add', [$row->id]) . '"><i class="fas fa-undo"></i> ' . __("lang_v1.sell_return") . '</a></li>';
                                 }
 
-                                if (auth()->user()->can("sell.create") || auth()->user()->can("direct_sell.access")) {
+                                // if (auth()->user()->can("sell.create") || auth()->user()->can("direct_sell.access")) {
                                     // $html .= '<li><a href="' . action('SellController@duplicateSell', [$row->id]) . '"><i class="fas fa-copy"></i> ' . __("lang_v1.duplicate_sell") . '</a></li>';
                                     
 
-                                    $html .= '<li><a href="' . action('SellPosController@showInvoiceUrl', [$row->id]) . '" class="view_invoice_url"><i class="fas fa-eye"></i> ' . __("lang_v1.view_invoice_url") . '</a></li>';
-                                }
+                                    // $html .= '<li><a href="' . action('SellPosController@showInvoiceUrl', [$row->id]) . '" class="view_invoice_url"><i class="fas fa-eye"></i> ' . __("lang_v1.view_invoice_url") . '</a></li>';
+                                // }
                             }
 
                             $html .= '<li><a href="#" data-href="' . action('NotificationController@getTemplate', ["transaction_id" => $row->id,"template_for" => "new_sale"]) . '" class="btn-modal" data-container=".view_modal"><i class="fa fa-envelope" aria-hidden="true"></i>' . __("lang_v1.new_sale_notification") . '</a></li>';
@@ -559,9 +559,9 @@ class SellController extends Controller
                     return $status;
                 })
                 ->addColumn('conatct_name', '@if(!empty($supplier_business_name)) {{$supplier_business_name}}, <br> @endif {{$name}}')
-                ->addColumn('customer_name', function ($row) {
-                    return $row->customer_name;
-                })
+                // ->addColumn('customer_name', function ($row) {
+                //     return $row->customer_name;
+                // })
                 ->editColumn('total_items', '{{@format_quantity($total_items)}}')
                 ->filterColumn('conatct_name', function ($query, $keyword) {
                     $query->where( function($q) use($keyword) {

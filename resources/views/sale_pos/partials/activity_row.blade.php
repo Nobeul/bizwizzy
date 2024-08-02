@@ -49,7 +49,7 @@
         @if(!empty($old_final_total))
             <span class="label bg-info">@format_currency($old_final_total)</span> --> 
         @endif
-         <span class="label bg-info">@format_currency($final_total)</span>
+         <span class="label bg-info">@format_currency($sell->total_before_tax)</span>
      </td>
     </tr>
 @endif

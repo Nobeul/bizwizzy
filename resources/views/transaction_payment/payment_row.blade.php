@@ -3,6 +3,7 @@
 
     {!! Form::open(['url' => action('TransactionPaymentController@store'), 'method' => 'post', 'id' => 'transaction_payment_add_form', 'files' => true ]) !!}
     {!! Form::hidden('transaction_id', $transaction->id); !!}
+    {!! Form::hidden("business_id", $business_id ?? null, ['id' => "pos-business-id"]); !!}
     @if(!empty($transaction->location))
       {!! Form::hidden('default_payment_accounts', $transaction->location->default_payment_accounts, ['id' => 'default_payment_accounts']); !!}
     @endif
@@ -84,9 +85,9 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 amount-row">
           <div class="form-group">
-            {!! Form::label("amount" , __('sale.amount') . ':*ssss') !!}
+            {!! Form::label("amount" , __('sale.amount') . ':*') !!}
             <div class="input-group">
               <span class="input-group-addon">
                 <i class="fas fa-money-bill-alt"></i>
