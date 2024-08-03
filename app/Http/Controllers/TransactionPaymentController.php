@@ -207,7 +207,7 @@ class TransactionPaymentController extends Controller
 
             $payments = $payments_query->get();
             $location_id = !empty($transaction->location_id) ? $transaction->location_id : null;
-            $payment_types = $this->transactionUtil->payment_types($location_id, true);
+            $payment_types = $this->transactionUtil->payment_types($location_id, true, auth()->user()->business_id);
             
             return view('transaction_payment.show_payments')
                     ->with(compact('transaction', 'payments', 'payment_types', 'accounts_enabled'));
