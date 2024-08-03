@@ -168,6 +168,8 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     Route::get('/vehicles/view/{id}', 'VehicleController@view');
     Route::get('/vehicles/{id}/edits', 'VehicleController@edits');
 
+    Route::match(['get', 'post'], 'kra-settings', 'KraController@addSettings');
+
     Route::post('/import-purchase-products', 'PurchaseController@importPurchaseProducts');
     Route::post('/purchases/update-status', 'PurchaseController@updateStatus');
     Route::get('/purchases/get_products', 'PurchaseController@getProducts');
@@ -497,34 +499,4 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone'])
     Route::get('/show-notification/{id}', 'HomeController@showNotification');
 });
 
-Route::match(['get', 'post'], 'kra-test', function () {
-    if (request()->method() == 'POST') {
-        $url = request()->endpoint;
-        $token = request()->token ?? 'ZxZoaZMUQbUJDljA7kTExQ==2023';
-        $payload = request()->payload;
-        $data = json_decode(request()->payload);
-
-        $ch = curl_init($url);
-    
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'Authorization: Basic ' . $token
-        ));
-    
-        $response = curl_exec($ch);  
-        
-        if ($response === false) {
-            $response = curl_error($ch);
-        }
-
-        curl_close($ch);
-        
-        return view('kra_test.index')->with(compact('response', 'url', 'token', 'payload'));
-    } else {
-        $response = '';
-        return view('kra_test.index')->with('response');
-    }
-});
+Route::match(['get', 'post'], 'kra-test', 'KraController@sandbox');

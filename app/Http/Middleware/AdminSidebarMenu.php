@@ -786,6 +786,12 @@ class AdminSidebarMenu
                             );
                         }
 
+                        $sub->url(
+                            action('KraController@addSettings'),
+                            __('KRA Settings'),
+                            ['icon' => 'fa fas fa-user-circle', 'active' => request()->segment(1) == 'kra-settings']
+                        );
+                        
                         // if (in_array('types_of_service', $enabled_modules) && auth()->user()->can('access_mpesa_settings')) {
                             $sub->url(
                                 action('MpesaController@mpesaSettings'),

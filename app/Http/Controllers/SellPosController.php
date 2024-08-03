@@ -58,6 +58,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Facades\DataTables;
 use App\InvoiceScheme;
+use App\KraSetting;
 use App\KraTransaction;
 use App\ReprintReceiptCount;
 use App\SalesOrderController;
@@ -721,14 +722,21 @@ class SellPosController extends Controller
         }
     }
 
-    public function sendInvoiceData($data, $salestype) {
-        if ($salestype == "cash" || $salestype == "invoice") {
-            // $url = "http://197.232.146.218:8084/api/sign?invoice+1";
-            // Authorization: Basic ZxZoaZMUQbUJDljA7kTExQ==2023
-            $url = "http://41.57.106.74:8089/api/sign?invoice+1";
-            // $url = "http://192.168.1.100:8089/api/sign?invoice+1";
-        } else if($salestype == "sell_return") {
-            $url = "http://197.232.146.218:8084/api/sign?invoice+2";
+    public function sendInvoiceData($data, $salestype)
+    {
+        $kra_settings_obj = KraSetting::where('business_id', auth()->user()->business_id)->first();
+
+        if (empty($kra_settings_obj)) {
+            \Log::info('kra settings not found for business id = ' . auth()->user()->business_id);
+            return false;
+        }
+        
+        if ($salestype == "cash") {
+            $url = $kra_settings_obj->cash_endpoint;
+        } else if ($salestype == "invoice") {
+            $url = $kra_settings_obj->invoice_endpoint;
+        } else {
+            $url = $kra_settings_obj->sell_return_endpoint;
         }
      
         // Initialize cURL session
@@ -741,7 +749,7 @@ class SellPosController extends Controller
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
             'Content-Type: application/json',
-            'Authorization: Basic ZxZoaZMUQbUJDljA7kTExQ=='
+            'Authorization: Basic ' . $kra_settings_obj->token
         ));
     
         $response = curl_exec($ch); 
