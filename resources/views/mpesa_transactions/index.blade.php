@@ -42,7 +42,7 @@
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                     <li class="active">
-                        <a href="#product_list_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-cubes" aria-hidden="true"></i> {{ __('All KRA Transactions') }} </a>
+                        <a href="#product_list_tab" data-toggle="tab" aria-expanded="true"><i class="fa fa-cubes" aria-hidden="true"></i> {{ __('All Mpesa Transactions') }} </a>
                     </li>
                 </ul>
 
