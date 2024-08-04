@@ -23,6 +23,7 @@ class MpesaController extends Controller
     {
         $cashiers = User::all();
         $transactions = MpesaTransaction::leftJoin('users', 'users.id', '=', 'mpesa_transactions.cashier_id')
+            ->orderBy('id', 'desc')
             ->select(
                 DB::raw('mpesa_transactions.*'),
                 DB::raw("CONCAT(COALESCE(users.surname, ''),' ',COALESCE(users.first_name, ''),' ',COALESCE(users.last_name,'')) as cashier_name")
