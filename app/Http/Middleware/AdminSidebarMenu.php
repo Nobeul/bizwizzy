@@ -300,6 +300,12 @@ class AdminSidebarMenu
                             }
                         }
 
+                        $sub->url(
+                            action('MpesaController@transactionList'),
+                            __('Mpesa Transactions'),
+                            ['icon' => 'fa fas fa-plus-circle', 'active' => request()->segment(1) == 'sells' && request()->segment(2) == 'create' && empty(request()->get('status'))]
+                        );
+
                         if (in_array('add_sale', $enabled_modules) && auth()->user()->can('direct_sell.access')) {
                             $sub->url(
                                 action('SellController@create', ['status' => 'draft']),

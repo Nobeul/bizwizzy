@@ -422,6 +422,8 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
     
     Route::resource('types-of-service', 'TypesOfServiceController');
 
+    Route::get('mpesa-transaction-list', 'MpesaController@transactionList');
+
     Route::get('mpesa-settings', 'MpesaController@mpesaSettings');
     Route::match(['get', 'post'], 'mpesa-settings/create', 'MpesaController@create');
     Route::post('mpesa-settings/{id}', 'MpesaController@edit');

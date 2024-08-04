@@ -11,11 +11,43 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MpesaMail;
 use App\MpesaTransaction;
+use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Yajra\DataTables\Facades\DataTables;
 
 class MpesaController extends Controller
 {
+    public function transactionList(Request $request)
+    {
+        $cashiers = User::all();
+        $transactions = MpesaTransaction::leftJoin('users', 'users.id', '=', 'mpesa_transactions.cashier_id')
+            ->select(
+                DB::raw('mpesa_transactions.*'),
+                DB::raw("CONCAT(COALESCE(users.surname, ''),' ',COALESCE(users.first_name, ''),' ',COALESCE(users.last_name,'')) as cashier_name")
+            );
+
+        if (! empty($request->cashier_id)) {
+            $transactions->where('cashier_id', $request->cashier_id);
+        }
+
+        if (request()->ajax()) {
+            return DataTables::of($transactions)
+                ->editColumn('accepted_by_cashier', function ($row) {
+                    return $row->cashier_name;
+                })
+                ->editColumn('status', function ($row) {
+                    return ucfirst(strtolower($row->status));
+                })
+                ->editColumn('transaction_time', function ($row) {
+                    return Carbon::createFromFormat('YmdHis', $row->transaction_time)->format('Y-m-d h:i:s A');
+                })
+                ->make(true);
+        }
+
+        return view('mpesa_transactions.index', compact('cashiers'));
+    }
     
     public function index()
     {
