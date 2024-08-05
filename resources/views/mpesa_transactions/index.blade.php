@@ -108,7 +108,6 @@
                         if($('#mpesa_filter_date_range').val()) {
                             var start = $('#mpesa_filter_date_range').data('daterangepicker').startDate.format('YYYY-MM-DD');
                             var end = $('#mpesa_filter_date_range').data('daterangepicker').endDate.format('YYYY-MM-DD');
-                            console.log(start, end);
                             d.start_date = start;
                             d.end_date = end;
                         }
