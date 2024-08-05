@@ -65,6 +65,17 @@
                         {!! Form::text('date_range', null, ['placeholder' => __('lang_v1.select_a_date_range'), 'class' => 'form-control', 'id' => 'spr_date_filter', 'readonly']); !!}
                     </div>
                 </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('user', __('Select User') . ':') !!}
+                        <select name="user_id" id="user_id" class="form-control select2" placeholder="{{ __('lang_v1.all') }}">
+                            <option value="">{{ __('Select user') }}</option>
+                            @foreach ($users as $user)
+                                <option value="{{ $user->id }}" {{ request()->user_id == $user->id ? 'selected' : '' }}>{{ optional($user)->surname }} {{ optional($user)->first_name }} {{ optional($user)->last_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
                 {!! Form::close() !!}
             @endcomponent
         </div>

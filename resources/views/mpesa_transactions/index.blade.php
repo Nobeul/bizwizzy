@@ -26,12 +26,12 @@
                 </select>
             </div>
         </div>
-        {{-- <div class="col-md-3">
-            <br>
+        <div class="col-md-3">
             <div class="form-group">
-                {!! Form::select('active_state', ['active' => __('business.is_active'), 'inactive' => __('lang_v1.inactive')], null, ['class' => 'form-control select2', 'style' => 'width:100%', 'id' => 'active_state', 'placeholder' => __('lang_v1.all')]); !!}
+                {!! Form::label('mpesa_filter_date_range', __('report.date_range') . ':') !!}
+                {!! Form::text('mpesa_filter_date_range', null, ['placeholder' => __('lang_v1.select_a_date_range'), 'class' => 'form-control', 'readonly']); !!}
             </div>
-        </div> --}}
+        </div>
     @endcomponent
     </div>
 </div>
@@ -83,6 +83,19 @@
 @section('javascript')
     <script type="text/javascript">
         $(document).ready( function(){
+            $('#mpesa_filter_date_range').daterangepicker(
+                dateRangeSettings,
+                function (start, end) {
+                    $('#mpesa_filter_date_range').val(start.format(moment_date_format) + ' ~ ' + end.format(moment_date_format));
+                    mpesa_transactions.ajax.reload();
+                }
+            );
+
+            $('#mpesa_filter_date_range').on('cancel.daterangepicker', function(ev, picker) {
+                $('#mpesa_filter_date_range').val('');
+                mpesa_transactions.ajax.reload();
+            });
+
             mpesa_transactions = $('#mpesa_transactions').DataTable({
                 processing: true,
                 serverSide: true,
@@ -92,6 +105,13 @@
                 "ajax": {
                     "url": "/mpesa-transaction-list",
                     "data": function ( d ) {
+                        if($('#mpesa_filter_date_range').val()) {
+                            var start = $('#mpesa_filter_date_range').data('daterangepicker').startDate.format('YYYY-MM-DD');
+                            var end = $('#mpesa_filter_date_range').data('daterangepicker').endDate.format('YYYY-MM-DD');
+                            console.log(start, end);
+                            d.start_date = start;
+                            d.end_date = end;
+                        }
                         d.cashier_id = $('#cashier_id').val();
                         d = __datatable_ajax_callback(d);
                     }

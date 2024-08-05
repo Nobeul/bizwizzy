@@ -2315,6 +2315,7 @@ class ReportController extends Controller
         }
 
         $business_id = $request->session()->get('user.business_id');
+        $users = User::all();
 
         $payment_types = $this->transactionUtil->payment_types(null, true, $business_id);
         if ($request->ajax()) {
@@ -2395,6 +2396,10 @@ class ReportController extends Controller
                 $query->where('transaction_payments.method', $request->get('payment_types'));
             }
 
+            if (!empty($request->get('user_id'))) {
+                $query->where('transaction_payments.created_by', $request->get('user_id'));
+            }
+
             return Datatables::of($query)
                  ->editColumn('invoice_no', function ($row) {
                      if (!empty($row->transaction_id)) {
@@ -2439,7 +2444,7 @@ class ReportController extends Controller
         $customer_groups = CustomerGroup::forDropdown($business_id, false, true);
 
         return view('report.sell_payment_report')
-            ->with(compact('business_locations', 'customers', 'payment_types', 'customer_groups'));
+            ->with(compact('business_locations', 'customers', 'payment_types', 'customer_groups', 'users'));
     }
 
 

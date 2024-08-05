@@ -33,6 +33,12 @@ class MpesaController extends Controller
             $transactions->where('cashier_id', $request->cashier_id);
         }
 
+        if (! empty($request->start_date) && ! empty($request->end_date)) {
+            $start = Carbon::createFromFormat('Y-m-d', $request->start_date)->format('YmdHis');
+            $end =  Carbon::createFromFormat('Y-m-d', $request->end_date)->format('YmdHis');
+            $transactions->whereDate('transaction_time', '>=', $start)->whereDate('transaction_time', '<=', $end);
+        }
+
         if (request()->ajax()) {
             return DataTables::of($transactions)
                 ->editColumn('accepted_by_cashier', function ($row) {
