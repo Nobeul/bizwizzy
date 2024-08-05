@@ -34,8 +34,8 @@ class MpesaController extends Controller
         }
 
         if (! empty($request->start_date) && ! empty($request->end_date)) {
-            $start = Carbon::createFromFormat('Y-m-d', $request->start_date)->format('YmdHis');
-            $end =  Carbon::createFromFormat('Y-m-d', $request->end_date)->format('YmdHis');
+            $start = Carbon::createFromFormat('Y-m-d', $request->start_date)->format('Ymd');
+            $end =  Carbon::createFromFormat('Y-m-d', $request->end_date)->format('Ymd');
             $transactions->whereDate('transaction_time', '>=', $start)->whereDate('transaction_time', '<=', $end);
         }
 
