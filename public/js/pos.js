@@ -2663,7 +2663,8 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
             var mpesaButton = `<div class="col-md-4 get-mpesa-paymet-div" style="margin-top: 25px;">
                                     <a class="btn btn-warning mpesa_payment_button_${row_index} get-mpesa-payment" data-amount="${payment_amount}" data-businessId="${business_id}">Get <span class="mpesa-button-amount">${payment_amount}</span> using mpesa</a>
                                 </div>`;
-            payment_row.find(".payment-type-row").after(mpesaButton);                 
+            payment_row.find(".payment-type-row").after(mpesaButton); 
+            $('#pos-save').hide();                
         }
     }
 
@@ -2707,7 +2708,9 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
         }).then((confirmed) => {
             if (confirmed) {
                 captureMpesaPaymentForCashier(business_id, amount, element);
+                $('#pos-save').show();
             } else {
+                $('#pos-save').hide();
                 generateMpesaRequest(business_id, amount, element.id);
             }
         });
