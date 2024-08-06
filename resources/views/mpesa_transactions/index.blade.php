@@ -65,7 +65,10 @@
                                 </tr>
                             </thead>
                             <tfoot>
-                                <tr>
+                                <tr class="bg-gray font-17 footer-total text-center">
+                                    <td colspan="2"><strong>@lang('sale.total'):</strong></td>
+                                    <td id="mpesa_total_amount">{{ $mpesa_total_amount }}</td>
+                                    <td colspan="3"></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -129,6 +132,10 @@
                     ],
                     fnDrawCallback: function(oSettings) {
                         __currency_convert_recursively($('#mpesa_transactions'));
+                    },
+                    "footerCallback": function ( row, data, start, end, display ) {
+                        var footer_total_amount = this.api().ajax.json().mpesa_total_amount ?? 0;
+                        $(this.api().column(2).footer()).html(__currency_trans_from_en(footer_total_amount, false));
                     },
             });
 

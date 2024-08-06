@@ -39,8 +39,17 @@ class MpesaController extends Controller
             $transactions->whereDate('transaction_time', '>=', $start)->whereDate('transaction_time', '<=', $end);
         }
 
+        if (isset($request->search['value']) && ! empty($request->search['value'])) {
+            $transactions->where('mpesa_transactions.first_name', 'like', '%' . $request->search['value'] . '%')
+                ->orWhere('transaction_id', 'like', '%' . $request->search['value'] . '%');
+        }
+
+        $filteredData = $transactions->get();
+        $mpesa_total_amount = $filteredData->sum('transaction_amount');
+
         if (request()->ajax()) {
             return DataTables::of($transactions)
+                ->with('mpesa_total_amount', $mpesa_total_amount)
                 ->editColumn('accepted_by_cashier', function ($row) {
                     return $row->cashier_name;
                 })
@@ -53,7 +62,7 @@ class MpesaController extends Controller
                 ->make(true);
         }
 
-        return view('mpesa_transactions.index', compact('cashiers'));
+        return view('mpesa_transactions.index', compact('cashiers', 'mpesa_total_amount'));
     }
     
     public function index()
