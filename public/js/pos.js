@@ -2665,6 +2665,8 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
                                 </div>`;
             payment_row.find(".payment-type-row").after(mpesaButton); 
             $('#pos-save').hide();                
+        } else {
+            $('#pos-save').show();
         }
     }
 

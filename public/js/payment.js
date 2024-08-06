@@ -179,11 +179,13 @@ function set_default_payment_account() {
         var mpesaButton = `<div class="col-md-4 get-mpesa-paymet-div" style="margin-top: 25px;">
                                 <a class="btn btn-warning get-mpesa-payment" data-amount="${payment_amount}" data-businessId="${business_id}">Get <span class="mpesa-button-amount">${payment_amount}</span> using mpesa</a>
                             </div>`;
-        $('.amount-row').after(mpesaButton);                  
+        $('.amount-row').after(mpesaButton);  
+        $('.btn-primary').hide();
     } else {
         if ($('.get-mpesa-paymet-div').length > 0) {
             $('.get-mpesa-paymet-div').remove();
         }
+        $('.btn-primary').show();
     }
 }
 
@@ -226,7 +228,13 @@ function showPaymentMessage(business_id, amount, element)
     }).then((confirmed) => {
         if (confirmed) {
             captureMpesaPaymentForCashier(business_id, amount, element);
+            $(document).ready(function () {
+                $('.btn-primary').show();
+            });
         } else {
+            $(document).ready(function () {
+                $('.btn-primary').hide();
+            });
             generateMpesaRequest(business_id, amount, element.id);
         }
     });
