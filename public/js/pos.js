@@ -2710,7 +2710,6 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
         }).then((confirmed) => {
             if (confirmed) {
                 captureMpesaPaymentForCashier(business_id, amount, element);
-                $('#pos-save').show();
             } else {
                 $('#pos-save').hide();
                 generateMpesaRequest(business_id, amount, element.id);
@@ -2730,6 +2729,7 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
                 transaction_id: element.id
             },
             success: function(element) {
+                $('#pos-save').show();
                 swal('Payment captured successfully');
             },
         });
