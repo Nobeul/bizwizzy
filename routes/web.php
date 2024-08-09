@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 include_once('install_r.php');
 
 // Route::get('testing', 'TestingController@mailTest');
+Route::get('update-duplicacies', 'TestingController@updateDuplicacies');
 
 Route::match(['get', 'post'], 'confirmation', 'MpesaController@confirmation');
 
