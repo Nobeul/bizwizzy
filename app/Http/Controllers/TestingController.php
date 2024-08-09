@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\TestMail;
+use App\Transaction;
 
 class TestingController extends Controller
 {
@@ -54,5 +55,17 @@ class TestingController extends Controller
     {
         Mail::to('nobeul.cse@gmail.com')->send(new TestMail());
         dd('test');
+    }
+
+    public function updateDuplicacies()
+    {
+        $duplicateTransactions = Transaction::whereNotNull('invoice_no')->groupBy('invoice_no')->havingRaw("count('invoice_no') > 1")->select('id', 'invoice_no')->get();
+        $total = 0;
+        foreach ($duplicateTransactions as $transaction) {
+            $total++;
+            $transaction->update(['invoice_no' => $transaction->invoice_no.'dup']);
+        }
+
+        echo 'Total ' . $total . 'was updated successfully';
     }
 }
