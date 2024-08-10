@@ -5158,6 +5158,7 @@ class TransactionUtil extends Util
             'transactions.custom_field_2',
             'transactions.custom_field_3',
             'transactions.custom_field_4',
+            'transactions.total_returned_amount',
             DB::raw('DATE_FORMAT(transactions.transaction_date, "%Y/%m/%d") as sale_date'),
             DB::raw("CONCAT(COALESCE(u.surname, ''),' ',COALESCE(u.first_name, ''),' ',COALESCE(u.last_name,'')) as added_by"),
             DB::raw('(SELECT SUM(IF(TP.is_return = 1,-1*TP.amount,TP.amount)) FROM transaction_payments AS TP WHERE
@@ -6095,27 +6096,21 @@ class TransactionUtil extends Util
             $sell_return_data['invoice_no'] = $this->generateReferenceNumber('sell_return', $ref_count, $business_id);
         }
 
-        if (empty($sell_return)) {
-            $sell_return_data['transaction_date'] = $sell_return_data['transaction_date'] ?? \Carbon::now();
-            $sell_return_data['business_id'] = $business_id;
-            $sell_return_data['location_id'] = $sell->location_id;
-            $sell_return_data['contact_id'] = $sell->contact_id;
-            $sell_return_data['customer_group_id'] = $sell->customer_group_id;
-            $sell_return_data['type'] = 'sell_return';
-            $sell_return_data['status'] = 'final';
-            $sell_return_data['created_by'] = $sell->created_by;
-            $sell_return_data['return_parent_id'] = $sell->id;
-            $sell_return = Transaction::create($sell_return_data);
+        $total_returned_amount = $sell_return_data['final_total'] + $sell->total_returned_amount ?? 0;
+        Transaction::where('id', $sell->id)->update(['total_returned_amount' => $total_returned_amount]);
 
-            $this->activityLog($sell_return, 'added');
-        } else {
-            $sell_return_data['invoice_no'] = $sell_return_data['invoice_no'] ?? $sell_return->invoice_no;
-            $sell_return_before = $sell_return->replicate();
-            
-            $sell_return->update($sell_return_data);
+        $sell_return_data['transaction_date'] = $sell_return_data['transaction_date'] ?? \Carbon::now();
+        $sell_return_data['business_id'] = $business_id;
+        $sell_return_data['location_id'] = $sell->location_id;
+        $sell_return_data['contact_id'] = $sell->contact_id;
+        $sell_return_data['customer_group_id'] = $sell->customer_group_id;
+        $sell_return_data['type'] = 'sell_return';
+        $sell_return_data['status'] = 'final';
+        $sell_return_data['created_by'] = $sell->created_by;
+        $sell_return_data['return_parent_id'] = $sell->id;
+        $sell_return = Transaction::create($sell_return_data);
 
-            $this->activityLog($sell_return, 'edited', $sell_return_before);
-        }
+        $this->activityLog($sell_return, 'added');
 
         if ($business->enable_rp == 1 && !empty($sell->rp_earned)) {
             $is_reward_expired = $this->isRewardExpired($sell->transaction_date, $business_id);
@@ -6149,7 +6144,7 @@ class TransactionUtil extends Util
 
                 $quantity_before = $sell_line->quantity_returned;
 
-                $sell_line->quantity_returned = $quantity;
+                $sell_line->quantity_returned = $sell_line->quantity_returned == 0 ? $quantity : $sell_line->quantity_returned + $quantity;
                 $sell_line->save();
 
                 //update quantity sold in corresponding purchase lines

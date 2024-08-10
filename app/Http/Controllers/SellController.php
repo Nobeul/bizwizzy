@@ -505,9 +505,8 @@ class SellController extends Controller
                     if (in_array($row->payment_status, ['due', 'partial'])) {
                         $total_sale = $row->total_before_tax ?? 0;
                         $total_paid = $row->total_paid ?? 0;
-                        $total_return = $row->amount_return ?? 0;
+                        $total_return = $row->total_returned_amount ?? ($row->amount_return ?? 0);
                         $total_return_paid = $row->return_paid ?? 0;
-                        // dd($total_sale, $total_paid, $total_return, $total_return_paid);
                         $total_remaining =  $total_sale - $total_paid - $total_return - $total_return_paid;
                         $total_remaining_html = '<span class="payment_due" data-orig-value="' . $total_remaining . '">' . $this->transactionUtil->num_f($total_remaining, true) . '</span>';
                     } else {
@@ -520,7 +519,7 @@ class SellController extends Controller
                 ->addColumn('return_due', function ($row) {
                     $return_due_html = '';
                     if (!empty($row->return_exists)) {
-                        $return_due = $row->amount_return - $row->return_paid;
+                        $return_due = ($row->total_returned_amount ?? $row->amount_return) - $row->return_paid;
                         $return_due_html .= '<a href="' . action("TransactionPaymentController@show", [$row->return_transaction_id]) . '" class="view_purchase_return_payment_modal"><span class="sell_return_due" data-orig-value="' . $return_due . '">' . $this->transactionUtil->num_f($return_due, true) . '</span></a>';
                     }
 
