@@ -2373,8 +2373,6 @@ class TransactionUtil extends Util
             $scheme->invoice_count = $scheme->invoice_count + 1;
             $scheme->save();
 
-            $invoice_no = $this->relpaceDuplicatedInvoiceNumbers($invoice_no, $scheme, $prefix);
-
             return $invoice_no;
         } else if ($status == 'draft') {
             $ref_count = $this->setAndGetReferenceCount('draft', $business_id);
@@ -2388,21 +2386,6 @@ class TransactionUtil extends Util
         else {
             return Str::random(5);
         }
-    }
-
-    private function relpaceDuplicatedInvoiceNumbers($invoice_no, $scheme, $prefix)
-    {
-        $existing_invoice_no = Transaction::where('invoice_no', $invoice_no)->first();
-
-        if ($existing_invoice_no) {
-            $last_transaction = Transaction::orderBy('id', 'desc')->first();
-            preg_match('/\d+/', $last_transaction->invoice_no, $matches);
-            $number = $matches[0] + 1;
-            $count = str_pad($number, $scheme->total_digits, '0', STR_PAD_LEFT);
-            $invoice_no = $prefix . $count;
-        }
-
-        return $invoice_no;
     }
 
     private function getInvoiceScheme($business_id, $location_id)
