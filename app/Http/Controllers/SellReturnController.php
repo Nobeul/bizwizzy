@@ -285,11 +285,17 @@ class SellReturnController extends Controller
             if (!empty($input['products'])) {
                 $go_ahead = true;
 
+                $total_quantity = 0;
                 foreach ($input['products'] as $product) {
-                    if ($product['quantity'] < 0 || $product['quantity'] == 0) {
+                    $total_quantity += $product['quantity'];
+                    if ($product['quantity'] < 0) {
                         $go_ahead = false;
                         break;
                     }    
+                }
+
+                if ($go_ahead && $total_quantity == 0) {
+                    $go_ahead = false;
                 }
 
                 if (! $go_ahead) {
