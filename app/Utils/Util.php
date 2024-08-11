@@ -374,6 +374,21 @@ class Util
             $ref_number = $prefix . $ref_digits;
         }
 
+        $existing_invoice_no = Transaction::where('invoice_no', $ref_number)->first();
+
+        if ($existing_invoice_no) {
+            $last_transaction = Transaction::orderBy('id', 'desc')->first();
+            preg_match('/\d+/', $last_transaction->invoice_no, $matches);
+            $number = $matches[0] + 1;
+            $ref_digits =  str_pad($number, 4, 0, STR_PAD_LEFT);
+            if (!in_array($type, ['contacts', 'business_location', 'username'])) {
+                $ref_year = \Carbon::now()->year;
+                $ref_number = $prefix . $ref_year . '/' . $ref_digits;
+            } else {
+                $ref_number = $prefix . $ref_digits;
+            }
+        }
+
         return $ref_number;
     }
 
