@@ -2404,7 +2404,7 @@ class TransactionUtil extends Util
         if ($existing_invoice_no) {
             $last_transaction = Transaction::orderBy('id', 'desc')->first();
             preg_match('/\d+/', $last_transaction->invoice_no, $matches);
-            $number = $matches[0] + 1;
+            $number = $matches[0] + time();
             $count = str_pad($number, $scheme->total_digits, '0', STR_PAD_LEFT);
             $invoice_no = $prefix . $count;
         }

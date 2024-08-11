@@ -379,7 +379,7 @@ class Util
         if ($existing_invoice_no) {
             $last_transaction = Transaction::orderBy('id', 'desc')->first();
             preg_match('/\d+/', $last_transaction->invoice_no, $matches);
-            $number = $matches[0] + 1;
+            $number = $matches[0] + time();
             $ref_digits =  str_pad($number, 4, 0, STR_PAD_LEFT);
             if (!in_array($type, ['contacts', 'business_location', 'username'])) {
                 $ref_year = \Carbon::now()->year;
