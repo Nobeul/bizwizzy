@@ -377,7 +377,7 @@ class Util
         $existing_invoice_no = Transaction::where('invoice_no', $ref_number)->first();
 
         if ($existing_invoice_no) {
-            $last_transaction = Transaction::orderBy('id', 'desc')->first();
+            $last_transaction = Transaction::whereNotNull('invoice_no')->orderBy('id', 'desc')->first();
             preg_match('/\d+/', $last_transaction->invoice_no, $matches);
             $number = $matches[0] + time();
             $ref_digits =  str_pad($number, 4, 0, STR_PAD_LEFT);

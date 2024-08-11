@@ -2402,7 +2402,7 @@ class TransactionUtil extends Util
         $existing_invoice_no = Transaction::where('invoice_no', $invoice_no)->first();
 
         if ($existing_invoice_no) {
-            $last_transaction = Transaction::orderBy('id', 'desc')->first();
+            $last_transaction = Transaction::whereNotNull('invoice_no')->orderBy('id', 'desc')->first();
             preg_match('/\d+/', $last_transaction->invoice_no, $matches);
             $number = $matches[0] + time();
             $count = str_pad($number, $scheme->total_digits, '0', STR_PAD_LEFT);
@@ -6093,7 +6093,7 @@ class TransactionUtil extends Util
                 ->first();
 
         $sell_return_data = [
-            'invoice_no' => $input['invoice_no'] ?? null,
+            // 'invoice_no' => $input['invoice_no'] ?? null,
             'discount_type' => $discount['discount_type'],
             'discount_amount' => $uf_number ? $this->num_uf($discount['discount_amount']) : $discount['discount_amount'],
             'tax_id' => $input['tax_id'],
