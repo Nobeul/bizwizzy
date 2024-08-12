@@ -6175,7 +6175,7 @@ class TransactionUtil extends Util
 
                 $quantity_before = $sell_line->quantity_returned;
 
-                $sell_line->quantity_returned = $sell_line->quantity_returned == 0 ? $quantity : $sell_line->quantity_returned;
+                $sell_line->quantity_returned = $quantity;
                 $sell_line->total_quantity_returned = isset($sell_line->total_quantity_returned) ? $sell_line->total_quantity_returned + $quantity : $quantity;
                 $sell_line->save();
 
