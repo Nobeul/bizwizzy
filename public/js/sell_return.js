@@ -123,8 +123,8 @@ function enable_sell_return_form_actions(){
 $(document).on('change', 'input.input_quantity', function() {
     var inputed_quantity = parseFloat($(this).val());
     var error_msg_td = $(this).closest('tr').find('.input_quantity').closest('td');
-    var total_returned = $(this).closest('tr').find('.total_returned').attr('data-total-returned');
-    var total_quantity = $(this).closest('tr').find('.total_returned').attr('data-total-quantity');
+    var total_returned = parseFloat($(this).closest('tr').find('.total_returned').attr('data-total-returned'));
+    var total_quantity = parseFloat($(this).closest('tr').find('.total_returned').attr('data-total-quantity'));
 
     if (inputed_quantity < 0 || inputed_quantity == 0) {
         error_msg_td.find('label.error').remove();

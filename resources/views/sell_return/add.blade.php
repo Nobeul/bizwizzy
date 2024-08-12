@@ -102,7 +102,7 @@
 								</td>
 								<td><span class="display_currency" data-currency_symbol="true">{{ $sell_line->unit_price_inc_tax }}</span></td>
 								<td>{{ $sell_line->formatted_qty }} {{$unit_name}}</td>
-								<td class="total_returned" data-total-quantity="{{$sell_line->quantity}}" data-total-returned="{{ $sell_line->quantity_returned }}">{{@format_quantity($sell_line->quantity_returned)}} {{$unit_name}}</td>
+								<td class="total_returned" data-total-quantity="{{$sell_line->quantity}}" data-total-returned="{{ $sell_line->total_quantity_returned }}">{{@format_quantity($sell_line->total_quantity_returned)}} {{$unit_name}}</td>
 								<td>
 									<input type="text" name="products[{{$loop->index}}][quantity]" value="0" class="form-control input-sm input_number return_qty input_quantity" data-rule-abs_digit="{{$check_decimal}}" data-msg-abs_digit="@lang('lang_v1.decimal_value_not_allowed')" data-rule-max-value="{{$sell_line->quantity}}">
 									{{-- below line is used to validate avaiable quantity. if needed add it as HTML element --}}

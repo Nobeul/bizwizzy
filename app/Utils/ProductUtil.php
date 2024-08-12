@@ -1990,7 +1990,7 @@ class ProductUtil extends Util
                                     'transactions.type as transaction_type',
                                     'sl.quantity as sell_line_quantity',
                                     'pl.quantity as purchase_line_quantity',
-                                    'rsl.quantity_returned as sell_return',
+                                    'rsl.total_quantity_returned as sell_return',
                                     'rpl.quantity_returned as purchase_return',
                                     'al.quantity as stock_adjusted',
                                     'pl.quantity_returned as combined_purchase_return',
@@ -2161,7 +2161,7 @@ class ProductUtil extends Util
                     'quantity_change' => $quantity_change,
                     'stock' => $this->roundQuantity($stock),
                     'type' => 'purchase_transfer',
-                    'type_label' => __('lang_v1.sell_return'),
+                    'type_label' => __('lang_v1.sell_return') . ' ' . $stock_line->transaction_id,
                     'ref_no' => $stock_line->invoice_no,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit)
                 ]);

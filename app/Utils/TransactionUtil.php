@@ -28,6 +28,7 @@ use Illuminate\Support\Str;
 use App\Utils\ModuleUtil;
 use App\Utils\BusinessUtil;
 use App\CashDenomination;
+use App\SellReturnTransaction;
 use App\Vehicle;
 
 class TransactionUtil extends Util
@@ -984,7 +985,7 @@ class TransactionUtil extends Util
      *
      * @return array
      */
-    public function getReceiptDetails($transaction_id, $location_id, $invoice_layout, $business_details, $location_details, $receipt_printer_type)
+    public function getReceiptDetails($transaction_id, $location_id, $invoice_layout, $business_details, $location_details, $receipt_printer_type, $product_sell_lines = [])
     {
         $il = $invoice_layout;
 
@@ -1398,7 +1399,11 @@ class TransactionUtil extends Util
             $output['total_line_discount'] = !empty($total_line_discount) ? $this->num_f($total_line_discount, true, $business_details) : 0;
         } elseif ($transaction_type == 'sell_return') {
             $parent_sell = Transaction::find($transaction->return_parent_id);
-            $lines = $parent_sell->sell_lines;
+            if (count($product_sell_lines) > 0) {
+                $lines = $parent_sell->sell_lines->whereIn('id', $product_sell_lines);
+            } else {
+                $lines = $parent_sell->sell_lines;
+            }
 
             foreach ($lines as $key => $value) {
                 if (!empty($value->sub_unit_id)) {
@@ -6116,18 +6121,27 @@ class TransactionUtil extends Util
         $total_returned_amount = $sell_return_data['final_total'] + $sell->total_returned_amount ?? 0;
         Transaction::where('id', $sell->id)->update(['total_returned_amount' => $total_returned_amount]);
 
-        $sell_return_data['transaction_date'] = $sell_return_data['transaction_date'] ?? \Carbon::now();
-        $sell_return_data['business_id'] = $business_id;
-        $sell_return_data['location_id'] = $sell->location_id;
-        $sell_return_data['contact_id'] = $sell->contact_id;
-        $sell_return_data['customer_group_id'] = $sell->customer_group_id;
-        $sell_return_data['type'] = 'sell_return';
-        $sell_return_data['status'] = 'final';
-        $sell_return_data['created_by'] = $sell->created_by;
-        $sell_return_data['return_parent_id'] = $sell->id;
-        $sell_return = Transaction::create($sell_return_data);
+        if (empty($sell_return)) {
+            $sell_return_data['transaction_date'] = $sell_return_data['transaction_date'] ?? \Carbon::now();
+            $sell_return_data['business_id'] = $business_id;
+            $sell_return_data['location_id'] = $sell->location_id;
+            $sell_return_data['contact_id'] = $sell->contact_id;
+            $sell_return_data['customer_group_id'] = $sell->customer_group_id;
+            $sell_return_data['type'] = 'sell_return';
+            $sell_return_data['status'] = 'final';
+            $sell_return_data['created_by'] = $sell->created_by;
+            $sell_return_data['return_parent_id'] = $sell->id;
+            $sell_return = Transaction::create($sell_return_data);
+        }
 
         $this->activityLog($sell_return, 'added');
+
+        SellReturnTransaction::create([
+            'transaction_id' => $sell->id,
+            'business_id' => $business_id,
+            'created_by' => auth()->user()->id,
+            'amount' => $sell_return_data['final_total'],
+        ]);
 
         if ($business->enable_rp == 1 && !empty($sell->rp_earned)) {
             $is_reward_expired = $this->isRewardExpired($sell->transaction_date, $business_id);
@@ -6161,7 +6175,8 @@ class TransactionUtil extends Util
 
                 $quantity_before = $sell_line->quantity_returned;
 
-                $sell_line->quantity_returned = $sell_line->quantity_returned == 0 ? $quantity : $sell_line->quantity_returned + $quantity;
+                $sell_line->quantity_returned = $sell_line->quantity_returned == 0 ? $quantity : $sell_line->quantity_returned;
+                $sell_line->total_quantity_returned = isset($sell_line->total_quantity_returned) ? $sell_line->total_quantity_returned + $quantity : $quantity;
                 $sell_line->save();
 
                 //update quantity sold in corresponding purchase lines

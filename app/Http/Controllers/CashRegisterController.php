@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BusinessLocation;
 use App\CashRegister;
+use App\SellReturnTransaction;
 use App\Transaction;
 use App\Utils\CashRegisterUtil;
 use App\Utils\ModuleUtil;
@@ -124,11 +125,14 @@ class CashRegisterController extends Controller
 
         $payment_types = $this->cashRegisterUtil->payment_types(null, false, $business_id);
 
-        $sell_return = Transaction::where('created_by', $user_id)
+        // $sell_return = Transaction::where('created_by', $user_id)
+        //             ->whereBetween('created_at', [$open_time, $close_time])
+        //             ->where('type', 'sell_return')
+        //             ->where('status', 'final')
+        //             ->sum('final_total');
+        $sell_return = SellReturnTransaction::where('created_by', $user_id)
                     ->whereBetween('created_at', [$open_time, $close_time])
-                    ->where('type', 'sell_return')
-                    ->where('status', 'final')
-                    ->sum('final_total');
+                    ->sum('amount');
 
         $business_location = BusinessLocation::where('business_id', $business_id)->first();
         $business_location = json_decode($business_location->default_payment_accounts, true);
@@ -158,11 +162,14 @@ class CashRegisterController extends Controller
         $open_time = $register_details['open_time'];
         $close_time = \Carbon::now()->toDateTimeString();
 
-        $sell_return = Transaction::where('created_by', $user_id)
+        // $sell_return = Transaction::where('created_by', $user_id)
+        //             ->whereBetween('created_at', [$open_time, $close_time])
+        //             ->where('type', 'sell_return')
+        //             ->where('status', 'final')
+        //             ->sum('final_total');
+        $sell_return = SellReturnTransaction::where('created_by', $user_id)
                     ->whereBetween('created_at', [$open_time, $close_time])
-                    ->where('type', 'sell_return')
-                    ->where('status', 'final')
-                    ->sum('final_total');
+                    ->sum('amount');
 
         $is_types_of_service_enabled = $this->moduleUtil->isModuleEnabled('types_of_service');
 
@@ -197,11 +204,14 @@ class CashRegisterController extends Controller
         $open_time = $register_details['open_time'];
         $close_time = \Carbon::now()->toDateTimeString();
 
-        $sell_return = Transaction::where('created_by', $user_id)
+        // $sell_return = Transaction::where('created_by', $user_id)
+        //             ->whereBetween('created_at', [$open_time, $close_time])
+        //             ->where('type', 'sell_return')
+        //             ->where('status', 'final')
+        //             ->sum('final_total');
+        $sell_return = SellReturnTransaction::where('created_by', $user_id)
                     ->whereBetween('created_at', [$open_time, $close_time])
-                    ->where('type', 'sell_return')
-                    ->where('status', 'final')
-                    ->sum('final_total');
+                    ->sum('amount');
 
         $is_types_of_service_enabled = $this->moduleUtil->isModuleEnabled('types_of_service');
 

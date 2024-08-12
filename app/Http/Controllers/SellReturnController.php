@@ -281,6 +281,7 @@ class SellReturnController extends Controller
 
         try {
             $input = $request->except('_token');
+            $business_id = $request->session()->get('user.business_id');
 
             if (!empty($input['products'])) {
                 $go_ahead = true;
@@ -298,6 +299,26 @@ class SellReturnController extends Controller
                     $go_ahead = false;
                 }
 
+                $sell = Transaction::where('business_id', $business_id)
+                        ->with(['sell_lines', 'sell_lines.sub_unit'])
+                        ->findOrFail($input['transaction_id']);
+
+                foreach ($sell->sell_lines as $sell_line) {
+                    $total_quantity_returned = $sell_line->total_quantity_returned ?? 0;
+                    $quantity = 0;
+                    foreach ($input['products'] as $product) {
+                        if ($product["sell_line_id"] == $sell_line->id) {
+                            $quantity = $product["quantity"];
+                            break;
+                        }
+                    }
+                    if (($total_quantity_returned + $quantity) > $sell_line->quantity) {
+                        $go_ahead = false;
+                        break;
+                    }
+
+                }
+
                 if (! $go_ahead) {
                     $output = [
                         'success' => 0,
@@ -306,8 +327,6 @@ class SellReturnController extends Controller
 
                     return $output;
                 }
-
-                $business_id = $request->session()->get('user.business_id');
 
                 //Check if subscribed or not
                 if (!$this->moduleUtil->isSubscribed($business_id)) {
@@ -320,7 +339,7 @@ class SellReturnController extends Controller
 
                 $sell_return =  $this->transactionUtil->addSellReturn($input, $business_id, $user_id);
 
-                $receipt = $this->receiptContent($business_id, $sell_return->location_id, $sell_return->id);
+                $receipt = $this->receiptContent($business_id, $sell_return->location_id, $sell_return->id, null, $input['products']);
                 
                 DB::commit();
 
@@ -513,7 +532,8 @@ class SellReturnController extends Controller
         $business_id,
         $location_id,
         $transaction_id,
-        $printer_type = null
+        $printer_type = null,
+        $products = null
     ) {
         $output = ['is_enabled' => false,
                     'print_type' => 'browser',
@@ -535,7 +555,17 @@ class SellReturnController extends Controller
             //Check if printer setting is provided.
             $receipt_printer_type = is_null($printer_type) ? $location_details->receipt_printer_type : $printer_type;
 
-            $receipt_details = $this->transactionUtil->getReceiptDetails($transaction_id, $location_id, $invoice_layout, $business_details, $location_details, $receipt_printer_type);
+            if ($products) {
+                $product_sell_lines = [];
+                foreach ($products as $product) {
+                    if ($product['quantity'] != 0) {
+                        array_push($product_sell_lines, $product['sell_line_id']);
+                    }
+                }
+            } else {
+                $product_sell_lines = [];
+            }
+            $receipt_details = $this->transactionUtil->getReceiptDetails($transaction_id, $location_id, $invoice_layout, $business_details, $location_details, $receipt_printer_type, $product_sell_lines);
             
             //If print type browser - return the content, printer - return printer config data, and invoice format config
             $output['print_title'] = $receipt_details->invoice_no;
