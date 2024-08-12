@@ -2161,7 +2161,7 @@ class ProductUtil extends Util
                     'quantity_change' => $quantity_change,
                     'stock' => $this->roundQuantity($stock),
                     'type' => 'purchase_transfer',
-                    'type_label' => __('lang_v1.sell_return') . ' ' . $stock_line->transaction_id,
+                    'type_label' => __('lang_v1.sell_return'),
                     'ref_no' => $stock_line->invoice_no,
                     'stock_in_second_unit' => $this->roundQuantity($stock_in_second_unit)
                 ]);
