@@ -6132,6 +6132,14 @@ class TransactionUtil extends Util
             $sell_return_data['created_by'] = $sell->created_by;
             $sell_return_data['return_parent_id'] = $sell->id;
             $sell_return = Transaction::create($sell_return_data);
+        } else {
+            $sell_return_data['invoice_no'] = $sell_return_data['invoice_no'] ?? $sell_return->invoice_no;
+            $sell_return_data['final_total'] = $total_returned_amount;
+            $sell_return_before = $sell_return->replicate();
+            
+            $sell_return->update($sell_return_data);
+
+            $this->activityLog($sell_return, 'edited', $sell_return_before);
         }
 
         $this->activityLog($sell_return, 'added');
