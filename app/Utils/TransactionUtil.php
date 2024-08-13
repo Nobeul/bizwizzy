@@ -6139,7 +6139,7 @@ class TransactionUtil extends Util
         SellReturnTransaction::create([
             'transaction_id' => $sell->id,
             'business_id' => $business_id,
-            'created_by' => auth()->user()->id,
+            'created_by' => $sell->created_by,
             'amount' => $sell_return_data['final_total'],
         ]);
 
