@@ -298,7 +298,7 @@ class Transaction extends Model
             }
         }
         
-        if ($payment_status == 'partial') {
+        if ($payment_status == 'partial' || $payment_status == 'due') {
             $total_sale = $transaction->final_total ?? 0;
             $total_paid = $transaction->total_paid ?? 0;
             $total_return = $transaction->amount_return ?? 0;
