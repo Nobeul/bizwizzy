@@ -65,27 +65,7 @@
 			Mousetrap(payment_modal).bind('{{$shortcuts["pos"]["finalize_payment"]}}', function(e, combo) {
 				if($('#modal_payment').is(':visible')){
 					e.preventDefault();
-					var show_finalize_row = true;
-					
-					$('.payment_types_dropdown').each(function(index) {
-						if ($(this).val() === 'mpesa') {
-							var confirmedValue = $(this).closest('.box-body').find('.get-mpesa-payment').attr('data-confirmed');
-							if (confirmedValue == 0) {
-								show_finalize_row = false;
-								return false;
-							}
-							
-						}
-					});
-
-					if (show_finalize_row) {
-						$('#pos-save').removeAttr('disabled');
-					} else {
-						$('#pos-save').attr('disabled', 'true');
-					}    
-					if (show_finalize_row) {
-						$('#pos-save').trigger('click');
-					}
+					$('#pos-save').trigger('click');
 				}
 			});
 		@endif
