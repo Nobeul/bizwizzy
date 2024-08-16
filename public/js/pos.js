@@ -985,11 +985,10 @@ $(document).ready(function() {
         calculate_balance_due();
         var amount = parseFloat($(this).val());
         var payment_amount_id = $(this).attr('id');
-        payment_amount_row_id = payment_amount_id.replace('amount_', '');
-        if (payment_amount_row_id == 0) {
-            $('.get-mpesa-payment').attr('data-amount', amount.toFixed(2));
-            $('.mpesa-button-amount').text(amount.toFixed(2));
-        }
+        var payment_row = $(this).closest('.payment_row');
+        var row_index = payment_row.find('.payment_row_index').val();
+        $('.mpesa_payment_button_'+row_index).attr('data-amount', amount.toFixed(2));
+        $('.mpesa_payment_button_'+row_index).find('.mpesa-button-amount').text(amount.toFixed(2));
     });
 
     //Update discount
@@ -2661,25 +2660,46 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
             var business_id = $('#pos-business-id').val();
             var payment_amount = payment_row.find('.payment-amount').val();
             var mpesaButton = `<div class="col-md-4 get-mpesa-paymet-div" style="margin-top: 25px;">
-                                    <a class="btn btn-warning mpesa_payment_button_${row_index} get-mpesa-payment" data-amount="${payment_amount}" data-businessId="${business_id}">Get <span class="mpesa-button-amount">${payment_amount}</span> using mpesa</a>
+                                    <a class="btn btn-warning mpesa_payment_button_${row_index} get-mpesa-payment" data-amount="${payment_amount}" data-businessId="${business_id}" data-confirmed="0">Get <span class="mpesa-button-amount">${payment_amount}</span> using mpesa</a>
                                 </div>`;
-            payment_row.find(".payment-type-row").after(mpesaButton); 
-            $('#pos-save').hide();                
-        } else {
-            $('#pos-save').show();
+            payment_row.find(".payment-type-row").after(mpesaButton);                
         }
+
+        getMpesaConfirmation();
     }
 
-    function generateMpesaRequest(business_id, amount, passed_by = null)
+    function getMpesaConfirmation()
+    {
+        var show_finalize_row = true;
+        
+        $('.payment_types_dropdown').each(function(index) {
+            if ($(this).val() === 'mpesa') {
+                var confirmedValue = $(this).closest('.box-body').find('.get-mpesa-payment').attr('data-confirmed');
+                if (confirmedValue == 0) {
+                    show_finalize_row = false;
+                    return false;
+                }
+                
+            }
+        });
+
+        if (show_finalize_row) {
+            $('#pos-save').removeAttr('disabled');
+        } else {
+            $('#pos-save').attr('disabled', 'true');
+        }
+    
+    }
+
+    function generateMpesaRequest(business_id, amount, passed_by = null, payment_row_id = null)
     {
         $.ajax({
             method: 'GET',
             url: base_path + '/mpesa-check-payments' + '?business_id=' + business_id + '&amount=' + amount + '&passed_by=' + passed_by,
             dataType: 'json',
             success: function(element) {
-                console.log(element.data);
                 if (element.data && element.data != null && element.data != 'undefined') {
-                        showPaymentMessage(business_id, amount, element.data);
+                        showPaymentMessage(business_id, amount, element.data, payment_row_id);
                 } else {
                     swal('Mpesa did not grab any payment yet.');
                 }
@@ -2688,7 +2708,7 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
         });
     }
 
-    function showPaymentMessage(business_id, amount, element)
+    function showPaymentMessage(business_id, amount, element, payment_row_id)
     {
         let name = element.first_name;
         if (element.middle_name != null) {
@@ -2709,15 +2729,14 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
             dangerMode: true,
         }).then((confirmed) => {
             if (confirmed) {
-                captureMpesaPaymentForCashier(business_id, amount, element);
+                captureMpesaPaymentForCashier(business_id, amount, element, payment_row_id);
             } else {
-                $('#pos-save').hide();
                 generateMpesaRequest(business_id, amount, element.id);
             }
         });
     }
 
-    function captureMpesaPaymentForCashier(business_id, amount, element)
+    function captureMpesaPaymentForCashier(business_id, amount, element, payment_row_id)
     {
         $.ajax({
             method: 'POST',
@@ -2729,7 +2748,10 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
                 transaction_id: element.id
             },
             success: function(element) {
-                $('#pos-save').show();
+                if (payment_row_id != null && payment_row_id != 'undefined') {
+                    $('.mpesa_payment_button_' + payment_row_id).attr('data-confirmed', 1);
+                }
+                getMpesaConfirmation();
                 swal('Payment captured successfully');
             },
         });
@@ -2738,6 +2760,7 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
     $(".get-mpesa-payment").on('click', function () {
         let business_id = $('#pos-business-id').val();
         let payment_amount = $(this).closest('.payment_row').find('.payment-amount').val();
+        let payment_row_id = $(this).closest('.payment_row').find('.payment_row_index').val();
 
         swal({
             title: 'Waiting',
@@ -2746,7 +2769,7 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
             dangerMode: true,
         }).then(confirm => {
             if (confirm) {
-                generateMpesaRequest(business_id, payment_amount);
+                generateMpesaRequest(business_id, payment_amount, null, payment_row_id);
             }
         });
 
