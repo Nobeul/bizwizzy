@@ -691,7 +691,28 @@ $(document).ready(function() {
 
     $(".payment_types_dropdown").on('change', function () {
         if ($(this).val() != 'mpesa') {
-            $(".get-mpesa-paymet-div").remove();
+            var payment_row = $(this).closest('.payment_row');
+            var row_index = payment_row.find('.payment_row_index').val(); 
+            $(`.mpesa_payment_button_${row_index}`).remove();
+        }
+
+        var show_finalize_row = true;
+        
+        $('.payment_types_dropdown').each(function(index) {
+            if ($(this).val() === 'mpesa') {
+                var confirmedValue = $(this).closest('.box-body').find('.get-mpesa-payment').attr('data-confirmed');
+                if (confirmedValue == 0 || confirmedValue === undefined) {
+                    show_finalize_row = false;
+                    return false;
+                }
+                
+            }
+        });
+
+        if (show_finalize_row) {
+            $('#pos-save').removeAttr('disabled');
+        } else {
+            $('#pos-save').attr('disabled', 'true');
         }
     });
 
@@ -2656,13 +2677,17 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
             account_dropdown.change();
         }
 
-        if (payment_type && payment_type == 'mpesa') {
+        if (payment_type && payment_type == 'mpesa' && $(`.mpesa_payment_button_${row_index}`).length == 0) {
             var business_id = $('#pos-business-id').val();
             var payment_amount = payment_row.find('.payment-amount').val();
             var mpesaButton = `<div class="col-md-4 get-mpesa-paymet-div" style="margin-top: 25px;">
                                     <a class="btn btn-warning mpesa_payment_button_${row_index} get-mpesa-payment" data-amount="${payment_amount}" data-businessId="${business_id}" data-confirmed="0">Get <span class="mpesa-button-amount">${payment_amount}</span> using mpesa</a>
                                 </div>`;
             payment_row.find(".payment-type-row").after(mpesaButton);                
+        } else {
+            if ($(`.mpesa_payment_button_${row_index}`).length > 0) {
+                $(`.mpesa_payment_button_${row_index}`).remove();
+            }
         }
 
         getMpesaConfirmation();
@@ -2675,7 +2700,7 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
         $('.payment_types_dropdown').each(function(index) {
             if ($(this).val() === 'mpesa') {
                 var confirmedValue = $(this).closest('.box-body').find('.get-mpesa-payment').attr('data-confirmed');
-                if (confirmedValue == 0) {
+                if (confirmedValue == 0 || confirmedValue === undefined) {
                     show_finalize_row = false;
                     return false;
                 }
@@ -2731,7 +2756,7 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
             if (confirmed) {
                 captureMpesaPaymentForCashier(business_id, amount, element, payment_row_id);
             } else {
-                generateMpesaRequest(business_id, amount, element.id);
+                generateMpesaRequest(business_id, amount, element.id, payment_row_id);
             }
         });
     }
@@ -2748,6 +2773,7 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
                 transaction_id: element.id
             },
             success: function(element) {
+                console.log(payment_row_id, element);
                 if (payment_row_id != null && payment_row_id != 'undefined') {
                     $('.mpesa_payment_button_' + payment_row_id).attr('data-confirmed', 1);
                 }
@@ -2779,6 +2805,10 @@ $(document).on('change', '.payment_types_dropdown', function(e) {
     amount_element = payment_row.find('.payment-amount');
     account_dropdown = payment_row.find('.account-dropdown');
     if (payment_type == 'advance') {
+        let payment_row_id = $(this).closest('.payment_row').find('.payment_row_index').val();
+        if ($(`.mpesa_payment_button_${payment_row_id}`).length > 0) {
+            $(`.mpesa_payment_button_${payment_row_id}`).remove();
+        }
         max_value = $('#advance_balance').val();
         msg = $('#advance_balance').data('error-msg');
         amount_element.rules('add', {
